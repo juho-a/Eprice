@@ -1,9 +1,10 @@
 ### Client/front template for Eprice app
 
+You need to have deno installed: https://docs.deno.com/runtime/
+
 * missing project.env -- ask Paavo for this.
 
 * run this with docker compose.
 
-* first run `deno install --allow-scripts` in `client/` folder.
+* first run `deno install --allow-scripts` in `client/` and `e2e-tests/` folders.
 
-* This should work on Linux, but on windows (unless using wsl/wsl2) some issues might rize. Ask Paavo for install and init procedure to follow.
