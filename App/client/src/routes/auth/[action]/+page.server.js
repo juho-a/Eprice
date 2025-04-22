@@ -12,7 +12,6 @@ const apiRequest = async (url, data) => {
   });
 };
 
-//const COOKIE_KEY = "token";//"auth";
 export const actions = {
 
   login: async ({ request, cookies }) => {
