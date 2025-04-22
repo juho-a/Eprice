@@ -1,7 +1,7 @@
 import os
 import dotenv
-# Load environment variables from .env file
-dotenv.load_dotenv()
+
+dotenv.load_dotenv("../.env.development")
 # Database configuration
 # check if environment variables for postgres are set, otherwise use default values
 # Default values are for development purposes only

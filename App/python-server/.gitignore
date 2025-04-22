@@ -1,5 +1,6 @@
 # ignore .env file
 .env
+!.env.development
 # ignore __pycache__ directories
 __pycache__/
 # ignore .DS_Store files
