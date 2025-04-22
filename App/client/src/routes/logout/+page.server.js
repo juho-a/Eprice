@@ -1,7 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { useUserState } from "$lib/states/userState.svelte";
 import { COOKIE_KEY } from "$env/static/private";
-//const COOKIE_KEY="token"; // Define the cookie key
 
 export async function load({ locals, cookies }) {
 	cookies.set(COOKIE_KEY, "", {

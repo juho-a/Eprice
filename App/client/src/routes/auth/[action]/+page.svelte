@@ -14,14 +14,6 @@
     <p class="text-xl text-red-500">{form.error}</p>
   {/if}
 
-  {#if form?.detail}
-  <ul>
-    {#each form.detail as dt}
-      <li class="text-red-500">{dt.msg}</li>
-    {/each}
-  </ul>
-  {/if}
-  
   {#if data.registered}
     <p class="text-xl">
       You have successfully registered. Please login to continue.

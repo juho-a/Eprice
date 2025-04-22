@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, Request
+from fastapi import APIRouter, Response, Request
 from fastapi.responses import JSONResponse
 from jose import jwt, JWTError
 from services.auth_service import AuthService
@@ -20,7 +20,7 @@ async def register(user: User, response: Response):
     except asyncpg.UniqueViolationError:
         print(f"Email already registered: {user.email.lower()}")
         response.status_code = 400
-        return {"message": "Email already registered.", "error": "Additional error message."} #remove error message
+        return {"message": "Email already registered."}
     except Exception as e:
         print(f"Error during registration: {str(e)}")
         response.status_code = 500
@@ -30,7 +30,12 @@ async def register(user: User, response: Response):
 async def login(user: User, response: Response):
     db_user = await auth_service.authenticate_user(user.email.lower(), user.password)
     if not db_user:
-        raise HTTPException(status_code=401, detail="Incorrect email or password.")
+        # SUGGESTION TO JUHO:
+        # dont't raise exceptions, just return set status code and return a message
+        # and we can handle it in the front
+        #raise HTTPException(status_code=401, detail="Incorrect email or password.")
+        response.status_code = 401
+        return {"message": "Incorrect email or password."}
     
     payload = {"email": db_user["email"], "id": db_user["id"]}
     token = auth_service.create_access_token(payload)

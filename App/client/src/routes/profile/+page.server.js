@@ -1,6 +1,5 @@
 import { PUBLIC_INTERNAL_API_URL } from "$env/static/public";
 import { COOKIE_KEY } from "$env/static/private";
-//const COOKIE_KEY = "token"; // Define the cookie key
 
 
 export const actions = {
