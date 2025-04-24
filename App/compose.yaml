@@ -20,7 +20,7 @@ services:
     build: client
     restart: unless-stopped
     volumes:
-      - ./client:/app
+      - ./client/src:/app/src
     ports:
       - 5173:5173
     depends_on:
@@ -49,3 +49,15 @@ services:
     depends_on:
       - database
 
+  chat-engine:
+    container_name: chat-engine
+    build:
+      context: .
+      dockerfile: chat-engine/Dockerfile
+    volumes:
+      - type: bind
+        source: ./chat-engine/.ollama
+        target: /root/.ollama
+    ports:
+      - 7860:7860
+    restart: always
