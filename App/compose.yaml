@@ -20,7 +20,7 @@ services:
     build: client
     restart: unless-stopped
     volumes:
-      - ./client/src:/app/src
+      - ./client:/app
     ports:
       - 5173:5173
     depends_on:
@@ -61,3 +61,5 @@ services:
     ports:
       - 7860:7860
     restart: always
+    profiles:
+      - chat-engine
