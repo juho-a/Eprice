@@ -48,7 +48,7 @@ async def login(user: User, response: Response):
     return {"message": "Welcome!"}
 
 
-@router.post("/api/auth/logout")
+@router.get("/api/auth/logout")
 async def logout(response: Response):
     response.delete_cookie(
         key=COOKIE_KEY,
