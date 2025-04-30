@@ -48,6 +48,16 @@ async def login(user: User, response: Response):
     return {"message": "Welcome!"}
 
 
+@router.post("/api/auth/logout")
+async def logout(response: Response):
+    response.delete_cookie(
+        key=COOKIE_KEY,
+        path="/",
+        domain="localhost",
+    )
+    return {"message": "User has successfully logged out"}
+
+
 def create_jwt_middleware(public_routes):
     """
     Middleware factory to validate JWT token and attach user info to the request.

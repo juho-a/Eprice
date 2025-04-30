@@ -1,0 +1,17 @@
+curl -X POST http://localhost:8000/api/auth/register \
+     -d '{"email": "test@test.com", "password": "secret"}' \
+     -H 'Content-Type: application/json'
+###
+curl -X POST http://localhost:8000/api/auth/login \
+     -d '{"email": "test@test.com", "password": "secret"}' \
+     -H 'Content-Type: application/json' \
+     -c cookies.txt \
+     -v
+###
+curl http://localhost:8000/api/data
+
+###
+curl -X POST http://localhost:8000/api/auth/logout \
+     -H 'Content-Type: application/json' \
+     -c cookies.txt \
+     -v
