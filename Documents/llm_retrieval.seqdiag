@@ -1,0 +1,7 @@
+Title: Knowledge Retrieval for RAG model
+User->LLM Client: User initiates a query
+LLM Client->Knowledge Base: Send embedded query
+Knowledge Base->LLM Client: Return relevant documents
+LLM Client->LLM Model: Send query and context
+LLM Model->LLM Client: Return generated response
+LLM Client->User: Display response;
