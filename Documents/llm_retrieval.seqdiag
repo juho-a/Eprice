@@ -1,11 +1,11 @@
 Title: Knowledge Retrieval for RAG model. Knowledge base is pre-processed pgvector DB.
 User->LLM Client: User initiates a query
 Note over LLM Client: Client embeds the query
-#Note over Vector DB: DB has text chunks\nand embeddings
-LLM Client->Vector DB: Send embedded query
-Note over Vector DB: similarity search\nfor relevant texts
-Vector DB->LLM Client: Return relevant text chunks
+#Note over Database: DB has text chunks\nand embeddings
+LLM Client->Database: Send embedded query
+Note over Database: similarity search\nfor relevant texts
+Database->LLM Client: Return relevant text chunks
 Note over LLM Client: Combine query with\nretrieved text chunks
-LLM Client->LLM Model: Send query and context
+LLM Client->LLM Model: formatted prompt with query and context
 LLM Model->LLM Client: Return generated response
 LLM Client->User: return generated response;
