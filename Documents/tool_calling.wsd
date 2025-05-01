@@ -1,4 +1,5 @@
-Title: Tool calling LLM
+@startuml
+title LLM engine with tool calling
 User->LLM Client: User initiates a query
 Note over LLM Client: Client adds system messages\nand tool calling instructions
 LLM Client->LLM Model: formatted prompt
@@ -10,3 +11,4 @@ Note over LLM Client: Client adds system messages\nand results to the prompt
 LLM Client->LLM Model: formatted prompt with tool results
 LLM Model->LLM Client: return generated response
 LLM Client->User: return generated response
+@enduml
