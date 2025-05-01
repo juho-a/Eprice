@@ -1,10 +1,13 @@
-# you can change the style to hand written or simple (preferences -> settings -> extensions -> seqdiag)
-Title: Sequence Diagram for data access from open and closed routes
+@startuml
+title FastAPI Server, access to data
+
+Title: Sequence Diagram for data access
 Participant Client
 Participant Server
 Participant Database
 Participant ExternalAPI
-Client->Server: POST /api/open/data/ <identifier>
+Client->Server: POST /api/data/ <identifier>
+Note over Server: Check credentials on\nprotected routes
 Server->Database: query if cached
 Database->Server: Success/Failure [,data]
 Note over Server: On success: return data\ndirectly to client\non failure: make api call
@@ -13,3 +16,5 @@ ExternalAPI->Server: success/failure [,data]
 Server->Client: Success/Failure [,data]
 Server->Database: On success: cache data
 Note over Client: On success: display data
+
+@enduml
