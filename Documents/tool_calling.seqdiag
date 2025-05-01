@@ -1,0 +1,12 @@
+Title: Tool calling LLM
+User->LLM Client: User initiates a query
+Note over LLM Client: Client adds system messages\nand tool calling instructions
+LLM Client->LLM Model: formatted prompt
+Note over LLM Model: LLM processes the prompt and\nidentifies if a tool is needed
+LLM Model->LLM Client: return tool call instructions
+LLM Client->Tool: Call tool with parameters
+Tool->LLM Client: return tool results
+Note over LLM Client: Client adds system messages\nand results to the prompt
+LLM Client->LLM Model: formatted prompt with tool results
+LLM Model->LLM Client: return generated response
+LLM Client->User: return generated response

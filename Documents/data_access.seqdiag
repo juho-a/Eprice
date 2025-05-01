@@ -6,10 +6,10 @@ Participant Database
 Participant ExternalAPI
 Client->Server: POST /api/open/data/ <identifier>
 Server->Database: query if cached
-Database->Server: Success/Failure, [,data]
+Database->Server: Success/Failure [,data]
 Note over Server: On success: return data\ndirectly to client\non failure: make api call
 Server->ExternalAPI: api call
-ExternalAPI->Server: success/failure, [,data]
-Server->Client: Success/Failure, data
-Server->Database: cache data
+ExternalAPI->Server: success/failure [,data]
+Server->Client: Success/Failure [,data]
+Server->Database: On success: cache data
 Note over Client: On success: display data
