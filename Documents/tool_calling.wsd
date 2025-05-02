@@ -1,14 +1,14 @@
 @startuml
 title LLM engine with tool calling
-User->LLM Client: User initiates a query
-Note over LLM Client: Client adds system messages\nand tool calling instructions
-LLM Client->LLM Model: formatted prompt
-Note over LLM Model: LLM processes the prompt and\nidentifies if a tool is needed
-LLM Model->LLM Client: return tool call instructions
-LLM Client->Tool: Call tool with parameters
-Tool->LLM Client: return tool results
-Note over LLM Client: Client adds system messages\nand results to the prompt
-LLM Client->LLM Model: formatted prompt with tool results
-LLM Model->LLM Client: return generated response
-LLM Client->User: return generated response
+User->LLM_Client: User initiates a query
+Note over LLM_Client: Client adds system messages\nand tool calling instructions
+LLM_Client->LLM_Model: formatted prompt
+Note over LLM_Model: LLM processes the prompt and\nidentifies if a tool is needed
+LLM_Model->LLM_Client: return tool call instructions
+LLM_Client->Tool: Call tool with parameters
+Tool->LLM_Client: return tool results
+Note over LLM_Client: Client adds system messages\nand results to the prompt
+LLM_Client->LLM_Model: formatted prompt with tool results
+LLM_Model->LLM_Client: return generated response
+LLM_Client->User: return generated response
 @enduml
