@@ -54,6 +54,7 @@ async def get_data():
         'chartLabels': chartLabels
     }
 
+# NOTE: JUHO, tämä ei sitten ole vielä valmis, vaan pelkkä esimerkki (tutkitaan sitö pörssihinta APIa)
 @app.get("/api/public/data")
 async def get_prices():
     """
@@ -72,20 +73,20 @@ async def get_prices():
             # Extract prices and hours
             prices = [item["price"] for item in data["prices"]]
             hours = [item["startDate"][11:16] for item in data["prices"]]  # Extract hour (HH:MM) from startDate
-            assert len(prices) == len(hours), "Prices and hours lists must be of the same length"
             
             # sort the prices and hours by hour
             prices, hours = zip(*sorted(zip(prices, hours), key=lambda x: x[1]))
             
             # Convert prices to float
             prices = [float(price) for price in prices]
-            # Convert hours to string
-            hours = list(range(24))#[str(hour) for hour in hours]
             
+            assert len(prices) == len(hours), "Prices and hours lists must be of the same length"
+            prices = prices[::2]  # Take every second price
+            hours = hours[::2]
             return {
-                "chartLegend": "Prices (snt / kWh)",
+                "chartLegend": "Prices (cnt / kWh)",
                 "chartType": "bar",
-                "chartValues": prices,
+                "chartValues": prices, # and take only every second hour
                 "chartLabels": hours,
                 "message": "Prices fetched successfully"
             }
