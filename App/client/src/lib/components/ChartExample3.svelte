@@ -22,11 +22,24 @@
 				data: {
 						labels: chartData.chartLabels,
 						datasets: [{
-								label: undefined,
+								label: chartData.chartLegend,
 								backgroundColor: 'rgb(70, 50, 255)',
 								borderColor: 'rgb(255, 255, 255)',
 								data: chartData.chartValues,
 						}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					scales: {
+						x: [{
+							ticks: {
+								autoSkip: true,
+								maxRotation: 90,
+								minRotation: 90
+							}
+						}]
+					}
 				}
 		});
 
