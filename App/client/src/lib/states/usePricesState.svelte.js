@@ -19,7 +19,8 @@ const usePricesState = () => {
     // it needs to be a plain object
     // otherwise it will not work
     state2js: () => {
-      return JSON.parse(JSON.stringify(pricesState));
+      const temp = JSON.stringify(pricesState);
+      return JSON.parse(temp);
     },
   }
 };

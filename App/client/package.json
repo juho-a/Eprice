@@ -11,18 +11,18 @@
 		"jose": "^5.10.0"
 	},
 	"devDependencies": {
-		"@skeletonlabs/skeleton": "^3.0.0-next.10",
-		"@skeletonlabs/skeleton-svelte": "^1.0.0-next.18",
+		"@skeletonlabs/skeleton": "^3.0.0-next.13",
+		"@skeletonlabs/skeleton-svelte": "^1.0.0-next.22",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-static": "^3.0.0",
 		"@sveltejs/kit": "^2.9.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/forms": "^0.5.10",
+		"@tailwindcss/vite": "^4.1.5",
 		"autoprefixer": "^10.4.20",
 		"chart.js": "^4.4.9",
-		"postcss": "^8.5.1",
 		"svelte": "^5.0.0",
-		"tailwindcss": "3.4.13",
+		"tailwindcss": "^4.1.5",
 		"vite": "^6.0.0"
 	}
 }

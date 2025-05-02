@@ -16,6 +16,7 @@
 		// this is a workaround for the fact that svelte stores are not serializable
 		const chartData = prices.state2js();
 
+		
 		ctx = chartCanvas.getContext('2d');
 		var chart = new chartjs(ctx, {
 				type: chartData.chartType,
@@ -30,15 +31,14 @@
 				},
 				options: {
 					responsive: true,
-					maintainAspectRatio: false,
+					maintainAspectRatio: true,
 					scales: {
-						x: [{
+						x: {
 							ticks: {
-								autoSkip: true,
-								maxRotation: 90,
-								minRotation: 90
+								maxRotation: 60,
+								minRotation: 60
 							}
-						}]
+						}
 					}
 				}
 		});
@@ -54,3 +54,4 @@
 	rounded"
  style="width: 100%;background-color: #1e1e2f;"
 ></canvas>
+

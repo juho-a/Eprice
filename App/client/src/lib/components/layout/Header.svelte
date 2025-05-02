@@ -1,9 +1,9 @@
 <script>
-  import bg from "$lib/assets/image.png";
+  import bg from "$lib/assets/image2.png";
   let { user } = $props();
 </script>
 
-<header class="flex items-center bg-primary-100 p-4 mb-6" style="background-image: url({bg})">
+<header class="flex items-center bg-primary-100 p-4 mb-6 border-b-1" style="background-image: url({bg})">
 <!--<header class="flex items-center bg-primary-300 p-4 mb-6">-->
   <h1 class="text-2xl text-white items-center">Electricity prices</h1>
     <nav>

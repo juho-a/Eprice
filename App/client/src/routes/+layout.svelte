@@ -1,5 +1,6 @@
 <script>
     import "../app.css";
+    import bg from "$lib/assets/image.png";
     import { useUserState } from "$lib/states/userState.svelte.js";
     import Header from "$lib/components/layout/Header.svelte";
     import Footer from "$lib/components/layout/Footer.svelte";
@@ -34,3 +35,15 @@
   <Footer />
   
 </div>
+
+<style>
+  :global(body){
+  background-image: url("https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem
+  }
+</style>

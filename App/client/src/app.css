@@ -1,6 +1,19 @@
-@tailwind base;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+@import "@skeletonlabs/skeleton";
+@import "@skeletonlabs/skeleton/optional/presets";
+@import "@skeletonlabs/skeleton/themes/cerberus";
+@import "@skeletonlabs/skeleton/themes/mint";
+@import "@skeletonlabs/skeleton/themes/pine";
+@import "@skeletonlabs/skeleton/themes/seafoam";
+@import "@skeletonlabs/skeleton/themes/rocket";
+
+@source "../node_modules/@skeletonlabs/skeleton-svelte/dist";
+/*@tailwind base;
 @tailwind components;
 @tailwind utilities;
+*/
 
 html,
 body {

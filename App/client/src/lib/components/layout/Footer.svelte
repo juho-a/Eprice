@@ -1,5 +1,5 @@
 <script>
-    import bg from "$lib/assets/image.png";
+    import bg from "$lib/assets/image2.png";
     let data = $props();
   </script>
 
