@@ -11,6 +11,7 @@
     "npm:@tailwindcss/vite@^4.1.5": "4.1.5_vite@6.0.2",
     "npm:autoprefixer@^10.4.20": "10.4.21_postcss@8.4.49",
     "npm:chart.js@^4.4.9": "4.4.9",
+    "npm:date-picker-svelte@^2.16.0": "2.16.0_svelte@5.6.2__acorn@8.14.0",
     "npm:jose@^5.10.0": "5.10.0",
     "npm:svelte@5": "5.6.2_acorn@8.14.0",
     "npm:tailwindcss@^4.1.5": "4.1.5",
@@ -760,6 +761,12 @@
     "csstype@3.1.3": {
       "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw=="
     },
+    "date-picker-svelte@2.16.0_svelte@5.6.2__acorn@8.14.0": {
+      "integrity": "sha512-BouDXc1Hh2urUehFGwji7C75XNcGMUPXU3tj9YbbfTjhgH/edrl8IzDDfn6hCu51ww0iBqKTQpZhZ5dThV9duQ==",
+      "dependencies": [
+        "svelte@5.6.2_acorn@8.14.0"
+      ]
+    },
     "debug@4.3.7": {
       "integrity": "sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==",
       "dependencies": [
@@ -1100,6 +1107,7 @@
         "npm:@tailwindcss/vite@^4.1.5",
         "npm:autoprefixer@^10.4.20",
         "npm:chart.js@^4.4.9",
+        "npm:date-picker-svelte@^2.16.0",
         "npm:jose@^5.10.0",
         "npm:svelte@5",
         "npm:tailwindcss@^4.1.5",

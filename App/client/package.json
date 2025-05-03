@@ -21,6 +21,7 @@
 		"@tailwindcss/vite": "^4.1.5",
 		"autoprefixer": "^10.4.20",
 		"chart.js": "^4.4.9",
+		"date-picker-svelte": "^2.16.0",
 		"svelte": "^5.0.0",
 		"tailwindcss": "^4.1.5",
 		"vite": "^6.0.0"
