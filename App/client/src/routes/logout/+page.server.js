@@ -3,7 +3,7 @@ import { useUserState } from "$lib/states/userState.svelte";
 import { COOKIE_KEY } from "$env/static/private";
 
 export async function load({ locals, cookies }) {
-	cookies.set(COOKIE_KEY, "", {
+	  cookies.set(COOKIE_KEY, "", {
         httpOnly: true,
         path: '/',
         maxAge: 0

@@ -11,15 +11,10 @@
         <li>
           <a href="/" class="">Home</a>
         </li>
-        <li>
-          <a href="/data" class="">Data</a>
-        </li>
         {#if user}
-      <ul class="ml-4 flex space-x-4 underline text-white">
         <li>
-          <a href="/profile" class="">Profile</a>
+          <p>Placeholder</p>
         </li>
-      </ul>
         {:else}
             <li>
               <a href="/auth/login" class="">Login</a>

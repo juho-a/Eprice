@@ -1,5 +1,5 @@
 <script>
-    import ChartExample3 from "$lib/components/ChartExample3.svelte";
+    import ChartExample from "$lib/components/ChartExample.svelte";
     //let { data, form } = $props();
     
 </script>
@@ -10,4 +10,4 @@
     <br>
 </h1>
 
-<ChartExample3 />
+<ChartExample />
