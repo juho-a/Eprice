@@ -5,3 +5,5 @@ python-jose
 uvicorn
 pydantic[email]
 dotenv
+requests
+httpx

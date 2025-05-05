@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.auth_controller import router as auth_router
 from controllers.auth_controller import create_jwt_middleware
+from external_apis.ext_apis import router as external_api_router
 
 
 # Public routes that do not require authentication
@@ -9,10 +10,17 @@ from controllers.auth_controller import create_jwt_middleware
 public_routes = [
     "/api/public/data",
     "/api/auth/login",
-    "/api/auth/register"
-]
+    "/api/auth/register",
+    "/api/latest_prices",
+    "/api/public/weather",
+    "/api/public/windpower",
+    "/api/public/windpower/range",
+    "/api/public/consumption",
+    "/api/public/consumption/range"
+    ]
 
 app = FastAPI()
+app.include_router(external_api_router)
 
 # Add CORS middleware
 app.add_middleware(
@@ -33,7 +41,6 @@ app.middleware("http")(create_jwt_middleware(public_routes))
 @app.get("/api/data")
 async def get_data():
     '''Example data endpoint
-
     Returns:
         dict: A dictionary containing example data for the chart.
         dict has the following keys:
@@ -44,18 +51,6 @@ async def get_data():
         	chartValues = [20, 10, 5, 2, 20, 30, 45];
 	        chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
     '''
-    chartType = 'bar'
-    chartValues = [20, 10, 5, 2, 20, 30, 45]
-    chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-    return {
-        'chartType': chartType,
-        'chartValues': chartValues,
-        'chartLabels': chartLabels
-    }
-
-@app.get("/api/public/data")
-async def get_public_data():
-    '''Example public data endpoint'''
     chartType = 'bar'
     chartValues = [20, 10, 5, 2, 20, 30, 45]
     chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
