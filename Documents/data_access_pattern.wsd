@@ -1,0 +1,36 @@
+@startuml
+
+package "Controller (routing)" as Controller {
+    class DataController {
+        + getData(request: Request): Response
+    }
+}
+
+package "Service" {
+    class ExternalAPIService {
+        + fetchDataFromAPI(params: dict): dict
+    }
+
+    class CacheService {
+        + getCachedData(params: dict): dict
+        + cacheData(params: dict, data: dict): void
+    }
+}
+
+package "Repository" {
+    class DataRepository {
+        + getDataFromDB(params: dict): dict
+        + saveDataToDB(params: dict, data: dict): void
+    }
+}
+
+CLient -> Controller : Sends request
+DataController --> CacheService : Requests data
+CacheService --> DataRepository : Checks local cache
+CacheService --> ExternalAPIService : Fetches data if not cached
+ExternalAPIService --> CacheService : Returns fetched data
+CacheService --> DataRepository : Caches data in local DB
+DataRepository --> CacheService : Returns cached data
+CacheService --> DataController : Returns data to controller
+
+@enduml
