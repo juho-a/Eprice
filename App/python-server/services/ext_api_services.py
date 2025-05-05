@@ -15,7 +15,7 @@ class ErrorResponse(BaseModel):
     error: str
 
 
-FINNGRID_API_KEY = "57d3e2bcb9544ec99f0fe055f6d7da96"
+FINNGRID_API_KEY = "replace"
 
 async def fetch_fingrid_data(dataset_id: int) -> FingridData | ErrorResponse:
     """
