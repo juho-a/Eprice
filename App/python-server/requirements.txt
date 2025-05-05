@@ -1,0 +1,8 @@
+fastapi
+asyncpg
+passlib[bcrypt]
+python-jose
+uvicorn
+pydantic[email]
+dotenv
+httpx

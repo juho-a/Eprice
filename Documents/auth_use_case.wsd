@@ -1,0 +1,43 @@
+@startuml
+title Use Case Diagram for authentication in Electricity Market App
+
+actor "Signed-in User" as User
+actor "Visitor" as Visitor
+
+package "Frontend (Svelte)" {
+    usecase "Register" as Register
+    usecase "Login" as Login
+    usecase "Logout" as Logout
+}
+
+
+package "Backend (FastAPI)" {
+    package "User Authentication" as Auth  {
+        usecase "Signal front to\n remove JWT" as RemoveJWT
+        usecase "Hash Password and\n send with email to DB\n(un-verified)" as HashPassword
+        usecase "Verify Password\nand pack JWT" as VerifyPassword
+    }
+    usecase "Manage route access\nwith JWT's" as ManageJWT
+}
+
+package "Database" {
+    usecase "Store and Retrieve User Data" as UserDB
+}
+
+User --> Login
+User --> Logout
+User --> Register
+Visitor --> Register
+Visitor --> Login
+
+Register --> HashPassword
+
+Login --> VerifyPassword
+VerifyPassword <--> UserDB
+VerifyPassword <--> ManageJWT
+Logout <--> RemoveJWT
+
+
+HashPassword --> UserDB
+
+@enduml
