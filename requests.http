@@ -1,14 +1,38 @@
+### This file contains HTTP requests to test the API endpoints.
+
+### Register a new user
 curl -X POST http://localhost:8000/api/auth/register \
      -d '{"email": "test@test.com", "password": "secret"}' \
      -H 'Content-Type: application/json'
-###
+
+### Login with the registered user
 curl -X POST http://localhost:8000/api/auth/login \
      -d '{"email": "test@test.com", "password": "secret"}' \
      -H 'Content-Type: application/json' \
      -c cookies.txt \
      -v
-###
-curl http://localhost:8000/api/data
+
+### logout the user
+curl -X GET http://localhost:8000/api/auth/logout -v
+
+### 
+curl -X GET http://localhost:8000/api/public/data -v
 
 ###
-curl -X GET http://localhost:8000/api/auth/logout -v
+curl -X GET http://localhost:8000/api/data -v
+
+### Get weather data with query parameters
+curl -X GET http://localhost:8000/api/public/weather?lat=60.1699&lon=24.9384&timestamp=2025-05-05T13:30:00Z
+
+### fingrid wind power data
+curl -X GET http://localhost:8000/api/public/windpower -v
+
+### fingrid wind power data range
+curl -X GET http://localhost:8000/api/public/windpower/range?startTime=2025-05-01T04:00:00Z&endTime=2025-05-08T06:00:00Z
+
+### fingrid consumption data
+curl -X GET http://localhost:8000/api/public/consumption -v
+
+
+### fingrid consumption data range
+curl -X GET http://localhost:8000/api/public/consumption/range?startTime=2025-05-01T04:00:00Z&endTime=2025-05-08T06:00:00Z

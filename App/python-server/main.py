@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.auth_controller import router as auth_router
 from controllers.auth_controller import create_jwt_middleware
-import httpx
+from external_apis.ext_apis import router as external_api_router
+
 
 # Public routes that do not require authentication
 # These routes can be accessed without a valid JWT token
@@ -10,10 +11,16 @@ public_routes = [
     "/api/public/data",
     "/api/auth/login",
     "/api/auth/register",
-    "/api/prices",
-]
+    "/api/latest_prices",
+    "/api/public/weather",
+    "/api/public/windpower",
+    "/api/public/windpower/range",
+    "/api/public/consumption",
+    "/api/public/consumption/range"
+    ]
 
 app = FastAPI()
+app.include_router(external_api_router)
 
 # Add CORS middleware
 app.add_middleware(
@@ -34,7 +41,6 @@ app.middleware("http")(create_jwt_middleware(public_routes))
 @app.get("/api/data")
 async def get_data():
     '''Example data endpoint
-
     Returns:
         dict: A dictionary containing example data for the chart.
         dict has the following keys:
@@ -53,45 +59,3 @@ async def get_data():
         'chartValues': chartValues,
         'chartLabels': chartLabels
     }
-
-# NOTE: JUHO, tämä ei sitten ole vielä valmis, vaan pelkkä esimerkki (tutkitaan sitö pörssihinta APIa)
-@app.get("/api/public/data")
-async def get_prices():
-    """
-    Fetch the latest prices from the external API and extract prices and hours.
-
-    Returns:
-        dict: A dictionary with keys 'values' (prices) and 'labels' (hours).
-    """
-    url = "https://api.porssisahko.net/v1/latest-prices.json"
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            response.raise_for_status()  # Raise an exception for HTTP errors
-            data = response.json()  # Parse the JSON response
-
-            # Extract prices and hours
-            prices = [item["price"] for item in data["prices"]]
-            hours = [item["startDate"][11:16] for item in data["prices"]]  # Extract hour (HH:MM) from startDate
-            
-            # sort the prices and hours by hour
-            prices, hours = zip(*sorted(zip(prices, hours), key=lambda x: x[1]))
-            
-            # Convert prices to float
-            prices = [float(price) for price in prices]
-            
-            assert len(prices) == len(hours), "Prices and hours lists must be of the same length"
-            prices = prices[::2]  # Take every second price
-            hours = hours[::2]
-            return {
-                "chartLegend": "Prices (cnt / kWh)",
-                "chartType": "bar",
-                "chartValues": prices, # and take only every second hour
-                "chartLabels": hours,
-                "message": "Prices fetched successfully"
-            }
-    except httpx.RequestError as exc:
-        return {"error": f"An error occurred while requesting {exc.request.url}: {str(exc)}"}
-    except httpx.HTTPStatusError as exc:
-        return {"error": f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}"}
-
