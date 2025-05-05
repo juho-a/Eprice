@@ -109,6 +109,8 @@ async def get_prices():
             
             # Convert prices to float
             prices = [float(price) for price in prices]
+            # take every 2nd element
+            prices = prices[::2]
             # Convert hours to string
             hours = list(range(24))#[str(hour) for hour in hours]
             
