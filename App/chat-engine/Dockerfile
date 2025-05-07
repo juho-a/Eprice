@@ -9,7 +9,7 @@ COPY ./chat-engine/run.sh /run.sh
 
 COPY ./chat-engine/gradio_dashboard.py /app/gradio_dashboard.py
 
-COPY ./chat-engine/.env /app/.env
+COPY ./chat-engine/.env.development /app/.env.development
 
 COPY ./chat-engine/pyproject.toml /app/pyproject.toml
 
