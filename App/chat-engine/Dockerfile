@@ -1,5 +1,6 @@
 FROM ollama/ollama
 
+# I will clean this up later (Paavo)
 # Set working directory
 WORKDIR /app
 

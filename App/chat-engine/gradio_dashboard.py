@@ -25,7 +25,7 @@ class ChatManager:
         self.history = []
         self.self_model = "llama3.2"
 
-    def send_message(self, message: str) -> str:
+    def send_message(self, message: str, history: list = None):
         # append the message to the history and send it to the model
         # TODO: check history length and truncate if necessary
         # TODO: history condensation
@@ -33,12 +33,18 @@ class ChatManager:
         response: ChatResponse = chat(
             model=self.self_model,
             messages=self.history,
-            stream=False,
+            stream=True,
         )
-        
+        output = ""
+        for chunk in response:
+            output += chunk.message.content
+            yield output
+            
+
         self.history.append({"role": "user", "content": message})
-        self.history.append({"role": "assistant", "content": response.message.content})
-        return response.message.content
+        self.history.append({"role": "assistant", "content": output})
+        #self.history.append({"role": "assistant", "content": response.message.content})
+        #return response.message.content
     
     def clear_history(self):
         # Clear the history of messages
@@ -54,28 +60,14 @@ class ChatManager:
         # Return the history of messages
         return self.history
     
-'''    
+
 # Initialize the chat manager
 chat_manager = ChatManager()
-demo = gr.Interface(
+app = gr.ChatInterface(
+    title="Eprice knowledge base",
+    description="Open source language model with a knowledge base.",
     fn=chat_manager.send_message,
-    # define the inputs: a text box and a slider for number of tokens [10, 100],
-    # and a slider for temperature [0.0, 1.0]
-    inputs=[
-        gr.Textbox(label="Input Text", placeholder="Enter your text here..."),
-    ],
-    # define the output: a text box that shows the history of messages
-    outputs=gr.Textbox(label="Response", placeholder="Response will appear here..."),
-
-    # set the title and description of the app
-    title="LLM Chatbot",
-    description="A simple chatbot using Ollama's LLM.",
-    # set the theme of the app
-    theme="default",
+    type="messages",
+    autoscroll=True,
 )
-
-demo.launch(share=True)
-'''
-dboard=gr.load_chat("http://localhost:11434/v1/", 
-             model="llama3.2")
-dboard.launch(pwa=True)
+app.launch(pwa=True, share=False)
