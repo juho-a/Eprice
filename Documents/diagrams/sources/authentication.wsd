@@ -1,0 +1,26 @@
+@startuml
+title Sequence Diagram for User Registration and Login using form-actions and JWT
+
+Client -> ClientServer: logout form-action
+ClientServer -> Server: api/auth/register
+Server -> Database: insert new user into database
+note over Server, Database: hash password and attempt to insert\nif email not already registered
+Database --> Server: success/failure
+Server --> Client: success/failure
+note over Client: On success: redirect\n to login page
+
+Client -> ClientServer: Send user email and password\nusing form-actions
+ClientServer -> Server: api/auth/login
+Server -> Database: select user from database
+Database --> Server: success/failure
+note over Server: On success: check\npassword_hash match
+note over Server: If match, pack user\ninfo in JWT payload
+Server --> ClientServer: success/failure and set-cookie (JWT)
+note over Client, ClientServer: Client server makes the payload\navailable to the client components
+
+Client -> ClientServer: Logout form-action
+ClientServer -> Server: api/auth/logout
+Server --> ClientServer: delete JWT cookie
+note over ClientServer, Client: Client server clears JWT payload
+
+@enduml
