@@ -3,6 +3,8 @@ import httpx
 from urllib.parse import urlencode
 from pydantic import BaseModel
 from typing import List, Optional
+from dotenv import load_dotenv
+import os
 
 # Define a model for Fingrid data
 class FingridData(BaseModel):
@@ -15,7 +17,11 @@ class ErrorResponse(BaseModel):
     error: str
 
 
-FINGRID_API_KEY = "Fingrid_API-Key"
+
+load_dotenv(dotenv_path=".env.development")
+# Käytä muuttujaa
+FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
+
 
 async def fetch_fingrid_data(dataset_id: int) -> FingridData | ErrorResponse:
     """

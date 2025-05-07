@@ -84,6 +84,90 @@ async def get_windpower_range(
     return await fetch_fingrid_data_range(dataset_id=165, start_time=startTime, end_time=endTime)
 
 
+
+
+@router.get("/api/public/production")
+async def get_consumption():
+    """
+    Returns the consumption forecast from the Fingrid API.
+
+    Returns:
+        list[dict] | dict: A list of data points or an error message.
+    """
+    return await fetch_fingrid_data(dataset_id=74)
+
+
+@router.get("/api/public/production/range")
+async def get_windpower_range(
+    startTime: str = Query(..., description="ISO 8601 start time, e.g., '2025-05-08T04:00:00Z'"),
+    endTime: str = Query(..., description="ISO 8601 end time, e.g., '2025-05-08T06:00:00Z'")
+):
+    """
+    Returns consumption forecast data from Fingrid API for a given time range.
+
+    Args:
+        startTime (str): ISO 8601 formatted start time.
+        endTime (str): ISO 8601 formatted end time.
+
+    Returns:
+        list[dict] | dict: A list of data points or an error message.
+    """
+    return await fetch_fingrid_data_range(dataset_id=74, start_time=startTime, end_time=endTime)
+
+
+
+
+
+
+
+
+@router.get("/api/public/consumptionfc")
+async def get_consumption():
+    """
+    Returns the consumption forecast from the Fingrid API.
+
+    Returns:
+        list[dict] | dict: A list of data points or an error message.
+    """
+    return await fetch_fingrid_data(dataset_id=74)
+
+
+@router.get("/api/public/consumptionfc/range")
+async def get_windpower_range(
+    startTime: str = Query(..., description="ISO 8601 start time, e.g., '2025-05-08T04:00:00Z'"),
+    endTime: str = Query(..., description="ISO 8601 end time, e.g., '2025-05-08T06:00:00Z'")
+):
+    """
+    Returns consumption forecast data from Fingrid API for a given time range.
+
+    Args:
+        startTime (str): ISO 8601 formatted start time.
+        endTime (str): ISO 8601 formatted end time.
+
+    Returns:
+        list[dict] | dict: A list of data points or an error message.
+    """
+    return await fetch_fingrid_data_range(dataset_id=74, start_time=startTime, end_time=endTime)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @router.get("/api/public/data")
 async def get_prices():
     """

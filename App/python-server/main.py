@@ -17,6 +17,8 @@ public_routes = [
     "/api/public/windpower/range",
     "/api/public/consumption",
     "/api/public/consumption/range"
+    "/api/public/production",
+    "/api/public/production/range"
     ]
 
 app = FastAPI()
