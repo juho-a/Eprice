@@ -1,4 +1,5 @@
-node_modules
+# these are needed for codespaces
+#node_modules
 
 # Output
 .output
