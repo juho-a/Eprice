@@ -1,10 +1,13 @@
 # List of all endpoints:
-###Authentication
+### OpenAPI documentation
+http://localhost:8000/docs
+
+### Authentication
 - POST `/api/auth/register`
 - POST `/api/auth/login`
 - GET `/api/auth/logout`
 
-###Fingrid data
+### Fingrid data
 - POST [`api/public/windpower/range`](#windpower-history-and-forecast)
 - GET [`api/public/windpower`](#windpower-history-and-forecast)
 - POST [`/api/public/production/range`](#total-production-history-and-forecast)
@@ -13,7 +16,7 @@
 - GET [`/api/public/consumption`](#consumption-forecast)
 
 
-###Weather forecast
+### Weather forecast
 - POST `api/public/weather/range` (not yet implemented)
 - GET `api/public/weather`
 

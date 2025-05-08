@@ -18,7 +18,9 @@ public_routes = [
     "/api/public/consumption",
     "/api/public/consumption/range"
     "/api/public/production",
-    "/api/public/production/range"
+    "/api/public/production/range",
+    "/docs",
+    "/openapi.json"
     ]
 
 app = FastAPI()
