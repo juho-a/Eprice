@@ -18,10 +18,8 @@ class ErrorResponse(BaseModel):
 
 
 
-load_dotenv(dotenv_path=".env.development")
-# Käytä muuttujaa
+load_dotenv(dotenv_path="./.env.local")
 FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
-
 
 async def fetch_fingrid_data(dataset_id: int) -> FingridData | ErrorResponse:
     """
