@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ## Eprice app template
 
 Set up: run `deno install --allow-scripts` in client folder. Create `.env.local` in client folder -- same in the python-server folder -- these should not go into git. Ask values in Discord. Let's keep the `node_modules/` (as with .env.local files) out of git. But for now, you should have these locally on client even if you run with docker (they get copied into container).
@@ -14,6 +14,3 @@ In the client, there are some small examples on how to structure the client side
 There is also some example plots, using ChartJS, that fetch data using different mechanisms.
 
 The links in the client header panel are defined in `client/src/lib/components/layout/`.
-=======
-# Eprice (test change)
->>>>>>> decb499 (change test)
