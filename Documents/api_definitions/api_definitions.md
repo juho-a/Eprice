@@ -30,8 +30,13 @@ The calculation of production forecast of all power prooduction types in Finland
 A consumption forecast for the next 24 hours made by Fingrid. Forecast is published on previous day at 12:00 EET. The Data before 21.04.2024 is in 5 minute resolution.
 
 # Example requests and responses for fingrid data
+
+Currently supported values for "data_name":
+- windpower
+- production
+- consumption
 ```
-POST http://localhost:8000/api/public/{data_type}/range
+POST http://localhost:8000/api/public/{data_name}/range
 Content-Type: application/json
 {
   "startTime": "2025-05-08T04:00:00Z",
