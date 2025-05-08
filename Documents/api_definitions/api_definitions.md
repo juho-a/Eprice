@@ -1,40 +1,52 @@
 # List of all endpoints:
-**Authentication**
-- POST /api/auth/register
-- POST /api/auth/login 
-- GET /api/auth/logout
+###Authentication
+- POST `/api/auth/register`
+- POST `/api/auth/login`
+- GET `/api/auth/logout`
 
-**Fingrid data**
-- POST [api/public/windpower/range](#windpower-history-and-forecast)
-- GET [api/public/windpower](#windpower-history-and-forecast)
-- POST [/api/public/production/range](#total-production-history-and-forecast)
-- GET [/api/public/production](#total-production-history-and-forecast)
-- POST [/api/public/consumption/range](#consumption-forecast)
-- GET [/api/public/consumption](#consumption-forecast)
-
-
-**Weather forecast**
-- POST api/public/weather/range
-- GET api/public/weather
+###Fingrid data
+- POST [`api/public/windpower/range`](#windpower-history-and-forecast)
+- GET [`api/public/windpower`](#windpower-history-and-forecast)
+- POST [`/api/public/production/range`](#total-production-history-and-forecast)
+- GET [`/api/public/production`](#total-production-history-and-forecast)
+- POST [`/api/public/consumption/range`](#consumption-forecast)
+- GET [`/api/public/consumption`](#consumption-forecast)
 
 
+###Weather forecast
+- POST `api/public/weather/range` (not yet implemented)
+- GET `api/public/weather`
 
-# Descriptions and examples of endpoints for Fingrid data
-## Windpower history and forecast
+## Descriptions and examples of using endpoints for authentication
+text here...
+
+## Descriptions and examples of using endpoints for weather data
+text here...
+
+
+## Descriptions and examples of using endpoints for Fingrid data
+### Windpower history and forecast
 Finnish wind power generation forecast and history data for the next 72 hours. Updated every 15 minutes. The forecast is based on weather forecasts and data about the location, size and capacity of wind turbines. The weather data sourced from multiple providers. The Data before 31.05.2023 is in hourly resolution.
 
-## Total production history and forecast
+### Total production history and forecast
 The calculation of production forecast of all power prooduction types in Finland is based on the production plans that balance responsible parties has reported to Fingrid. Production forecast is updated every 15 minutes. The Data before 03.06.2023 is in hourly resolution."
 
-## Consumption forecast
+### Consumption forecast
 A consumption forecast for the next 24 hours made by Fingrid. Forecast is published on previous day at 12:00 EET. The Data before 21.04.2024 is in 5 minute resolution.
 
-# Example requests and responses for fingrid data
+## Requests and responses for fingrid data
 
 Currently supported values for "data_name":
 - windpower
 - production
 - consumption
+
+Request body keys for all Fingrid data are following:
+```
+- startTime: string in RFC 3339 format
+- endTime: string in RFC 3339 format
+```
+### Example
 ```
 POST http://localhost:8000/api/public/{data_name}/range
 Content-Type: application/json

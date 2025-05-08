@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Public Energy API
+  version: 1.0.0
+  description: API Fingridin ja sään avoimen tiedon hakemiseen.
+
+paths:
+  /api/public/windpower:
+    get:
+      summary: Get wind power forecast
+      responses:
+        '200':
+          description: Wind power data
+
+  /api/public/windpower/range:
+    post:
+      summary: Get wind power data for time range
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeRangeRequest'
+      responses:
+        '200':
+          description: Wind power data in time range
+
+  /api/public/consumption:
+    get:
+      summary: Get consumption forecast
+      responses:
+        '200':
+          description: Consumption forecast
+
+  /api/public/consumption/range:
+    post:
+      summary: Get consumption data for time range
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeRangeRequest'
+      responses:
+        '200':
+          description: Consumption data in time range
+
+  /api/public/production:
+    get:
+      summary: Get production forecast
+      responses:
+        '200':
+          description: Production forecast
+
+  /api/public/production/range:
+    post:
+      summary: Get production data for time range
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeRangeRequest'
+      responses:
+        '200':
+          description: Production data in time range
+
+  /api/public/data:
+    get:
+      summary: Get electricity price data
+      responses:
+        '200':
+          description: Price data and chart labels
+
+  /api/public/weather:
+    get:
+      summary: Get weather forecast
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: UTC datetime in RFC 3339 format, e.g. 2025-05-08T13:00:00Z
+      responses:
+        '200':
+          description: Weather data
+
+components:
+  schemas:
+    TimeRangeRequest:
+      type: object
+      required:
+        - startTime
+        - endTime
+      properties:
+        startTime:
+          type: string
+          format: date-time
+          example: "2025-05-08T04:00:00Z"
+          description: Start time in RFC 3339 format (UTC)
+        endTime:
+          type: string
+          format: date-time
+          example: "2025-05-08T06:00:00Z"
+          description: End time in RFC 3339 format (UTC)
