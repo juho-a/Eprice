@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import httpx
 from urllib.parse import urlencode
 from pydantic import BaseModel, Field
@@ -31,16 +31,6 @@ load_dotenv(dotenv_path="./.env.local")
 FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
 
 async def fetch_fingrid_data(dataset_id: int) -> FingridData | ErrorResponse:
-    """
-    Fetches a Fingrid dataset and removes the datasetId field from the results.
-
-    Args:
-        dataset_id (int): The ID of the Fingrid dataset (e.g., 165 or 245)
-
-    Returns:
-        FingridData: A single data point closest to the current time.
-        ErrorResponse: An error message if the fetch fails.
-    """
     url = f"https://data.fingrid.fi/api/datasets/{dataset_id}/data"
     headers = {"x-api-key": FINGRID_API_KEY}
 
@@ -71,17 +61,6 @@ async def fetch_fingrid_data(dataset_id: int) -> FingridData | ErrorResponse:
 
 
 async def fetch_weather_data(lat: float, lon: float, requested_dt: datetime) -> dict:
-    """
-    Fetches the weather forecast and returns the closest moment's temperature and wind speed.
-
-    Args:
-        lat (float): Latitude
-        lon (float): Longitude
-        requested_dt (datetime): UTC timestamp for which the closest forecast is fetched
-
-    Returns:
-        dict: Temperature, wind speed, and forecast timestamp or an error message
-    """
     url = f"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={lat}&lon={lon}"
     headers = {
         "User-Agent": "eprice-app"
@@ -114,19 +93,8 @@ async def fetch_weather_data(lat: float, lon: float, requested_dt: datetime) -> 
     except Exception as e:
         return {"error": f"Unexpected error occurred: {str(e)}"}
     
+
 async def fetch_fingrid_data_range(dataset_id: int, start_time: str, end_time: str) -> List[FingridData] | ErrorResponse:
-    """
-    Fetches Fingrid dataset data for a given time interval and removes the datasetId field.
-
-    Args:
-        dataset_id (int): Fingrid dataset ID.
-        start_time (str): ISO 8601 formatted start time.
-        end_time (str): ISO 8601 formatted end time.
-
-    Returns:
-        List[FingridData]: A list of data points for the given time range.
-        ErrorResponse: An error message if the fetch fails.
-    """
     base_url = f"https://data.fingrid.fi/api/datasets/{dataset_id}/data"
     headers = {"x-api-key": FINGRID_API_KEY}
     
@@ -153,18 +121,46 @@ async def fetch_fingrid_data_range(dataset_id: int, start_time: str, end_time: s
         return ErrorResponse(error=f"Failed to fetch data for dataset {dataset_id} from Fingrid API: {str(e)}")
 
 
-async def fetch_weather_data_range():
-    url = f"https://frost.met.no/observations/v0.jsonld?lat=60.1699&lon=24.9384&referencetime=2010-01-01T12&elements=air_temperature"
-    headers = {
-        "User-Agent": "eprice-app"
-    }
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, headers=headers)
-            print("hello")
-            response.raise_for_status()
-            data = response.json()
 
-        print(data)
-    except:
-        pass
+async def fetch_price_data_range(start_time: str, end_time: str):
+    base_url = "https://api.porssisahko.net/v1/price.json"
+
+    start_datetime = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+    end_datetime = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+
+    result = []
+
+    current_datetime = start_datetime
+    while current_datetime <=end_datetime:
+        date_str = current_datetime.strftime("%Y-%m-%d")
+        hour_str = current_datetime.strftime("%H")
+
+        query_params = {
+            "date": date_str,
+            "hour": hour_str
+        }
+
+        url = f"{base_url}?{urlencode(query_params)}"
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url)
+                if response.status_code != 200:
+                    return {"error": f"HTTP error {response.status_code}"}
+
+                data =response.json()
+
+                if data:
+                    result.append({
+                        "time":f"{date_str}T{hour_str}:00:00Z",
+                        "price": data['price']
+                        })
+                else:
+                    print(f"No data returned for {date_str} {hour_str}")
+        except Exception as e:
+            return {"error": f"Failed to fetch price data: {str(e)}"}
+
+        current_datetime += timedelta(hours=1)
+
+    return result
+
+

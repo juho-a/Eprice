@@ -179,25 +179,6 @@
                 }
             }
         },
-        "/api/public/data": {
-            "get": {
-                "summary": "Get Prices",
-                "description": "Get hourly electricity prices from external API.\n\nFetches latest hourly prices and formats them for charting.\n\nReturns:\n    dict: Contains chart legend, type, values (snt/kWh), labels (hours), and status message.",
-                "operationId": "get_prices_api_public_data_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RootModel_DataPoint_"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/public/weather": {
             "post": {
                 "summary": "Post Weather",
@@ -230,6 +211,68 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/price/range": {
+            "post": {
+                "summary": "Post Price Range",
+                "description": "Get price data for specific time range from Porssisahko API\n\nArgs:\n    Timestamp in RFC 3339 format.\n\nReturns:\n    list[dict]: Price data or en error message",
+                "operationId": "post_price_range_api_public_price_range_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TimeRangeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PriceData"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Post Price Range Api Public Price Range Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/data": {
+            "get": {
+                "summary": "Get Prices",
+                "description": "Get hourly electricity prices from external API.\n\nFetches latest hourly prices and formats them for charting.\n\nReturns:\n    dict: Contains chart legend, type, values (snt/kWh), labels (hours), and status message.",
+                "operationId": "get_prices_api_public_data_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_DataPoint_"
                                 }
                             }
                         }
@@ -383,6 +426,26 @@
                 },
                 "type": "object",
                 "title": "HTTPValidationError"
+            },
+            "PriceData": {
+                "properties": {
+                    "time": {
+                        "type": "string",
+                        "title": "Time",
+                        "example": "2025-05-08T04:00:00.000Z"
+                    },
+                    "price": {
+                        "type": "number",
+                        "title": "Price",
+                        "example": 10.01
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "time",
+                    "price"
+                ],
+                "title": "PriceData"
             },
             "RootModel_DataPoint_": {
                 "$ref": "#/components/schemas/DataPoint",

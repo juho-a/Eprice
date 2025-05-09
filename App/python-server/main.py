@@ -20,6 +20,7 @@ public_routes = [
     "/api/public/consumption/range",
     "/api/public/production",
     "/api/public/production/range",
+    "/api/public/price/range",
     "/docs",
     "/openapi.json"
     ]
