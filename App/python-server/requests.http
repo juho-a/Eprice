@@ -27,20 +27,12 @@ curl -X GET http://localhost:8000/api/public/weather?lat=60.1699&lon=24.9384&tim
 ### fingrid wind power data
 curl -X GET http://localhost:8000/api/public/windpower -v
 
-### fingrid wind power data range
-curl -X GET http://localhost:8000/api/public/windpower/range?startTime=2025-05-01T04:00:00Z&endTime=2025-05-08T06:00:00Z
-
 ### fingrid consumption data
 curl -X GET http://localhost:8000/api/public/consumption -v
-
-### fingrid consumption data range
-curl -X GET http://localhost:8000/api/public/consumption/range?startTime=2025-05-01T04:00:00Z&endTime=2025-05-08T06:00:00Z
 
 ### fingrid production data
 curl -X GET http://localhost:8000/api/public/production -v
 
-### fingrid production data range
-curl -X GET http://localhost:8000/api/public/production/range?startTime=2025-05-05T00:00:00Z&endTime=2025-05-06T06:00:00Z
 
 
 ###

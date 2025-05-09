@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Query
 from datetime import datetime, timezone
 from services.ext_api_services import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
+from typing import List
 import httpx
 
 
@@ -15,15 +16,23 @@ class TimeRangeRequest(BaseModel):
         description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)"
     )
 
+class DataPoint(BaseModel):
+    startTime: str = Field(..., example="2025-05-08T04:00:00.000Z")
+    endTime: str = Field(..., example="2025-05-08T04:15:00.000Z")
+    value: float = Field(..., example=7883.61)
+
+
+class DataResponse(RootModel[List[DataPoint]]):
+    pass
+
 
 router = APIRouter()
 
 
-@router.get("/api/public/windpower")
+@router.get("/api/public/windpower", response_model=RootModel[DataPoint])
 async def get_windpower():
     """
     Get wind power production forecast.
-
     Fetches forecast data from Fingrid dataset ID 245.
 
     Returns:
@@ -32,10 +41,11 @@ async def get_windpower():
     return await fetch_fingrid_data(dataset_id=245)
 
 
-@router.post("/api/public/windpower/range")
+@router.post("/api/public/windpower/range", response_model=RootModel[List[DataPoint]])
 async def post_windpower_range(time_range: TimeRangeRequest):
     """
     Get wind power production data for a given time range.
+    Fetches data from Fingrid dataset ID 245.
 
     Args:
         time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
@@ -50,12 +60,11 @@ async def post_windpower_range(time_range: TimeRangeRequest):
     )
 
 
-@router.get("/api/public/consumption")
+@router.get("/api/public/consumption", response_model=RootModel[DataPoint])
 async def get_consumption():
     """
     Get electricity consumption forecast.
-
-    Fetches forecast data from Fingrid dataset ID 165.
+    Fetches consumption data from Fingrid dataset ID 165.
 
     Returns:
         list[dict] | dict: A list of data points or an error message.
@@ -63,10 +72,11 @@ async def get_consumption():
     return await fetch_fingrid_data(dataset_id=165)
 
 
-@router.post("/api/public/consumption/range")
+@router.post("/api/public/consumption/range", response_model=RootModel[List[DataPoint]])
 async def post_consumption_range(time_range: TimeRangeRequest):
     """
     Get electricity consumption data for a given time range.
+    Fetches consumption data from Fingrid dataset ID 165.
 
     Args:
         time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
@@ -81,12 +91,11 @@ async def post_consumption_range(time_range: TimeRangeRequest):
     )
 
 
-@router.get("/api/public/production")
+@router.get("/api/public/production", response_model=RootModel[DataPoint])
 async def get_production():
     """
     Get electricity production forecast.
-
-    Fetches forecast data from Fingrid dataset ID 241.
+    Fetches production data from Fingrid dataset ID 241.
 
     Returns:
         list[dict] | dict: A list of data points or an error message.
@@ -94,10 +103,11 @@ async def get_production():
     return await fetch_fingrid_data(dataset_id=241)
 
 
-@router.post("/api/public/production/range")
+@router.post("/api/public/production/range", response_model=RootModel[List[DataPoint]])
 async def post_production_range(time_range: TimeRangeRequest):
     """
     Get electricity production data for a given time range.
+    Fetches production data from Fingrid dataset ID 241.
 
     Args:
         time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
@@ -112,7 +122,7 @@ async def post_production_range(time_range: TimeRangeRequest):
     )
 
 
-@router.get("/api/public/data")
+@router.get("/api/public/data", response_model=RootModel[DataPoint])
 async def get_prices():
     """
     Get hourly electricity prices from external API.
@@ -158,6 +168,7 @@ async def get_weather(
 ):
     """
     Get weather forecast for a specific UTC time and location.
+    Fetches weather forecast data from the MET API.
 
     Args:
         lat (float): Latitude.
