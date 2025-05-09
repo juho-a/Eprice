@@ -8,7 +8,7 @@
         "/api/public/windpower": {
             "get": {
                 "summary": "Get Windpower",
-                "description": "Get current wind power production.\nFetches forecast data from Fingrid dataset ID 245. Finnish wind power generation forecast for the next 72 hours. Updated every 15 minutes. The forecast is based on weather forecasts and data about the location, size and capacity of wind turbines. The weather data sourced from multiple providers. The Data before 31.05.2023 is in hourly resolution.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get wind power production forecast.\nFetches forecast data from Fingrid dataset ID 245.\n\nReturns:\n    dict: A data point or an error message.",
                 "operationId": "get_windpower_api_public_windpower_get",
                 "responses": {
                     "200": {
@@ -27,7 +27,7 @@
         "/api/public/windpower/range": {
             "post": {
                 "summary": "Post Windpower Range",
-                "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245. \"Finnish wind power generation forecast for the next 72 hours. Updated every 15 minutes. The forecast is based on weather forecasts and data about the location, size and capacity of wind turbines. The weather data sourced from multiple providers. The Data before 31.05.2023 is in hourly resolution.\"\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
                 "operationId": "post_windpower_range_api_public_windpower_range_post",
                 "requestBody": {
                     "content": {
@@ -66,7 +66,7 @@
         "/api/public/consumption": {
             "get": {
                 "summary": "Get Consumption",
-                "description": "Get current electricity consumption.\nFetches consumption data from Fingrid dataset ID 165. A consumption forecast for the next 24 hours made by Fingrid. Forecast is published on previous day at 12:00 EET. The Data before 21.04.2024 is in 5 minute resolution.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get electricity consumption forecast.\nFetches consumption data from Fingrid dataset ID 165.\n\nReturns:\n    dict: A data point or an error message.",
                 "operationId": "get_consumption_api_public_consumption_get",
                 "responses": {
                     "200": {
@@ -85,7 +85,7 @@
         "/api/public/consumption/range": {
             "post": {
                 "summary": "Post Consumption Range",
-                "description": "Get electricity consumption data for a given time range.\nFetches consumption data from Fingrid dataset ID 165. A consumption forecast for the next 24 hours made by Fingrid. Forecast is published on previous day at 12:00 EET. The Data before 21.04.2024 is in 5 minute resolution.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get electricity consumption data for a given time range.\nFetches consumption data from Fingrid dataset ID 165.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
                 "operationId": "post_consumption_range_api_public_consumption_range_post",
                 "requestBody": {
                     "content": {
@@ -124,7 +124,7 @@
         "/api/public/production": {
             "get": {
                 "summary": "Get Production",
-                "description": "Get current electricity production.\nFetches production data from Fingrid dataset ID 241. The calculation of production forecast in Finland is based on the production plans that balance responsible parties has reported to Fingrid. Production forecast is updated every 15 minutes. The Data before 03.06.2023 is in hourly resolution.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get electricity production forecast.\nFetches production data from Fingrid dataset ID 241.\n\nReturns:\n    dict: A data point or an error message.",
                 "operationId": "get_production_api_public_production_get",
                 "responses": {
                     "200": {
@@ -143,7 +143,7 @@
         "/api/public/production/range": {
             "post": {
                 "summary": "Post Production Range",
-                "description": "Get electricity production data for a given time range.\nFetches production data from Fingrid dataset ID 241. The calculation of production forecast in Finland is based on the production plans that balance responsible parties has reported to Fingrid. Production forecast is updated every 15 minutes. The Data before 03.06.2023 is in hourly resolution.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get electricity production data for a given time range.\nFetches production data from Fingrid dataset ID 241.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
                 "operationId": "post_production_range_api_public_production_range_post",
                 "requestBody": {
                     "content": {
@@ -199,47 +199,28 @@
             }
         },
         "/api/public/weather": {
-            "get": {
-                "summary": "Get Weather",
-                "description": "Get weather forecast for a specific UTC time and location.\nFetches weather forecast data from the MET API.\n\nArgs:\n    lat (float): Latitude.\n    lon (float): Longitude.\n    timestamp (str): UTC datetime in RFC 3339 format (e.g., 2024-05-05T13:30:00Z).\n\nReturns:\n    dict: Weather forecast data or an error message.",
-                "operationId": "get_weather_api_public_weather_get",
-                "parameters": [
-                    {
-                        "name": "lat",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number",
-                            "title": "Lat"
+            "post": {
+                "summary": "Post Weather",
+                "description": "Get weather forecast for a specific UTC time and location (POST version).\nFetches weather forecast data from the MET API.\n\nArgs:\n    request (WeatherRequest): Contains latitude, longitude, and timestamp in RFC 3339 format.\n\nReturns:\n    dict: Weather forecast data or an error message.",
+                "operationId": "post_weather_api_public_weather_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WeatherRequest"
+                            }
                         }
                     },
-                    {
-                        "name": "lon",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "number",
-                            "title": "Lon"
-                        }
-                    },
-                    {
-                        "name": "timestamp",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "description": "UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z",
-                            "title": "Timestamp"
-                        },
-                        "description": "UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z"
-                    }
-                ],
+                    "required": true
+                },
                 "responses": {
                     "200": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_WeatherDataPoint_"
+                                }
                             }
                         }
                     },
@@ -414,6 +395,10 @@
                 "type": "array",
                 "title": "RootModel[List[DataPoint]]"
             },
+            "RootModel_WeatherDataPoint_": {
+                "$ref": "#/components/schemas/WeatherDataPoint",
+                "title": "RootModel[WeatherDataPoint]"
+            },
             "TimeRangeRequest": {
                 "properties": {
                     "startTime": {
@@ -487,6 +472,58 @@
                     "type"
                 ],
                 "title": "ValidationError"
+            },
+            "WeatherDataPoint": {
+                "properties": {
+                    "temperature_celsius": {
+                        "type": "number",
+                        "title": "Temperature Celsius",
+                        "example": 8.5
+                    },
+                    "wind_speed_mps": {
+                        "type": "number",
+                        "title": "Wind Speed Mps",
+                        "example": 2.2
+                    },
+                    "closest_forecast_time": {
+                        "type": "string",
+                        "title": "Closest Forecast Time",
+                        "example": "2025-05-09T16:00:00Z"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "temperature_celsius",
+                    "wind_speed_mps",
+                    "closest_forecast_time"
+                ],
+                "title": "WeatherDataPoint"
+            },
+            "WeatherRequest": {
+                "properties": {
+                    "lat": {
+                        "type": "number",
+                        "title": "Lat",
+                        "description": "Latitude"
+                    },
+                    "lon": {
+                        "type": "number",
+                        "title": "Lon",
+                        "description": "Longitude"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "title": "Timestamp",
+                        "description": "UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "lat",
+                    "lon",
+                    "timestamp"
+                ],
+                "title": "WeatherRequest"
             }
         }
     }

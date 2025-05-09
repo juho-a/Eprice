@@ -1,16 +1,25 @@
 from datetime import datetime, timezone
 import httpx
 from urllib.parse import urlencode
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 from dotenv import load_dotenv
 import os
 
 # Define a model for Fingrid data
 class FingridData(BaseModel):
-    startTime: str
-    endTime: str
-    value: float  # Replace this with the actual field name from Fingrid's API
+    startTime: str= Field(
+        example="2024-05-01T00:00:00Z",
+        description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)"
+    )
+    endTime: str = Field(
+        example="2024-05-02T00:00:00Z",
+        description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)"
+    )
+    value: float  = Field(
+        example="7883.61",
+        description="Value of the data point"
+    )
 
 # Define a model for error responses
 class ErrorResponse(BaseModel):
@@ -142,3 +151,20 @@ async def fetch_fingrid_data_range(dataset_id: int, start_time: str, end_time: s
             return [FingridData(**item) for item in data]
     except Exception as e:
         return ErrorResponse(error=f"Failed to fetch data for dataset {dataset_id} from Fingrid API: {str(e)}")
+
+
+async def fetch_weather_data_range():
+    url = f"https://frost.met.no/observations/v0.jsonld?lat=60.1699&lon=24.9384&referencetime=2010-01-01T12&elements=air_temperature"
+    headers = {
+        "User-Agent": "eprice-app"
+    }
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers)
+            print("hello")
+            response.raise_for_status()
+            data = response.json()
+
+        print(data)
+    except:
+        pass

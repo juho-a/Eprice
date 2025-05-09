@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
-from services.ext_api_services import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range
+from services.ext_api_services import fetch_fingrid_data, fetch_weather_data, fetch_weather_data_range, fetch_fingrid_data_range
 from pydantic import BaseModel, Field, RootModel
 from typing import List
 import httpx
@@ -22,9 +23,15 @@ class DataPoint(BaseModel):
     value: float = Field(..., example=7883.61)
 
 
-class DataResponse(RootModel[List[DataPoint]]):
-    pass
+class WeatherRequest(BaseModel):
+    lat: float = Field(..., description="Latitude")
+    lon: float = Field(..., description="Longitude")
+    timestamp: str = Field(..., description="UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z")
 
+class WeatherDataPoint(BaseModel):
+    temperature_celsius: float = Field(..., example=8.5)
+    wind_speed_mps: float = Field(..., example=2.2)
+    closest_forecast_time: str = Field(..., example="2025-05-09T16:00:00Z")
 
 router = APIRouter()
 
@@ -36,7 +43,7 @@ async def get_windpower():
     Fetches forecast data from Fingrid dataset ID 245.
 
     Returns:
-        list[dict] | dict: A list of data points or an error message.
+        dict: A data point or an error message.
     """
     return await fetch_fingrid_data(dataset_id=245)
 
@@ -51,7 +58,7 @@ async def post_windpower_range(time_range: TimeRangeRequest):
         time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
 
     Returns:
-        list[dict] | dict: A list of data points or an error message.
+        list[dict]: A list of data points or an error message.
     """
     return await fetch_fingrid_data_range(
         dataset_id=245,
@@ -67,7 +74,7 @@ async def get_consumption():
     Fetches consumption data from Fingrid dataset ID 165.
 
     Returns:
-        list[dict] | dict: A list of data points or an error message.
+        dict: A data point or an error message.
     """
     return await fetch_fingrid_data(dataset_id=165)
 
@@ -82,7 +89,7 @@ async def post_consumption_range(time_range: TimeRangeRequest):
         time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
 
     Returns:
-        list[dict] | dict: A list of data points or an error message.
+        list[dict]: A list of data points or an error message.
     """
     return await fetch_fingrid_data_range(
         dataset_id=165,
@@ -98,7 +105,7 @@ async def get_production():
     Fetches production data from Fingrid dataset ID 241.
 
     Returns:
-        list[dict] | dict: A list of data points or an error message.
+        dict: A data point or an error message.
     """
     return await fetch_fingrid_data(dataset_id=241)
 
@@ -113,7 +120,7 @@ async def post_production_range(time_range: TimeRangeRequest):
         time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
 
     Returns:
-        list[dict] | dict: A list of data points or an error message.
+        list[dict]: A list of data points or an error message.
     """
     return await fetch_fingrid_data_range(
         dataset_id=241,
@@ -160,26 +167,20 @@ async def get_prices():
         return {"error": f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}"}
 
 
-@router.get("/api/public/weather")
-async def get_weather(
-    lat: float,
-    lon: float,
-    timestamp: str = Query(..., description="UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z")
-):
+@router.post("/api/public/weather", response_model=RootModel[WeatherDataPoint])
+async def post_weather(request: WeatherRequest):
     """
-    Get weather forecast for a specific UTC time and location.
+    Get weather forecast for a specific UTC time and location (POST version).
     Fetches weather forecast data from the MET API.
 
     Args:
-        lat (float): Latitude.
-        lon (float): Longitude.
-        timestamp (str): UTC datetime in RFC 3339 format (e.g., 2024-05-05T13:30:00Z).
+        request (WeatherRequest): Contains latitude, longitude, and timestamp in RFC 3339 format.
 
     Returns:
         dict: Weather forecast data or an error message.
     """
     try:
-        requested_dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00")).replace(tzinfo=timezone.utc)
-        return await fetch_weather_data(lat, lon, requested_dt)
+        requested_dt = datetime.fromisoformat(request.timestamp.replace("Z", "+00:00")).replace(tzinfo=timezone.utc)
+        return await fetch_weather_data(request.lat, request.lon, requested_dt)
     except ValueError:
         return {"error": "Invalid timestamp format. Expected RFC 3339 format (e.g. 2024-05-05T13:30:00Z)"}

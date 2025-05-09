@@ -13,6 +13,7 @@ public_routes = [
     "/api/auth/register",
     "/api/latest_prices",
     "/api/public/weather",
+    "/api/public/weather/range",
     "/api/public/windpower",
     "/api/public/windpower/range",
     "/api/public/consumption",
