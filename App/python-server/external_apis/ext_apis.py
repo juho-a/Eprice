@@ -24,9 +24,9 @@ class DataPoint(BaseModel):
 
 
 class WeatherRequest(BaseModel):
-    lat: float = Field(..., description="Latitude")
-    lon: float = Field(..., description="Longitude")
-    timestamp: str = Field(..., description="UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z")
+    lat: float = Field(..., description="Latitude", example=60.1699)
+    lon: float = Field(..., description="Longitude", example=24.9384)
+    timestamp: str = Field(..., description="UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z", example="2024-05-05T13:30:00Z")
 
 class WeatherDataPoint(BaseModel):
     temperature_celsius: float = Field(..., example=8.5)
@@ -49,7 +49,10 @@ async def get_windpower():
     Returns:
         dict: A data point or an error message.
     """
-    return await fetch_fingrid_data(dataset_id=245)
+    try:
+        return await fetch_fingrid_data(dataset_id=245)
+    except Exception as e:
+        return {"error":e}
 
 
 @router.post("/api/public/windpower/range", response_model=RootModel[List[DataPoint]])
@@ -64,11 +67,14 @@ async def post_windpower_range(time_range: TimeRangeRequest):
     Returns:
         list[dict]: A list of data points or an error message.
     """
-    return await fetch_fingrid_data_range(
-        dataset_id=245,
-        start_time=time_range.startTime,
-        end_time=time_range.endTime
-    )
+    try:
+        return await fetch_fingrid_data_range(
+            dataset_id=245,
+            start_time=time_range.startTime,
+            end_time=time_range.endTime)
+    except Exception as e:
+        return {"error":e}
+    
 
 
 @router.get("/api/public/consumption", response_model=RootModel[DataPoint])
@@ -80,7 +86,10 @@ async def get_consumption():
     Returns:
         dict: A data point or an error message.
     """
-    return await fetch_fingrid_data(dataset_id=165)
+    try:
+        return await fetch_fingrid_data(dataset_id=165)
+    except Exception as e:
+        return {"error":e}
 
 
 @router.post("/api/public/consumption/range", response_model=RootModel[List[DataPoint]])
@@ -95,11 +104,14 @@ async def post_consumption_range(time_range: TimeRangeRequest):
     Returns:
         list[dict]: A list of data points or an error message.
     """
-    return await fetch_fingrid_data_range(
-        dataset_id=165,
-        start_time=time_range.startTime,
-        end_time=time_range.endTime
-    )
+    try:
+        return await fetch_fingrid_data_range(
+            dataset_id=165,
+            start_time=time_range.startTime,
+            end_time=time_range.endTime
+        )
+    except Exception as e:
+        return {"error":e}
 
 
 @router.get("/api/public/production", response_model=RootModel[DataPoint])
@@ -111,8 +123,10 @@ async def get_production():
     Returns:
         dict: A data point or an error message.
     """
-    return await fetch_fingrid_data(dataset_id=241)
-
+    try:
+        return await fetch_fingrid_data(dataset_id=241)
+    except Exception as e:
+        return {"error":e}
 
 @router.post("/api/public/production/range", response_model=RootModel[List[DataPoint]])
 async def post_production_range(time_range: TimeRangeRequest):
@@ -147,8 +161,8 @@ async def post_weather(request: WeatherRequest):
     try:
         requested_dt = datetime.fromisoformat(request.timestamp.replace("Z", "+00:00")).replace(tzinfo=timezone.utc)
         return await fetch_weather_data(request.lat, request.lon, requested_dt)
-    except ValueError:
-        return {"error": "Invalid timestamp format. Expected RFC 3339 format (e.g. 2024-05-05T13:30:00Z)"}
+    except Exception as e:
+        return {"error":e}
 
 
 
@@ -166,8 +180,8 @@ async def post_price_range(time_range: TimeRangeRequest):
 
     try:
         return await fetch_price_data_range(time_range.startTime, time_range.endTime)
-    except ValueError as e:
-        return e
+    except Exception as e:
+        return {"error":e}
 
 
 
