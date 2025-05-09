@@ -8,7 +8,7 @@
         "/api/public/windpower": {
             "get": {
                 "summary": "Get Windpower",
-                "description": "Get wind power production forecast.\nFetches forecast data from Fingrid dataset ID 245.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get current wind power production.\nFetches forecast data from Fingrid dataset ID 245. Finnish wind power generation forecast for the next 72 hours. Updated every 15 minutes. The forecast is based on weather forecasts and data about the location, size and capacity of wind turbines. The weather data sourced from multiple providers. The Data before 31.05.2023 is in hourly resolution.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
                 "operationId": "get_windpower_api_public_windpower_get",
                 "responses": {
                     "200": {
@@ -27,7 +27,7 @@
         "/api/public/windpower/range": {
             "post": {
                 "summary": "Post Windpower Range",
-                "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245. \"Finnish wind power generation forecast for the next 72 hours. Updated every 15 minutes. The forecast is based on weather forecasts and data about the location, size and capacity of wind turbines. The weather data sourced from multiple providers. The Data before 31.05.2023 is in hourly resolution.\"\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
                 "operationId": "post_windpower_range_api_public_windpower_range_post",
                 "requestBody": {
                     "content": {
@@ -66,7 +66,7 @@
         "/api/public/consumption": {
             "get": {
                 "summary": "Get Consumption",
-                "description": "Get electricity consumption forecast.\nFetches consumption data from Fingrid dataset ID 165.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get current electricity consumption.\nFetches consumption data from Fingrid dataset ID 165. A consumption forecast for the next 24 hours made by Fingrid. Forecast is published on previous day at 12:00 EET. The Data before 21.04.2024 is in 5 minute resolution.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
                 "operationId": "get_consumption_api_public_consumption_get",
                 "responses": {
                     "200": {
@@ -85,7 +85,7 @@
         "/api/public/consumption/range": {
             "post": {
                 "summary": "Post Consumption Range",
-                "description": "Get electricity consumption data for a given time range.\nFetches consumption data from Fingrid dataset ID 165.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get electricity consumption data for a given time range.\nFetches consumption data from Fingrid dataset ID 165. A consumption forecast for the next 24 hours made by Fingrid. Forecast is published on previous day at 12:00 EET. The Data before 21.04.2024 is in 5 minute resolution.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
                 "operationId": "post_consumption_range_api_public_consumption_range_post",
                 "requestBody": {
                     "content": {
@@ -124,7 +124,7 @@
         "/api/public/production": {
             "get": {
                 "summary": "Get Production",
-                "description": "Get electricity production forecast.\nFetches production data from Fingrid dataset ID 241.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get current electricity production.\nFetches production data from Fingrid dataset ID 241. The calculation of production forecast in Finland is based on the production plans that balance responsible parties has reported to Fingrid. Production forecast is updated every 15 minutes. The Data before 03.06.2023 is in hourly resolution.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
                 "operationId": "get_production_api_public_production_get",
                 "responses": {
                     "200": {
@@ -143,7 +143,7 @@
         "/api/public/production/range": {
             "post": {
                 "summary": "Post Production Range",
-                "description": "Get electricity production data for a given time range.\nFetches production data from Fingrid dataset ID 241.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
+                "description": "Get electricity production data for a given time range.\nFetches production data from Fingrid dataset ID 241. The calculation of production forecast in Finland is based on the production plans that balance responsible parties has reported to Fingrid. Production forecast is updated every 15 minutes. The Data before 03.06.2023 is in hourly resolution.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict] | dict: A list of data points or an error message.",
                 "operationId": "post_production_range_api_public_production_range_post",
                 "requestBody": {
                     "content": {
