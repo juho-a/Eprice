@@ -185,7 +185,7 @@ async def post_price_range(time_range: TimeRangeRequest):
 
 
 
-@router.get("/api/public/data", response_model=RootModel[DataPoint])
+@router.get("/api/public/data")
 async def get_prices():
     """
     Get hourly electricity prices from external API.
