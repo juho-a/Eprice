@@ -74,20 +74,20 @@ services:
 
   data-preparation:
     build:
-      context: ./data-preparation/scripts  # Path to the directory containing the Dockerfile
+      context: ./data-preparation/scripts  # Here be Dockerfile
     volumes:
       - ./data-preparation/data:/data  # Mount the data folder
       - ./data-preparation/scripts:/scripts  # Mount the scripts folder
-    working_dir: /scripts  # Set the working directory to the scripts folder
+    working_dir: /scripts
     env_file:
-      - ./project.env  # Load environment variables
+      - ./project.env
     entrypoint: >
       bash -c "
       ./get_porssisahko_data.sh &&
       ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx &&
-      tail -f /dev/null
+      tail -f /dev/null # (REMOVE) Keep the container running after the script finishes
       "
-    healthcheck: # check if the data preparation is done
+    healthcheck: # This is to ensure data is available before running migrations
       test: ["CMD", "bash", "-c", "if [ -f /data/porssisahko.csv ]; then exit 0; else exit 1; fi"]
       interval: 10s
       timeout: 5s

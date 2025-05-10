@@ -2,7 +2,7 @@
 -- Uncomment the line below if you want to drop the table first
 -- There might be some issues with the unique constraint
 -- But first try tearing down the containers and up again
-DROP TABLE IF EXISTS porssisahko;
+--DROP TABLE IF EXISTS porssisahko;
 
 
 DO $$
