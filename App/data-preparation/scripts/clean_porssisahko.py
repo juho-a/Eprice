@@ -13,8 +13,10 @@ def clean_data(filename):
     # Convert prices to float, handle errors by setting to average of adjacent values
     for i in range(len(prices)):
         try:
-            prices[i] = float(prices[i].replace(",", "."))
+            #prices[i] = float(prices[i].replace(",", "."))
+            prices[i] = float(prices[i])
         except ValueError:
+            print(f"Invalid price at index {i}: {prices[i]}")
             if i == 0:
                 prices[i] = prices[i + 1]
             elif i == len(prices) - 1:
@@ -28,27 +30,33 @@ def clean_data(filename):
     days = []
     hours = []
     weekdays = []
+    dates = []
+    datetimes = []
 
     for line in times:
+        datetimes.append(line)
         date = line.split(" ")[0]
         time = line.split(" ")[1]
         year, month, day = date.split("/")
         hour = time.split(":")[0]
+        dates.append(date)
         years.append(int(year))
         months.append(int(month))
         days.append(int(day))
         hours.append(int(hour))
         weekday = datetime.datetime(int(year), int(month), int(day)).weekday()
-        weekdays.append(weekday)
+        weekdays.append(weekday)        
 
     # Create a new DataFrame
     df2 = pd.DataFrame({
+        "Date": dates,
         "Year": years,
         "Month": months,
         "Day": days,
         "Hour": hours,
         "Weekday": weekdays,
-        "Price": prices
+        "Price": prices,
+        "Datetime": datetimes
     })
 
     # Save the cleaned data to a new CSV file

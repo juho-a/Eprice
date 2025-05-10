@@ -15,9 +15,12 @@ services:
     env_file:
       - project.env
     depends_on:
-      - database
-      - data-preparation  # Ensure data-preparation runs before migrations
+      database:
+        condition: service_started
+      data-preparation:
+        condition: service_healthy
     volumes:
+      - ./data-preparation/data:/data
       - ./database-migrations:/flyway/sql
     command: -connectRetries=60 -baselineOnMigrate=true migrate
       
@@ -81,5 +84,12 @@ services:
     entrypoint: >
       bash -c "
       ./get_porssisahko_data.sh &&
-      ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx
+      ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx &&
+      tail -f /dev/null
       "
+    healthcheck: # check if the data preparation is done
+      test: ["CMD", "bash", "-c", "if [ -f /data/porssisahko.csv ]; then exit 0; else exit 1; fi"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
