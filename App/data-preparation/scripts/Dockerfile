@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
 
 # Install Python dependencies using pip
 RUN pip install --no-cache-dir \
-    pandas
+    pandas \
+    psycopg2-binary
 
 # Set the working directory
 WORKDIR /scripts

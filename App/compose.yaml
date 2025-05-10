@@ -17,10 +17,10 @@ services:
     depends_on:
       database:
         condition: service_started
-      data-preparation:
-        condition: service_healthy
+      #data-preparation:
+      #  condition: service_healthy
     volumes:
-      - ./data-preparation/data:/data
+      #- ./data-preparation/data:/data
       - ./database-migrations:/flyway/sql
     command: -connectRetries=60 -baselineOnMigrate=true migrate
       
@@ -85,6 +85,7 @@ services:
       bash -c "
       ./get_porssisahko_data.sh &&
       ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx &&
+      python populate_porssisahko.py ../data/porssisahko.csv &&
       tail -f /dev/null # (REMOVE) Keep the container running after the script finishes
       "
     healthcheck: # This is to ensure data is available before running migrations
