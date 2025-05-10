@@ -6,7 +6,7 @@ services:
     env_file:
       - project.env
     volumes:
-      - ./data-preparation/data:/data
+      - ./data-preparation/data:/data #let's keep this, so we can do manual inserts also
 
   database-migrations:
     image: flyway/flyway:10

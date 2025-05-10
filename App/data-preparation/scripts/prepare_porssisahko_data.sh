@@ -22,14 +22,14 @@ sed -i '1,3d' temp_file.csv
 mv temp_file.csv "$output_file"
 
 # remove the temporary file
-rm -f temp_file.csv
+rm -f temp_file.csv # (comment for debugging)
 # print success message
 echo "File converted and saved as $output_file"
 
 # run python script to process the csv file
 python clean_porssisahko.py "$output_file"
 # the new name has "_cleaned.csv" appended to the original name
-rm -f "$output_file"
+rm -f "$output_file" # (comment for debugging)
 # rename the cleaned file
 mv "${output_file%.csv}_cleaned.csv" "$output_file"
 # print success message

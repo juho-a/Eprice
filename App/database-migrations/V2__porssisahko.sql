@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS porssisahko;
 
 -- Create the updated porssisahko table
+-- NOTE: We'll use INT so that we can get statistics on the data
 CREATE TABLE porssisahko (
     id SERIAL PRIMARY KEY,
     Year INT NOT NULL,
