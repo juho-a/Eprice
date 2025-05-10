@@ -7,8 +7,8 @@ services:
       - project.env
     ports: # TODO: comment out later
       - 5432:5432 # Only for development/debugging
-    volumes:
-      - ./data-preparation/data:/data #let's keep this, so we can do manual inserts also
+    #volumes:
+    #  - ./data-preparation/data:/data #let's keep this, so we can do manual inserts also
 
   database-migrations:
     image: flyway/flyway:10
@@ -76,8 +76,8 @@ services:
     build:
       context: ./data-preparation/scripts  # Here be Dockerfile
     volumes:
-      - ./data-preparation/data:/data  # Mount the data folder
-      - ./data-preparation/scripts:/scripts  # Mount the scripts folder
+      - ./data-preparation/data:/data
+      - ./data-preparation/scripts:/scripts
     working_dir: /scripts
     env_file:
       - ./project.env
@@ -85,12 +85,12 @@ services:
       bash -c "
       ./get_porssisahko_data.sh &&
       ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx &&
-      python populate_porssisahko.py ../data/porssisahko.csv &&
-      tail -f /dev/null # (REMOVE) Keep the container running after the script finishes
+      python populate_porssisahko.py ../data/porssisahko.csv
+      #tail -f /dev/null # for debugging -- keeps the container running after the script finishes
       "
-    healthcheck: # This is to ensure data is available before running migrations
-      test: ["CMD", "bash", "-c", "if [ -f /data/porssisahko.csv ]; then exit 0; else exit 1; fi"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+    #healthcheck: # This is to ensure data is available before running migrations
+    #  test: ["CMD", "bash", "-c", "if [ -f /data/porssisahko.csv ]; then exit 0; else exit 1; fi"]
+    #  interval: 10s
+    #  timeout: 5s
+    #  retries: 3
+    #  start_period: 30s

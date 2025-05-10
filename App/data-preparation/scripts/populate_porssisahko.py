@@ -43,7 +43,7 @@ def populate_db(df):
         END $$;
     """)
     # Insert data into the table (on conflict do nothing)
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         cursor.execute("""
             INSERT INTO porssisahko (Date, Year, Month, Day, Hour, Weekday, Price, Datetime)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
