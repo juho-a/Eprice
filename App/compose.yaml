@@ -5,17 +5,20 @@ services:
     restart: unless-stopped
     env_file:
       - project.env
-  
+    volumes:
+      - ./data-preparation/data:/data
+
   database-migrations:
     image: flyway/flyway:10
     env_file:
       - project.env
     depends_on:
       - database
+      - data-preparation  # Ensure data-preparation runs before migrations
     volumes:
       - ./database-migrations:/flyway/sql
     command: -connectRetries=60 -baselineOnMigrate=true migrate
-
+      
   client:
     build: client
     restart: unless-stopped
@@ -63,3 +66,18 @@ services:
     restart: always
     profiles:
       - chat-engine
+
+  data-preparation:
+    build:
+      context: ./data-preparation/scripts  # Path to the directory containing the Dockerfile
+    volumes:
+      - ./data-preparation/data:/data  # Mount the data folder
+      - ./data-preparation/scripts:/scripts  # Mount the scripts folder
+    working_dir: /scripts  # Set the working directory to the scripts folder
+    env_file:
+      - ./project.env  # Load environment variables
+    entrypoint: >
+      bash -c "
+      ./get_porssisahko_data.sh &&
+      ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx
+      "
