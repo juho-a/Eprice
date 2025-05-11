@@ -77,15 +77,13 @@ services:
       context: ./data-preparation/scripts  # Here be Dockerfile
     volumes:
       - ./data-preparation/data:/data
-      - ./data-preparation/scripts:/scripts
-    working_dir: /scripts
+      - ./data-preparation/scripts:/scripts # remove for production
+    working_dir: /scripts # this is already done in the Dockerfile (remove for production)
     env_file:
       - ./project.env
     entrypoint: >
       bash -c "
-      ./get_porssisahko_data.sh &&
-      ./prepare_porssisahko_data.sh ../data/porssisahko.xlsx &&
-      python populate_porssisahko.py ../data/porssisahko.csv
+      ./populate_porssisahko.sh
       #tail -f /dev/null # for debugging -- keeps the container running after the script finishes
       "
     #healthcheck: # This is to ensure data is available before running migrations

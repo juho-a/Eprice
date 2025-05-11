@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# read input filename from command line
-input_file=$1
+curl https://porssisahko.net/api/internal/excel-export --output ../data/porssisahko.xlsx
+
+# checks if the file was downloaded successfully
+if [ $? -ne 0 ]; then
+    echo "Failed to download the file"
+    exit 1
+fi
+
+input_file="../data/porssisahko.xlsx"
 
 # check if input file exists
 if [ ! -f "$input_file" ]; then
@@ -32,5 +39,10 @@ python clean_porssisahko.py "$output_file"
 rm -f "$output_file" # (comment for debugging)
 # rename the cleaned file
 mv "${output_file%.csv}_cleaned.csv" "$output_file"
+
+# run the populate_porssisahko.py script
+python populate_porssisahko.py "$output_file"
 # print success message
-echo "File cleaned and saved as $output_file"
+echo "File populated and saved as $output_file"
+# remove the original file
+#rm -f "$input_file" # (comment for debugging)

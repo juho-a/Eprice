@@ -1,6 +1,4 @@
-DROP TABLE IF EXISTS porssisahko;
-
-CREATE TABLE porssisahko (
+CREATE TABLE IF NOT EXISTS porssisahko (
     id SERIAL PRIMARY KEY,
     Datetime TIMESTAMP NOT NULL, -- Original column for datetime
     Date DATE NOT NULL, -- New column for the date
