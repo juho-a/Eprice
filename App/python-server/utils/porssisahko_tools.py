@@ -18,25 +18,21 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
     # Parse the ISO 8601 date
     dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
 
-    # Extract components
-    year = dt.year
-    month = dt.month
-    day = dt.day
-    hour = dt.hour
-    weekday = dt.weekday()  # Monday = 0, Sunday = 6
+    # Extract the weekday
+    weekday = dt.weekday()
 
     # Format Datetime and Date fields
-    datetime_str = dt.strftime(f"%Y-%m-%d {hour:02d}:00:00")  # "YYYY-MM-DD HH:00:00"
+    datetime_str = dt.strftime(f"%Y-%m-%d {dt.hour:02d}:00:00")  # "YYYY-MM-DD HH:00:00"
     date_str = dt.strftime("%Y-%m-%d")  # "YYYY-MM-DD"
 
     # Return the dictionary
     return {
         "Datetime": datetime_str,
         "Date": date_str,
-        "Year": year,
-        "Month": month,
-        "Day": day,
-        "Hour": hour,
+        "Year": dt.year,
+        "Month": dt.month,
+        "Day": dt.day,
+        "Hour": dt.hour,
         "Weekday": weekday,
         "Price": price,
         "Predicted": predicted
@@ -50,9 +46,12 @@ async def insert_porssisahko_entry(database_url: str, entry: dict):
         database_url (str): The database connection URL.
         entry (dict): A dictionary containing the data to insert.
     """
-    # assumes correct database_url format
-    conn = await asyncpg.connect(database_url)
+    conn = None
     try:
+        # Attempt to connect to the database
+        conn = await asyncpg.connect(database_url)
+
+        # Execute the insert query
         await conn.execute(
             """
             INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
@@ -68,5 +67,15 @@ async def insert_porssisahko_entry(database_url: str, entry: dict):
             entry["Weekday"],
             entry["Price"]
         )
+    except asyncpg.PostgresError as e:
+        # Handle database-related errors
+        print(f"Database error: {e}")
+        raise # NOTE: Juho, this will propagate the error to the caller
+    except Exception as e:
+        # Handle other unexpected errors
+        print(f"Unexpected error: {e}")
+        raise # NOTE: we get more granular error information this way
     finally:
-        await conn.close()
+        # Ensure the connection is closed if it was successfully opened
+        if conn:
+            await conn.close()
