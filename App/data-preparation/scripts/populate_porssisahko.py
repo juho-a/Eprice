@@ -23,8 +23,7 @@ def populate_db(df):
             Day INT,
             Hour INT,
             Weekday INT,
-            Price FLOAT,
-            Datetime TIMESTAMP
+            Price FLOAT
         )
     """)
     
@@ -36,19 +35,19 @@ def populate_db(df):
                 SELECT 1
                 FROM information_schema.table_constraints
                 WHERE table_name = 'porssisahko'
-                AND constraint_name = 'porssisahko_datetime_key'
+                AND constraint_name = 'unique_date_time'
             ) THEN
-                ALTER TABLE porssisahko ADD CONSTRAINT porssisahko_datetime_key UNIQUE (Datetime);
+                ALTER TABLE porssisahko ADD CONSTRAINT unique_date_time UNIQUE (Date, Hour);
             END IF;
         END $$;
     """)
     # Insert data into the table (on conflict do nothing)
     for _, row in df.iterrows():
         cursor.execute("""
-            INSERT INTO porssisahko (Date, Year, Month, Day, Hour, Weekday, Price, Datetime)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (datetime) DO NOTHING
-        """, (row["Date"], row["Year"], row["Month"], row["Day"], row["Hour"], row["Weekday"], row["Price"], row["Datetime"]))
+            INSERT INTO porssisahko (Date, Year, Month, Day, Hour, Weekday, Price)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (Date, Hour) DO NOTHING
+        """, (row["Date"], row["Year"], row["Month"], row["Day"], row["Hour"], row["Weekday"], row["Price"]))
     # Commit the changes and close the connection
     conn.commit()
     cursor.close()

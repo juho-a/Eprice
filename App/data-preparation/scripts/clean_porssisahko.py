@@ -31,10 +31,10 @@ def clean_data(filename):
     hours = []
     weekdays = []
     dates = []
-    datetimes = []
+    #datetimes = []
 
     for line in times:
-        datetimes.append(line)
+        #datetimes.append(line)
         date = line.split(" ")[0]
         time = line.split(" ")[1]
         year, month, day = date.split("/")
@@ -55,8 +55,7 @@ def clean_data(filename):
         "Day": days,
         "Hour": hours,
         "Weekday": weekdays,
-        "Price": prices,
-        "Datetime": datetimes
+        "Price": prices
     })
 
     # Save the cleaned data to a new CSV file

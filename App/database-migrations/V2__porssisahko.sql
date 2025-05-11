@@ -8,10 +8,9 @@ CREATE TABLE porssisahko (
     Day INT NOT NULL,
     Hour INT NOT NULL,
     Weekday INT NOT NULL,
-    Price NUMERIC(10, 3) NOT NULL,
-    Datetime TIMESTAMP NOT NULL -- New column for the datetime
+    Price NUMERIC(10, 3) NOT NULL
 );
 
--- Add a unique constraint to prevent duplicate rows
+-- Add a unique constraint to prevent duplicate rows (date and time)
 ALTER TABLE porssisahko
-    ADD CONSTRAINT porssisahko_datetime_key UNIQUE (Datetime);
+    ADD CONSTRAINT unique_date_time UNIQUE (Date, Hour);
