@@ -17,14 +17,18 @@ def populate_db(df):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS porssisahko (
             id SERIAL PRIMARY KEY,
-            Date DATE,
-            Year INT,
-            Month INT,
-            Day INT,
-            Hour INT,
-            Weekday INT,
-            Price FLOAT
-        )
+            Datetime TIMESTAMP NOT NULL, -- Original column for datetime
+            Date DATE NOT NULL, -- New column for the date
+            Year INT NOT NULL, -- Year, etc. for statistics
+            Month INT NOT NULL,
+            Day INT NOT NULL,
+            Hour INT NOT NULL,
+            Weekday INT NOT NULL,
+            Price NUMERIC(10, 3) NOT NULL,
+            Predicted BOOLEAN NOT NULL DEFAULT FALSE,
+            CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
     """)
     
     # add a unique constraint to the datetime column if it doesn't exist
@@ -35,19 +39,19 @@ def populate_db(df):
                 SELECT 1
                 FROM information_schema.table_constraints
                 WHERE table_name = 'porssisahko'
-                AND constraint_name = 'unique_date_time'
+                AND constraint_name = 'unique_datetime'
             ) THEN
-                ALTER TABLE porssisahko ADD CONSTRAINT unique_date_time UNIQUE (Date, Hour);
+                ALTER TABLE porssisahko ADD CONSTRAINT unique_datetime UNIQUE (Datetime);
             END IF;
         END $$;
     """)
     # Insert data into the table (on conflict do nothing)
     for _, row in df.iterrows():
         cursor.execute("""
-            INSERT INTO porssisahko (Date, Year, Month, Day, Hour, Weekday, Price)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (Date, Hour) DO NOTHING
-        """, (row["Date"], row["Year"], row["Month"], row["Day"], row["Hour"], row["Weekday"], row["Price"]))
+            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (Datetime) DO NOTHING
+        """, (row["Datetime"], row["Date"], row["Year"], row["Month"], row["Day"], row["Hour"], row["Weekday"], row["Price"]))
     # Commit the changes and close the connection
     conn.commit()
     cursor.close()

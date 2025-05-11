@@ -31,7 +31,7 @@ def clean_data(filename):
     hours = []
     weekdays = []
     dates = []
-    #datetimes = []
+    datetimes = []
 
     for line in times:
         #datetimes.append(line)
@@ -39,6 +39,11 @@ def clean_data(filename):
         time = line.split(" ")[1]
         year, month, day = date.split("/")
         hour = time.split(":")[0]
+        
+        # datetime as "YYYY-MM-DD HH:00:00",always beginning hours
+        datetime_str = f"{year}-{month.zfill(2)}-{day.zfill(2)} {hour.zfill(2)}:00:00"
+        datetimes.append(datetime_str)
+
         dates.append(date)
         years.append(int(year))
         months.append(int(month))
@@ -49,6 +54,7 @@ def clean_data(filename):
 
     # Create a new DataFrame
     df2 = pd.DataFrame({
+        "Datetime": datetimes,
         "Date": dates,
         "Year": years,
         "Month": months,

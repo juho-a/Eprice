@@ -2,8 +2,9 @@ DROP TABLE IF EXISTS porssisahko;
 
 CREATE TABLE porssisahko (
     id SERIAL PRIMARY KEY,
+    Datetime TIMESTAMP NOT NULL, -- Original column for datetime
     Date DATE NOT NULL, -- New column for the date
-    Year INT NOT NULL, -- Year for statistics
+    Year INT NOT NULL, -- Year, etc. for statistics
     Month INT NOT NULL,
     Day INT NOT NULL,
     Hour INT NOT NULL,
@@ -16,4 +17,4 @@ CREATE TABLE porssisahko (
 
 -- Add a unique constraint to prevent duplicate rows (date and time)
 ALTER TABLE porssisahko
-    ADD CONSTRAINT unique_date_time UNIQUE (Date, Hour);
+    ADD CONSTRAINT unique_datetime UNIQUE (Datetime);
