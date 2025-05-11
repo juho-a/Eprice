@@ -86,6 +86,8 @@ services:
       ./populate_porssisahko.sh
       #tail -f /dev/null # for debugging -- keeps the container running after the script finishes
       "
+    #If we end-up doing the data population in migrations, it'll depend on loaded data
+    # from the data-preparation service
     #healthcheck: # This is to ensure data is available before running migrations
     #  test: ["CMD", "bash", "-c", "if [ -f /data/porssisahko.csv ]; then exit 0; else exit 1; fi"]
     #  interval: 10s

@@ -13,7 +13,7 @@ if os.getenv("POSTGRES_USER") is None:
 if os.getenv("POSTGRES_PASSWORD") is None:
     os.environ["POSTGRES_PASSWORD"] = "password"
 if os.getenv("PGHOST") is None:
-    os.environ["PGHOST"] = "database"
+    os.environ["PGHOST"] = "postgresql_database"
 if os.getenv("PGPORT") is None:
     os.environ["PGPORT"] = "5432"
 if os.getenv("POSTGRES_DB") is None:
