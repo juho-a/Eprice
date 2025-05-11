@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
-from services.ext_api_services import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range, fetch_price_data_range
+from services.data_service import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range, fetch_price_data_range
 from pydantic import BaseModel, Field, RootModel
 from typing import List
 import httpx

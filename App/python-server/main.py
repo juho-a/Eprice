@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.auth_controller import router as auth_router
 from controllers.auth_controller import create_jwt_middleware
-from external_apis.ext_apis import router as external_api_router
+from controllers.data_controller import router as external_api_router
 
 
 # Public routes that do not require authentication
