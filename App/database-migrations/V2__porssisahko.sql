@@ -8,7 +8,10 @@ CREATE TABLE porssisahko (
     Day INT NOT NULL,
     Hour INT NOT NULL,
     Weekday INT NOT NULL,
-    Price NUMERIC(10, 3) NOT NULL
+    Price NUMERIC(10, 3) NOT NULL,
+    Predicted BOOLEAN NOT NULL DEFAULT FALSE,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Add a unique constraint to prevent duplicate rows (date and time)
