@@ -5,26 +5,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from dotenv import load_dotenv
 import os
-
-# Define a model for Fingrid data
-class FingridData(BaseModel):
-    startTime: str= Field(
-        example="2024-05-01T00:00:00Z",
-        description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)"
-    )
-    endTime: str = Field(
-        example="2024-05-02T00:00:00Z",
-        description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)"
-    )
-    value: float  = Field(
-        example="7883.61",
-        description="Value of the data point"
-    )
-
-# Define a model for error responses
-class ErrorResponse(BaseModel):
-    error: str
-
+from models.data_model import *
 
 
 load_dotenv(dotenv_path="./.env.local")
