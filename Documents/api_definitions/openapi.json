@@ -271,9 +271,7 @@
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RootModel_DataPoint_"
-                                }
+                                "schema": {}
                             }
                         }
                     }

@@ -46,6 +46,10 @@ class FingridData(BaseModel):
         description="Value of the data point"
     )
 
+class newDataPoint(BaseModel):
+    startTime: str = Field(..., example="2025-05-08T04:00:00.000Z")
+    value: float = Field(..., example=7883.61)
+
 # Define a model for error responses
 class ErrorResponse(BaseModel):
     error: str

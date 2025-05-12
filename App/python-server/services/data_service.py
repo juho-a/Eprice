@@ -1,11 +1,12 @@
 from datetime import datetime, timezone, timedelta
 import httpx
 from urllib.parse import urlencode
-from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 from dotenv import load_dotenv
 import os
 from models.data_model import *
+from datetime import datetime
+import pytz
 
 
 load_dotenv(dotenv_path="./.env.local")
@@ -143,5 +144,30 @@ async def fetch_price_data_range(start_time: str, end_time: str):
         current_datetime += timedelta(hours=1)
 
     return result
+
+async def fetch_price_data_latest():
+    """
+    Fetches the latest hourly electricity prices from the API.
+
+    Returns the prices as a list with the 'endDate' field removed from each entry.
+
+    Returns:
+        list: A list of dictionaries containing hourly electricity price data.
+              The 'endDate' key is removed from each dictionary.
+    """
+
+    url = "https://api.porssisahko.net/v1/latest-prices.json"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            data = response.json()["prices"]
+            for item in data:
+                item.pop("endDate", None)
+    except Exception as e:
+        return {"error": f"Failed to fetch price data: {str(e)}"}
+    
+    return data
+
 
 
