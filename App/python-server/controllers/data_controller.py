@@ -164,9 +164,3 @@ async def get_prices():
         return {"error": e}
     
 
-@router.get("/api/public/data/today")
-async def get_prices():
-    try:
-        return await fetch_price_data_latest()
-    except Exception as e:
-        return {"error": e}

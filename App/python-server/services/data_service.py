@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import os
 from models.data_model import *
 from datetime import datetime
-import pytz
 
 
 load_dotenv(dotenv_path="./.env.local")
