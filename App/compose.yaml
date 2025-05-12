@@ -7,6 +7,8 @@ services:
       - project.env
     ports: # TODO: comment out later
       - 5432:5432 # Only for development/debugging
+    environment:
+      - TZ=Europe/Helsinki  # Set the timezone
     #volumes:
     #  - ./data-preparation/data:/data #let's keep this, so we can do manual inserts also
 
@@ -56,6 +58,8 @@ services:
       - project.env
     depends_on:
       - database
+    environment:
+      - TZ=Europe/Helsinki  # Set the timezone
 
   chat-engine:
     container_name: chat-engine

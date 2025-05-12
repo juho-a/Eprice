@@ -42,13 +42,7 @@ app.include_router(auth_router)
 # Middleware to check JWT token
 # everything that's not in public routes has to have a valid JWT token
 app.middleware("http")(create_jwt_middleware(public_routes))
-@app.on_event("shutdown")
-async def shutdown_event():
-    '''Shutdown event handler
-    This function is called when the application is shutting down.
-    It ensures that the scheduler is properly shut down to avoid any background tasks running after the application has stopped.
-    '''
-    shutdown_scheduler()
+@app.on_event("shutdown")(shutdown_scheduler)  # Register the shutdown function to clean up the scheduler
 
 # example data endpoints
 @app.get("/api/data")
