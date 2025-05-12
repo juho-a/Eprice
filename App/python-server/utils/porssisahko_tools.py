@@ -1,5 +1,6 @@
 from datetime import datetime
 import asyncpg
+from config.secrets import DATABASE_URL
 
 def convert_to_porssisahko_entry(price, iso_date, predicted=False):
     """
@@ -38,7 +39,7 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
         "Predicted": predicted
     }
 
-async def insert_porssisahko_entry(database_url: str, entry: dict):
+async def insert_porssisahko_entry(entry: dict):
     """
     Inserts a single entry into the porssisahko table using asyncpg.
 
@@ -49,7 +50,7 @@ async def insert_porssisahko_entry(database_url: str, entry: dict):
     conn = None
     try:
         # Attempt to connect to the database
-        conn = await asyncpg.connect(database_url)
+        conn = await asyncpg.connect(DATABASE_URL)
 
         # Execute the insert query
         await conn.execute(
@@ -79,18 +80,17 @@ async def insert_porssisahko_entry(database_url: str, entry: dict):
         if conn: # has to be checked here --  trying to close a None connection will raise an error
             await conn.close()
 
-async def insert_porssisahko_entries(database_url: str, entries: list):
+async def insert_porssisahko_entries(entries: list):
     """
-    Inserts multiple entries into the porssisahko table using asyncpg.
+    Inserts multiple entries into the porssisahko table.
 
     Args:
-        database_url (str): The database connection URL.
         entries (list[dict]): A list of dictionaries containing the data to insert.
     """
     conn = None
     try:
         # Attempt to connect to the database
-        conn = await asyncpg.connect(database_url)
+        conn = await asyncpg.connect(DATABASE_URL)
 
         # Prepare the insert query
         insert_query = """
@@ -125,12 +125,11 @@ async def insert_porssisahko_entries(database_url: str, entries: list):
         if conn:
             await conn.close()
             
-async def get_missing_porssisahko_entries(database_url: str, start_date: str, end_date: str):
+async def get_missing_porssisahko_entries(start_date: str, end_date: str):
     """
     Retrieves missing entries from the porssisahko table between two dates.
 
     Args:
-        database_url (str): The database connection URL.
         start_date (str): The start date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
         end_date (str): The end date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
 
@@ -139,7 +138,7 @@ async def get_missing_porssisahko_entries(database_url: str, start_date: str, en
     """
     conn = None
     try:
-        conn = await asyncpg.connect(database_url)
+        conn = await asyncpg.connect(DATABASE_URL)
 
         # Execute the query to find missing entries
         rows = await conn.fetch(
@@ -162,6 +161,46 @@ async def get_missing_porssisahko_entries(database_url: str, start_date: str, en
 
         return [
             (row["Datetime"].strftime("%Y-%m-%d"), row["Datetime"].hour)
+            for row in rows
+        ]
+    except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
+        raise
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise
+    finally:
+        if conn:
+            await conn.close()
+
+async def get_porssisahko_entries(start_date: str, end_date: str, select_columns: str = "*"):
+    """
+    Retrieves entries from the porssisahko table between two dates.
+
+    Args:
+        start_date (str): The start date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
+        end_date (str): The end date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
+        select_columns (str): The columns to select from the table. Default is "*".
+    Returns:
+        list[dict]: A list of dictionaries containing the data for each entry.
+    """
+    conn = None
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+
+        # Execute the query to find missing entries
+        rows = await conn.fetch(
+            """
+            SELECT {select_columns}
+            FROM porssisahko
+            WHERE Datetime BETWEEN $1 AND $2
+            """.format(select_columns=select_columns),
+            start_date,
+            end_date
+        )
+
+        return [
+            dict(row)
             for row in rows
         ]
     except asyncpg.PostgresError as e:
