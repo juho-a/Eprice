@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
-from services.data_service import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range, fetch_price_data_range
-from pydantic import BaseModel, Field, RootModel
+from services.data_service import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range, fetch_price_data_range, fetch_price_data_latest
+from pydantic import RootModel
 from typing import List
 import httpx
 from models.data_model import *
@@ -158,38 +158,15 @@ async def post_price_range(time_range: TimeRangeRequest):
 
 @router.get("/api/public/data")
 async def get_prices():
-    """
-    Get hourly electricity prices from external API.
-
-    Fetches latest hourly prices and formats them for charting.
-
-    Returns:
-        dict: Contains chart legend, type, values (snt/kWh), labels (hours), and status message.
-    """
-    url = "https://api.porssisahko.net/v1/latest-prices.json"
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            response.raise_for_status()
-            data = response.json()
-
-            prices = [item["price"] for item in data["prices"]]
-            hours = [item["startDate"][11:16] for item in data["prices"]]
-            assert len(prices) == len(hours), "Prices and hours lists must be of the same length"
-
-            prices, hours = zip(*sorted(zip(prices, hours), key=lambda x: x[1]))
-            prices = [float(price) for price in prices][::2]
-            hours = list(range(24))
-
-            return {
-                "chartLegend": "Prices (snt / kWh)",
-                "chartType": "bar",
-                "chartValues": prices,
-                "chartLabels": hours,
-                "message": "Prices fetched successfully"
-            }
-    except httpx.RequestError as exc:
-        return {"error": f"An error occurred while requesting {exc.request.url}: {str(exc)}"}
-    except httpx.HTTPStatusError as exc:
-        return {"error": f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}"}
+        return await fetch_price_data_latest()
+    except Exception as e:
+        return {"error": e}
     
+
+@router.get("/api/public/data/today")
+async def get_prices():
+    try:
+        return await fetch_price_data_latest()
+    except Exception as e:
+        return {"error": e}
