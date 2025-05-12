@@ -10,6 +10,7 @@ from utils.scheduled_tasks import shutdown_scheduler  # Import the shutdown func
 # These routes can be accessed without a valid JWT token
 public_routes = [
     "/api/public/data",
+    "/api/public/data/today",
     "/api/auth/login",
     "/api/auth/register",
     "/api/latest_prices",
