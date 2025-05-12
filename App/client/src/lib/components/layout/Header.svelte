@@ -1,13 +1,12 @@
 <script>
-  import bg from "$lib/assets/image2.png";
   let { user } = $props();
 </script>
 
-<header class="flex items-center bg-primary-100 p-4 mb-6 border-b-1" style="background-image: url({bg})">
+<header class="flex items-center justify-between bg-black p-4 mb-6 border-b-1">
 <!--<header class="flex items-center bg-primary-300 p-4 mb-6">-->
-  <h1 class="text-2xl text-white items-center">Electricity prices</h1>
+  <h1 class="text-2xl text-white">Electricity prices</h1>
     <nav>
-      <ul class="ml-4 flex space-x-4 underline text-white">
+      <ul class="ml-4 flex space-x-4 text-white">
         <li>
           <a href="/" class="">Home</a>
         </li>
