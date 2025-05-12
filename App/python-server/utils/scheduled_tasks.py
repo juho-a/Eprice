@@ -32,18 +32,18 @@ def fetch_and_insert_porssisahko_data_sync():
     asyncio.run(fetch_and_insert_porssisahko_data())
 
 # Set up the scheduler
-scheduler = BackgroundScheduler()
+ps_scheduler = BackgroundScheduler()
 # Trigger to run the task every day at 14:15
-trigger = CronTrigger(hour=14, minute=15)
+ps_trigger = CronTrigger(hour=14, minute=15)
 # NOTE: For debugging/testing purposes, you can use an interval trigger to run every 15 seconds or so
 #trigger = IntervalTrigger(seconds=10)
-scheduler.add_job(fetch_and_insert_porssisahko_data_sync, trigger)
-scheduler.start()
+ps_scheduler.add_job(fetch_and_insert_porssisahko_data_sync, ps_trigger)
+ps_scheduler.start()
 
 # Ensure the scheduler shuts down properly on application exit
 def shutdown_scheduler():
     print("Shutting down scheduler...")
-    scheduler.shutdown()
+    ps_scheduler.shutdown()
 
 # TODO: Implement a task to see if there are missing entries in the database
 # between two dates, and if so, fetch them from the API and insert them into the database

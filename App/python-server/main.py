@@ -43,6 +43,8 @@ app.include_router(auth_router)
 # Middleware to check JWT token
 # everything that's not in public routes has to have a valid JWT token
 app.middleware("http")(create_jwt_middleware(public_routes))
+
+# To shut down the scheduler when the application is shutting down
 @app.on_event("shutdown")
 async def shutdown_event():
     '''Shutdown event handler
@@ -51,25 +53,3 @@ async def shutdown_event():
     '''
     shutdown_scheduler()
 
-# example data endpoints
-@app.get("/api/data")
-async def get_data():
-    '''Example data endpoint
-    Returns:
-        dict: A dictionary containing example data for the chart.
-        dict has the following keys:
-            - chartType: str, type of chart (e.g., 'bar', 'line', etc.), default is 'bar'
-            - chartValues: list of int
-            - chartLabels: list of str
-
-        	chartValues = [20, 10, 5, 2, 20, 30, 45];
-	        chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-    '''
-    chartType = 'bar'
-    chartValues = [20, 10, 5, 2, 20, 30, 45]
-    chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-    return {
-        'chartType': chartType,
-        'chartValues': chartValues,
-        'chartLabels': chartLabels
-    }
