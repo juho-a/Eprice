@@ -47,7 +47,6 @@
 </script>
 
 <canvas bind:this={chartCanvas} id="myChart" class="
-	absolute
 	bottom-10
 	top-10
 	m-auto

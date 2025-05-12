@@ -1,10 +1,9 @@
 <script>
-    import bg from "$lib/assets/image2.png";
     let data = $props();
-  </script>
+</script>
 
 
-<footer class="p-4 border-t-1" style="background-image: url({bg})">
+<footer class="p-4 bg-black border-t-1">
 <!--<footer class="bg-primary-300 p-4 border-t-1">-->
     <p class="text-center text-white font-bold">
         Dogs seem to dislike cats, sadly... © 2025
