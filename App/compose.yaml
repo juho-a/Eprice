@@ -90,6 +90,9 @@ services:
       ./populate_porssisahko.sh
       #tail -f /dev/null # for debugging -- keeps the container running after the script finishes
       "
+    profiles:
+      - data-preparation
+
     #If we end-up doing the data population in migrations, it'll depend on loaded data
     # from the data-preparation service
     #healthcheck: # This is to ensure data is available before running migrations
