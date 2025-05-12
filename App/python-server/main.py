@@ -4,6 +4,7 @@ from controllers.auth_controller import router as auth_router
 from controllers.auth_controller import create_jwt_middleware
 from controllers.data_controller import router as external_api_router
 from utils.scheduled_tasks import shutdown_scheduler  # Import the shutdown function to clean up the scheduler
+from pydantic import ValidationError
 
 
 # Public routes that do not require authentication
@@ -33,7 +34,9 @@ app.include_router(external_api_router)
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://localhost:5173", "http://localhost:5173"],  # Allow requests from this origin
+    allow_origins=["https://localhost:5173",
+                    "http://localhost:5173",
+                    "http://testserver"],  # Allow requests from this origin
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers

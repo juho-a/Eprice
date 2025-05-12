@@ -101,3 +101,20 @@ services:
     #  timeout: 5s
     #  retries: 3
     #  start_period: 30s
+
+  backend-tests:
+    build:
+      context: ./backend-tests
+    network_mode: host
+    depends_on:
+      - database
+    env_file:
+      - ./project.env
+    volumes:
+      - ./backend-tests/tests:/app/tests
+      - ./python-server:/app/python-server
+    environment:
+      - PYTHONPATH=/app/python-server
+    profiles:
+      - backend-tests
+    #command: ["pytest", "tests"]
