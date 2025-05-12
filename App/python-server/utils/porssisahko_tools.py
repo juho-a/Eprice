@@ -76,6 +76,100 @@ async def insert_porssisahko_entry(database_url: str, entry: dict):
         print(f"Unexpected error: {e}")
         raise # NOTE: we get more granular error information this way
     finally:
-        # Ensure the connection is closed if it was successfully opened
+        if conn: # has to be checked here --  trying to close a None connection will raise an error
+            await conn.close()
+
+async def insert_porssisahko_entries(database_url: str, entries: list):
+    """
+    Inserts multiple entries into the porssisahko table using asyncpg.
+
+    Args:
+        database_url (str): The database connection URL.
+        entries (list[dict]): A list of dictionaries containing the data to insert.
+    """
+    conn = None
+    try:
+        # Attempt to connect to the database
+        conn = await asyncpg.connect(database_url)
+
+        # Prepare the insert query
+        insert_query = """
+            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ON CONFLICT (Datetime) DO NOTHING
+        """
+        # Create a list of tuples for the entries
+        values = [
+            (
+                entry["Datetime"],
+                entry["Date"],
+                entry["Year"],
+                entry["Month"],
+                entry["Day"],
+                entry["Hour"],
+                entry["Weekday"],
+                entry["Price"]
+            )
+            for entry in entries
+        ]
+        
+        # Execute the insert query with the list of values
+        await conn.executemany(insert_query, values)
+    except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
+        raise
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise
+    finally:
+        if conn:
+            await conn.close()
+            
+async def get_missing_porssisahko_entries(database_url: str, start_date: str, end_date: str):
+    """
+    Retrieves missing entries from the porssisahko table between two dates.
+
+    Args:
+        database_url (str): The database connection URL.
+        start_date (str): The start date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
+        end_date (str): The end date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
+
+    Returns:
+        list[tuple]: A list of tuples where each tuple contains the date (YYYY-MM-DD) and hour (0-23).
+    """
+    conn = None
+    try:
+        conn = await asyncpg.connect(database_url)
+
+        # Execute the query to find missing entries
+        rows = await conn.fetch(
+            """
+            WITH date_range AS (
+                SELECT generate_series(
+                    $1::TIMESTAMP,
+                    $2::TIMESTAMP,
+                    '1 hour'::INTERVAL
+                ) AS Datetime
+            )
+            SELECT dr.Datetime
+            FROM date_range dr
+            LEFT JOIN porssisahko p ON dr.Datetime = p.Datetime
+            WHERE p.Datetime IS NULL
+            """,
+            start_date,
+            end_date
+        )
+
+        return [
+            (row["Datetime"].strftime("%Y-%m-%d"), row["Datetime"].hour)
+            for row in rows
+        ]
+    except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
+        raise
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise
+    finally:
         if conn:
             await conn.close()
