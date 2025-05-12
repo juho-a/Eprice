@@ -5,7 +5,7 @@ from typing import List
 from dotenv import load_dotenv
 import os
 from models.data_model import *
-from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 load_dotenv(dotenv_path="./.env.local")
@@ -166,7 +166,33 @@ async def fetch_price_data_latest():
     except Exception as e:
         return {"error": f"Failed to fetch price data: {str(e)}"}
     
-    return data
+    return [PriceDataPoint(**item) for item in data]
 
 
+from models.data_model import PriceDataPoint
+from typing import List
+
+async def fetch_price_data_today() -> List[PriceDataPoint]:
+    """
+    Fetches today's electricity price data and returns it as a list of PriceDataPoint models.
+
+    Returns:
+        List[PriceDataPoint]: A list of price data points for today.
+    """
+    data = await fetch_price_data_latest()
+
+    # Get the current date in Finland's timezone
+    now_fi = datetime.now(ZoneInfo("Europe/Helsinki"))
+    today_fi = now_fi.date()
+
+    # Filter data for today's date
+    filtered_data = [
+        item for item in data
+        if datetime.fromisoformat(item.startDate.replace("Z", "+00:00"))
+           .astimezone(ZoneInfo("Europe/Helsinki"))
+           .date() == today_fi
+    ]
+
+    # Convert filtered data to PriceDataPoint models
+    return [PriceDataPoint(**item.dict()) for item in filtered_data]
 
