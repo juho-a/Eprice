@@ -41,7 +41,7 @@ scheduler.add_job(fetch_and_insert_porssisahko_data_sync, trigger)
 scheduler.start()
 
 # Ensure the scheduler shuts down properly on application exit
-def shutdown_scheduler(*args):
+def shutdown_scheduler():
     print("Shutting down scheduler...")
     scheduler.shutdown()
 
