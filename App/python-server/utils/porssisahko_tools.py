@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import asyncpg
 from config.secrets import DATABASE_URL
 
@@ -119,6 +119,7 @@ async def get_porssisahko_entries(start_date: str, end_date: str, select_columns
         if conn:
             await conn.close()
 
+
 def convert_to_porssisahko_entry(price, iso_date, predicted=False):
     """
     Converts a price and ISO 8601 date into a dictionary for the porssisahko table.
@@ -133,24 +134,24 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
         ValueError: If the ISO date is not in the correct format.
     """
     try:
-        # Parse the ISO 8601 date
+        # Juho: we'll later make the formats more precise and succinct
+        # Now there's some needless formatting to make the api play nice with the database
         dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
 
-        # Extract the weekday
-        weekday = dt.weekday()
+        # Convert to offset-naive datetime (db doesn't like tz's)
+        dt_naive = dt.replace(tzinfo=None)
 
-        # Format Datetime and Date fields
-        datetime_str = dt.strftime(f"%Y-%m-%d {dt.hour:02d}:00:00")  # "YYYY-MM-DD HH:00:00"
-        date_str = dt.strftime("%Y-%m-%d")  # "YYYY-MM-DD"
+        # Extract the weekday
+        weekday = dt_naive.weekday()
 
         # Return the dictionary
         return {
-            "Datetime": datetime_str,
-            "Date": date_str,
-            "Year": dt.year,
-            "Month": dt.month,
-            "Day": dt.day,
-            "Hour": dt.hour,
+            "Datetime": dt_naive,  # Use offset-naive datetime
+            "Date": dt_naive.date(),  # Extract the date part
+            "Year": dt_naive.year,
+            "Month": dt_naive.month,
+            "Day": dt_naive.day,
+            "Hour": dt_naive.hour,
             "Weekday": weekday,
             "Price": price,
             "Predicted": predicted
@@ -158,6 +159,7 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
     except ValueError as e:
         # Handle invalid date format or parsing errors
         raise ValueError(f"Invalid ISO date format: {iso_date}. Error: {e}")
+
 
 async def insert_porssisahko_entry(entry: dict):
     """
