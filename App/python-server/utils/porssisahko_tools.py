@@ -2,139 +2,42 @@ from datetime import datetime
 import asyncpg
 from config.secrets import DATABASE_URL
 
-def convert_to_porssisahko_entry(price, iso_date, predicted=False):
-    """
-    Converts a price and ISO 8601 date into a dictionary for the porssisahko table.
-
-    Args:
-        price (float): The price value.
-        iso_date (str): The date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
-        predicted (bool): Indicates if the price is predicted. Default is False.
-        If True, the price is considered a prediction.
-        If False, the price is considered an actual value (historical).
-
-    Returns:
-        dict: A dictionary with keys: Datetime, Date, Year, Month, Day, Hour, Weekday, Price, Predicted.
-    """
-    # Parse the ISO 8601 date
-    dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
-
-    # Extract the weekday
-    weekday = dt.weekday()
-
-    # Format Datetime and Date fields
-    datetime_str = dt.strftime(f"%Y-%m-%d {dt.hour:02d}:00:00")  # "YYYY-MM-DD HH:00:00"
-    date_str = dt.strftime("%Y-%m-%d")  # "YYYY-MM-DD"
-
-    # Return the dictionary
-    return {
-        "Datetime": datetime_str,
-        "Date": date_str,
-        "Year": dt.year,
-        "Month": dt.month,
-        "Day": dt.day,
-        "Hour": dt.hour,
-        "Weekday": weekday,
-        "Price": price,
-        "Predicted": predicted
-    }
-
-async def insert_porssisahko_entry(entry: dict):
-    """
-    Inserts a single entry into the porssisahko table using asyncpg.
-
-    Args:
-        database_url (str): The database connection URL.
-        entry (dict): A dictionary containing the data to insert.
-    """
-    conn = None
-    try:
-        # Attempt to connect to the database
-        conn = await asyncpg.connect(DATABASE_URL)
-
-        # Execute the insert query
-        await conn.execute(
-            """
-            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            ON CONFLICT (Datetime) DO NOTHING
-            """,
-            entry["Datetime"],
-            entry["Date"],
-            entry["Year"],
-            entry["Month"],
-            entry["Day"],
-            entry["Hour"],
-            entry["Weekday"],
-            entry["Price"]
-        )
-    except asyncpg.PostgresError as e:
-        # Handle database-related errors
-        print(f"Database error: {e}")
-        raise # NOTE: Juho, this will propagate the error to the caller
-    except Exception as e:
-        # Handle other unexpected errors
-        print(f"Unexpected error: {e}")
-        raise # NOTE: we get more granular error information this way
-    finally:
-        if conn: # has to be checked here --  trying to close a None connection will raise an error
-            await conn.close()
-
-async def insert_porssisahko_entries(entries: list):
+async def insert_into_porssisahko_table(entries: list, predicted: bool = False):
     """
     Inserts multiple entries into the porssisahko table.
-
+    
     Args:
         entries (list[dict]): A list of dictionaries containing the data to insert.
+        Each dictionary should have 'price' and 'startDate' keys. 
+        They might also have 'endDate' key, but it is not used in this function.
+        predicted (bool): Indicates if the entries are predicted. Default is False.
+        NOTE: the predicted flag is for future use, and is not used in the current implementation.
+    Returns:
+        None    
+    Raises:
+        asyncpg.PostgresError: If there is an error with the database operation.
+        Exception: If there is an unexpected error.
     """
-    conn = None
-    try:
-        # Attempt to connect to the database
-        conn = await asyncpg.connect(DATABASE_URL)
+    # Convert each entry to the appropriate format
+    formatted_entries = [
+        convert_to_porssisahko_entry(entry["price"], entry["startDate"], predicted=predicted)
+        for entry in entries
+    ]
 
-        # Prepare the insert query
-        insert_query = """
-            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            ON CONFLICT (Datetime) DO NOTHING
-        """
-        # Create a list of tuples for the entries
-        values = [
-            (
-                entry["Datetime"],
-                entry["Date"],
-                entry["Year"],
-                entry["Month"],
-                entry["Day"],
-                entry["Hour"],
-                entry["Weekday"],
-                entry["Price"]
-            )
-            for entry in entries
-        ]
-        
-        # Execute the insert query with the list of values
-        await conn.executemany(insert_query, values)
-    except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
-        raise
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        raise
-    finally:
-        if conn:
-            await conn.close()
-            
+    # Insert the entries into the database
+    await insert_porssisahko_entries(formatted_entries)
+
 async def get_missing_porssisahko_entries(start_date: str, end_date: str):
     """
     Retrieves missing entries from the porssisahko table between two dates.
-
     Args:
         start_date (str): The start date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
         end_date (str): The end date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
-
     Returns:
         list[tuple]: A list of tuples where each tuple contains the date (YYYY-MM-DD) and hour (0-23).
+    Raises:
+        asyncpg.PostgresError: If there is an error with the database operation.
+        Exception: If there is an unexpected error.
     """
     conn = None
     try:
@@ -183,6 +86,9 @@ async def get_porssisahko_entries(start_date: str, end_date: str, select_columns
         select_columns (str): The columns to select from the table. Default is "*".
     Returns:
         list[dict]: A list of dictionaries containing the data for each entry.
+    Raises:
+        asyncpg.PostgresError: If there is an error with the database operation.
+        Exception: If there is an unexpected error.
     """
     conn = None
     try:
@@ -212,3 +118,140 @@ async def get_porssisahko_entries(start_date: str, end_date: str, select_columns
     finally:
         if conn:
             await conn.close()
+
+def convert_to_porssisahko_entry(price, iso_date, predicted=False):
+    """
+    Converts a price and ISO 8601 date into a dictionary for the porssisahko table.
+
+    Args:
+        price (float): The price value.
+        iso_date (str): The date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
+        predicted (bool): Indicates if the price is predicted. Default is False.
+    Returns:
+        dict: A dictionary with keys: Datetime, Date, Year, Month, Day, Hour, Weekday, Price, Predicted.
+    Raises:
+        ValueError: If the ISO date is not in the correct format.
+    """
+    try:
+        # Parse the ISO 8601 date
+        dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
+
+        # Extract the weekday
+        weekday = dt.weekday()
+
+        # Format Datetime and Date fields
+        datetime_str = dt.strftime(f"%Y-%m-%d {dt.hour:02d}:00:00")  # "YYYY-MM-DD HH:00:00"
+        date_str = dt.strftime("%Y-%m-%d")  # "YYYY-MM-DD"
+
+        # Return the dictionary
+        return {
+            "Datetime": datetime_str,
+            "Date": date_str,
+            "Year": dt.year,
+            "Month": dt.month,
+            "Day": dt.day,
+            "Hour": dt.hour,
+            "Weekday": weekday,
+            "Price": price,
+            "Predicted": predicted
+        }
+    except ValueError as e:
+        # Handle invalid date format or parsing errors
+        raise ValueError(f"Invalid ISO date format: {iso_date}. Error: {e}")
+
+async def insert_porssisahko_entry(entry: dict):
+    """
+    Inserts a single entry into the porssisahko table using asyncpg.
+
+    Args:
+        database_url (str): The database connection URL.
+        entry (dict): A dictionary containing the data to insert.
+    Returns:
+        None
+    Raises:
+        asyncpg.PostgresError: If there is an error with the database operation.
+        Exception: If there is an unexpected error.
+    """
+    conn = None
+    try:
+        # Attempt to connect to the database
+        conn = await asyncpg.connect(DATABASE_URL)
+
+        # Execute the insert query
+        await conn.execute(
+            """
+            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ON CONFLICT (Datetime) DO NOTHING
+            """,
+            entry["Datetime"],
+            entry["Date"],
+            entry["Year"],
+            entry["Month"],
+            entry["Day"],
+            entry["Hour"],
+            entry["Weekday"],
+            entry["Price"]
+        )
+    except asyncpg.PostgresError as e:
+        # Handle database-related errors
+        print(f"Database error: {e}")
+        raise # NOTE: Juho, this will propagate the error to the caller
+    except Exception as e:
+        # Handle other unexpected errors
+        print(f"Unexpected error: {e}")
+        raise # NOTE: we get more granular error information this way
+    finally:
+        if conn: # has to be checked here --  trying to close a None connection will raise an error
+            await conn.close()
+
+async def insert_porssisahko_entries(entries: list):
+    """
+    Inserts multiple entries into the porssisahko table.
+
+    Args:
+        entries (list[dict]): A list of dictionaries containing the data to insert.
+    Returns:
+        None
+    Raises:
+        asyncpg.PostgresError: If there is an error with the database operation.
+        Exception: If there is an unexpected error.
+    """
+    conn = None
+    try:
+        # Attempt to connect to the database
+        conn = await asyncpg.connect(DATABASE_URL)
+
+        # Prepare the insert query
+        insert_query = """
+            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ON CONFLICT (Datetime) DO NOTHING
+        """
+        # Create a list of tuples for the entries
+        values = [
+            (
+                entry["Datetime"],
+                entry["Date"],
+                entry["Year"],
+                entry["Month"],
+                entry["Day"],
+                entry["Hour"],
+                entry["Weekday"],
+                entry["Price"]
+            )
+            for entry in entries
+        ]
+        
+        # Execute the insert query with the list of values
+        await conn.executemany(insert_query, values)
+    except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
+        raise
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise
+    finally:
+        if conn:
+            await conn.close()
+            
