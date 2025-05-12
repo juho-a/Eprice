@@ -20,7 +20,7 @@ def fetch_and_insert_porssisahko_data():
     except requests.RequestException as e:
         print(f"Error fetching data from the API: {e}")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        print(f"Non-API error: {e}")
 
 # Set up the scheduler
 scheduler = BackgroundScheduler()
