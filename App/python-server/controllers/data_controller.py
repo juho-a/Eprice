@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
-from services.data_service import fetch_fingrid_data, fetch_weather_data, fetch_fingrid_data_range, fetch_price_data_range, fetch_price_data_latest
+from services.data_service import *
 from pydantic import RootModel
 from typing import List
 import httpx
@@ -156,11 +156,17 @@ async def post_price_range(time_range: TimeRangeRequest):
 
 
 
-@router.get("/api/public/data")
+@router.get("/api/public/data", response_model=List[PriceDataPoint])
 async def get_prices():
     try:
         return await fetch_price_data_latest()
     except Exception as e:
         return {"error": e}
-    
 
+@router.get("/api/public/data/today", response_model=List[PriceDataPoint])
+async def get_prices_today():
+    try:
+        return await fetch_price_data_today()
+    except Exception as e:
+        return {"error": e}
+    

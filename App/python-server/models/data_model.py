@@ -10,12 +10,6 @@ class TimeRangeRequest(BaseModel):
         description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)"
     )
 
-class DataPoint(BaseModel):
-    startTime: str = Field(..., example="2025-05-08T04:00:00.000Z")
-    endTime: str = Field(..., example="2025-05-08T04:15:00.000Z")
-    value: float = Field(..., example=7883.61)
-
-
 class WeatherRequest(BaseModel):
     lat: float = Field(..., description="Latitude", example=60.1699)
     lon: float = Field(..., description="Longitude", example=24.9384)
@@ -30,6 +24,10 @@ class PriceData(BaseModel):
     time: str = Field(..., example="2025-05-08T04:00:00.000Z")
     price: float = Field(..., example=10.01)
 
+class DataPoint(BaseModel):
+    startTime: str = Field(..., example="2025-05-08T04:00:00.000Z")
+    endTime: str = Field(..., example="2025-05-08T04:15:00.000Z")
+    value: float = Field(..., example=7883.61)
 
 # Define a model for Fingrid data
 class FingridData(BaseModel):
@@ -46,9 +44,9 @@ class FingridData(BaseModel):
         description="Value of the data point"
     )
 
-class newDataPoint(BaseModel):
-    startTime: str = Field(..., example="2025-05-08T04:00:00.000Z")
-    value: float = Field(..., example=7883.61)
+class PriceDataPoint(BaseModel):
+    startDate: str = Field(..., description="UTC datetime in RFC 3339 format", example="2025-05-08T04:00:00.000Z")
+    price: float = Field(..., description="Floating-point number representing the price in euro cents", example=0.61)
 
 # Define a model for error responses
 class ErrorResponse(BaseModel):
