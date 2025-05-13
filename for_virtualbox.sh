@@ -33,3 +33,7 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 cat ~/.ssh/id_ed25519.pub | xclip
 # Now save the pub key to github keys
+
+git clone git@github.com:wumpfroot/Eprice.git
+
+
