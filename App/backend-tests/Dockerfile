@@ -7,6 +7,7 @@ WORKDIR /app
 COPY ./tests /app/tests
 
 COPY ./pyproject.toml /app/pyproject.toml
+COPY ./pytest.ini /app/pytest.ini
 
 # Add python-server to PYTHONPATH
 ENV PYTHONPATH="/app/python-server:$PYTHONPATH"
