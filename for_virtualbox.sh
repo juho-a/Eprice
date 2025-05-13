@@ -36,4 +36,7 @@ cat ~/.ssh/id_ed25519.pub | xclip
 
 git clone git@github.com:wumpfroot/Eprice.git
 
+cd Eprice/App/client
+deno install --allow-sctips
+
 
