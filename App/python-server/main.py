@@ -21,8 +21,6 @@ public_routes = [
     "/api/public/weather/range",
     "/api/public/windpower",
     "/api/public/windpower/range",
-    "/api/public/windpower/range/kokeilu",
-    "/api/public/windpower/kokeilu",
     "/api/public/consumption",
     "/api/public/consumption/range",
     "/api/public/production",

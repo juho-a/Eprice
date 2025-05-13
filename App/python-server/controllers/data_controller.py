@@ -15,44 +15,6 @@ fingrid_data_service = FingridDataService()
 price_data_service = PriceDataService()
 
 
-@router.get("/api/public/windpower/kokeilu", response_model=RootModel[DataPoint])
-async def get_windpower():
-    """
-    Get wind power production forecast.
-    Fetches forecast data from Fingrid dataset ID 245.
-
-    Returns:
-        dict: A data point or an error message.
-    """
-    try:
-        return await fingrid_data_service(dataset_id=245)
-    except Exception as e:
-        return {"error":e}
-
-
-@router.post("/api/public/windpower/range/kokeilu", response_model=RootModel[List[DataPoint]])
-async def post_windpower_range(time_range: TimeRangeRequest):
-    """
-    Get wind power production data for a given time range.
-    Fetches data from Fingrid dataset ID 245.
-
-    Args:
-        time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
-
-    Returns:
-        list[dict]: A list of data points or an error message.
-    """
-    try:
-        return await fingrid_data_service.fingrid_data_range(
-            dataset_id=245,
-            start_time=time_range.startTime,
-            end_time=time_range.endTime)
-    except Exception as e:
-        return {"error":e}
-
-
-
-
 @router.get("/api/public/windpower", response_model=RootModel[DataPoint])
 async def get_windpower():
     """
