@@ -25,3 +25,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install ./google-chrome*.deb
+sudo apt install xclip
+
+# for git
+ssh-keygen -t ed25519 -C "paavo.reinikka@proton.me"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub | xclip
+# Now save the pub key to github keys
