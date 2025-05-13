@@ -1,4 +1,21 @@
 from datetime import datetime
+import asyncpg
+import time
+
+async def wait_for_database(database_url):
+    max_retries = 10
+    retry_delay = 5  # seconds
+    for attempt in range(max_retries):
+        try:
+            conn = await asyncpg.connect(database_url)
+            await conn.close()
+            print("Database is ready.")
+            return
+        except Exception as e:
+            print(f"Database not ready (attempt {attempt + 1}/{max_retries}): {e}")
+            time.sleep(retry_delay)
+    raise Exception("Database is not ready after multiple attempts.")
+
 
 def convert_to_porssisahko_entry(price, iso_date, predicted=False):
     """

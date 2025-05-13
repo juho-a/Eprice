@@ -9,8 +9,13 @@ services:
       - 5432:5432 # Only for development/debugging
     environment:
       - TZ=Europe/Helsinki  # Set the timezone
-    #volumes:
-    #  - ./data-preparation/data:/data #let's keep this, so we can do manual inserts also
+    volumes:
+      - ./data-preparation/data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   database-migrations:
     image: flyway/flyway:10
@@ -19,10 +24,8 @@ services:
     depends_on:
       database:
         condition: service_started
-      #data-preparation:
-      #  condition: service_healthy
     volumes:
-      #- ./data-preparation/data:/data
+      - ./data-preparation/data:/data
       - ./database-migrations:/flyway/sql
     command: -connectRetries=60 -baselineOnMigrate=true migrate
       
@@ -57,7 +60,9 @@ services:
     env_file:
       - project.env
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      #- database
     environment:
       - TZ=Europe/Helsinki  # Set the timezone
 
@@ -76,12 +81,16 @@ services:
     profiles:
       - chat-engine
 
+  # This service is for updating the database with data from external sources
+  # It will be run manually when needed. Any known and constant data should be
+  # added to the database using migrations. Only fresh data that is not
+  # available in the database should be added using this service.
   data-preparation:
     build:
       context: ./data-preparation/scripts  # Here be Dockerfile
     volumes:
       - ./data-preparation/data:/data
-      - ./data-preparation/scripts:/scripts # remove for production
+      - ./data-preparation/scripts:/scripts
     working_dir: /scripts # this is already done in the Dockerfile (remove for production)
     env_file:
       - ./project.env
