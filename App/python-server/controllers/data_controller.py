@@ -11,6 +11,46 @@ router = APIRouter()
 fingrid_api_servie = FetchFingridData()
 weather_api_service = FetchWeatherData()
 price_api_service = FetchPriceData()
+fingrid_data_service = FingridDataService()
+price_data_service = PriceDataService()
+
+
+@router.get("/api/public/windpower/kokeilu", response_model=RootModel[DataPoint])
+async def get_windpower():
+    """
+    Get wind power production forecast.
+    Fetches forecast data from Fingrid dataset ID 245.
+
+    Returns:
+        dict: A data point or an error message.
+    """
+    try:
+        return await fingrid_data_service(dataset_id=245)
+    except Exception as e:
+        return {"error":e}
+
+
+@router.post("/api/public/windpower/range/kokeilu", response_model=RootModel[List[DataPoint]])
+async def post_windpower_range(time_range: TimeRangeRequest):
+    """
+    Get wind power production data for a given time range.
+    Fetches data from Fingrid dataset ID 245.
+
+    Args:
+        time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
+
+    Returns:
+        list[dict]: A list of data points or an error message.
+    """
+    try:
+        return await fingrid_data_service.fingrid_data_range(
+            dataset_id=245,
+            start_time=time_range.startTime,
+            end_time=time_range.endTime)
+    except Exception as e:
+        return {"error":e}
+
+
 
 
 @router.get("/api/public/windpower", response_model=RootModel[DataPoint])
@@ -41,7 +81,7 @@ async def post_windpower_range(time_range: TimeRangeRequest):
         list[dict]: A list of data points or an error message.
     """
     try:
-        return await fingrid_api_servie.fetch_fingrid_data_range(
+        return await fingrid_data_service.fingrid_data_range(
             dataset_id=245,
             start_time=time_range.startTime,
             end_time=time_range.endTime)
@@ -78,7 +118,7 @@ async def post_consumption_range(time_range: TimeRangeRequest):
         list[dict]: A list of data points or an error message.
     """
     try:
-        return await fingrid_api_servie.FetchFingridDataRange.fetch_fingrid_data_range(
+        return await fingrid_data_service.fingrid_data_range(
             dataset_id=165,
             start_time=time_range.startTime,
             end_time=time_range.endTime
@@ -113,11 +153,14 @@ async def post_production_range(time_range: TimeRangeRequest):
     Returns:
         list[dict]: A list of data points or an error message.
     """
-    return await fingrid_api_servie.FetchFingridDataRange.fetch_fingrid_data_range(
-        dataset_id=241,
-        start_time=time_range.startTime,
-        end_time=time_range.endTime
-    )
+    try:
+        return await fingrid_data_service.fingrid_data_range(
+            dataset_id=241,
+            start_time=time_range.startTime,
+            end_time=time_range.endTime
+        )
+    except Exception as e:
+        return {"error":e}
 
 @router.post("/api/public/weather", response_model=RootModel[WeatherDataPoint])
 async def post_weather(request: WeatherRequest):
@@ -133,10 +176,9 @@ async def post_weather(request: WeatherRequest):
     """
     try:
         requested_dt = datetime.fromisoformat(request.timestamp.replace("Z", "+00:00")).replace(tzinfo=timezone.utc)
-        return await weather_api_service.fetch_weather_data(request.lat, request.lon, requested_dt)
+        return await WeatherdDataService.weather_data(request.lat, request.lon, requested_dt)
     except Exception as e:
         return {"error":e}
-
 
 
 @router.post("/api/public/price/range", response_model=List[PriceDataPoint])
@@ -152,23 +194,22 @@ async def post_price_range(time_range: TimeRangeRequest):
     """
 
     try:
-        return await price_api_service.fetch_price_data_range(time_range.startTime, time_range.endTime)
+        return await price_data_service.price_data_range(time_range.startTime, time_range.endTime)
     except Exception as e:
         return {"error":e}
-
 
 
 @router.get("/api/public/data", response_model=List[PriceDataPoint])
 async def get_prices():
     try:
-        return await price_api_service.fetch_price_data_latest()
+        return await price_data_service.price_data_latest()
     except Exception as e:
         return {"error": e}
 
 @router.get("/api/public/data/today", response_model=List[PriceDataPoint])
 async def get_prices_today():
     try:
-        return await price_api_service.fetch_price_data_today()
+        return await price_data_service.price_data_today()
     except Exception as e:
         return {"error": e}
     

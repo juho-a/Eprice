@@ -5,6 +5,64 @@
         "version": "0.1.0"
     },
     "paths": {
+        "/api/public/windpower/kokeilu": {
+            "get": {
+                "summary": "Get Windpower",
+                "description": "Get wind power production forecast.\nFetches forecast data from Fingrid dataset ID 245.\n\nReturns:\n    dict: A data point or an error message.",
+                "operationId": "get_windpower_api_public_windpower_kokeilu_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_DataPoint_"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/windpower/range/kokeilu": {
+            "post": {
+                "summary": "Post Windpower Range",
+                "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
+                "operationId": "post_windpower_range_api_public_windpower_range_kokeilu_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TimeRangeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_List_DataPoint__"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/public/windpower": {
             "get": {
                 "summary": "Get Windpower",
