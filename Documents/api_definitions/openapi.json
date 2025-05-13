@@ -5,6 +5,64 @@
         "version": "0.1.0"
     },
     "paths": {
+        "/api/public/windpower/kokeilu": {
+            "get": {
+                "summary": "Get Windpower",
+                "description": "Get wind power production forecast.\nFetches forecast data from Fingrid dataset ID 245.\n\nReturns:\n    dict: A data point or an error message.",
+                "operationId": "get_windpower_api_public_windpower_kokeilu_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_DataPoint_"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/windpower/range/kokeilu": {
+            "post": {
+                "summary": "Post Windpower Range",
+                "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
+                "operationId": "post_windpower_range_api_public_windpower_range_kokeilu_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TimeRangeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RootModel_List_DataPoint__"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/public/windpower": {
             "get": {
                 "summary": "Get Windpower",
@@ -240,7 +298,7 @@
                             "application/json": {
                                 "schema": {
                                     "items": {
-                                        "$ref": "#/components/schemas/PriceData"
+                                        "$ref": "#/components/schemas/PriceDataPoint"
                                     },
                                     "type": "array",
                                     "title": "Response Post Price Range Api Public Price Range Post"
@@ -264,14 +322,41 @@
         "/api/public/data": {
             "get": {
                 "summary": "Get Prices",
-                "description": "Get hourly electricity prices from external API.\n\nFetches latest hourly prices and formats them for charting.\n\nReturns:\n    dict: Contains chart legend, type, values (snt/kWh), labels (hours), and status message.",
                 "operationId": "get_prices_api_public_data_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PriceDataPoint"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Prices Api Public Data Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/data/today": {
+            "get": {
+                "summary": "Get Prices Today",
+                "operationId": "get_prices_today_api_public_data_today_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PriceDataPoint"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Prices Today Api Public Data Today Get"
+                                }
                             }
                         }
                     }
@@ -365,23 +450,6 @@
                     }
                 }
             }
-        },
-        "/api/data": {
-            "get": {
-                "summary": "Get Data",
-                "description": "Example data endpoint\nReturns:\n    dict: A dictionary containing example data for the chart.\n    dict has the following keys:\n        - chartType: str, type of chart (e.g., 'bar', 'line', etc.), default is 'bar'\n        - chartValues: list of int\n        - chartLabels: list of str\n\n            chartValues = [20, 10, 5, 2, 20, 30, 45];\n            chartLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];",
-                "operationId": "get_data_api_data_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
         }
     },
     "components": {
@@ -425,25 +493,27 @@
                 "type": "object",
                 "title": "HTTPValidationError"
             },
-            "PriceData": {
+            "PriceDataPoint": {
                 "properties": {
-                    "time": {
+                    "startDate": {
                         "type": "string",
-                        "title": "Time",
+                        "title": "Startdate",
+                        "description": "UTC datetime in RFC 3339 format",
                         "example": "2025-05-08T04:00:00.000Z"
                     },
                     "price": {
                         "type": "number",
                         "title": "Price",
-                        "example": 10.01
+                        "description": "Floating-point number representing the price in euro cents",
+                        "example": 0.61
                     }
                 },
                 "type": "object",
                 "required": [
-                    "time",
+                    "startDate",
                     "price"
                 ],
-                "title": "PriceData"
+                "title": "PriceDataPoint"
             },
             "RootModel_DataPoint_": {
                 "$ref": "#/components/schemas/DataPoint",
