@@ -8,11 +8,9 @@ from models.data_model import *
 
 
 router = APIRouter()
-fingrid_api_servie = FetchFingridData()
-weather_api_service = FetchWeatherData()
-price_api_service = FetchPriceData()
 fingrid_data_service = FingridDataService()
 price_data_service = PriceDataService()
+weather_data_service = WeatherdDataService()
 
 
 @router.get("/api/public/windpower", response_model=RootModel[DataPoint])
@@ -25,7 +23,7 @@ async def get_windpower():
         dict: A data point or an error message.
     """
     try:
-        return await fingrid_api_servie.fetch_fingrid_data(dataset_id=245)
+        return await fingrid_data_service.fingrid_data(dataset_id=245)
     except Exception as e:
         return {"error":e}
 
@@ -62,7 +60,7 @@ async def get_consumption():
         dict: A data point or an error message.
     """
     try:
-        return await fingrid_api_servie.fetch_fingrid_data(dataset_id=165)
+        return await fingrid_data_service.fingrid_data(dataset_id=165)
     except Exception as e:
         return {"error":e}
 
@@ -99,7 +97,7 @@ async def get_production():
         dict: A data point or an error message.
     """
     try:
-        return await fingrid_api_servie.fetch_fingrid_data(dataset_id=241)
+        return await fingrid_data_service.fingrid_data(dataset_id=241)
     except Exception as e:
         return {"error":e}
 
@@ -138,7 +136,7 @@ async def post_weather(request: WeatherRequest):
     """
     try:
         requested_dt = datetime.fromisoformat(request.timestamp.replace("Z", "+00:00")).replace(tzinfo=timezone.utc)
-        return await WeatherdDataService.weather_data(request.lat, request.lon, requested_dt)
+        return await weather_data_service.weather_data(request.lat, request.lon, requested_dt)
     except Exception as e:
         return {"error":e}
 
