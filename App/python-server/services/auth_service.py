@@ -4,9 +4,6 @@ from datetime import datetime, timedelta
 from repositories.user_repository import UserRepository
 from config.secrets import JWT_SECRET, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
-# There is a harmful deprecation warning in passlib that is not relevant to our use case
-import warnings
-warnings.filterwarnings("ignore", module="passlib")
 
 class AuthService:
     def __init__(self, user_repository: UserRepository):

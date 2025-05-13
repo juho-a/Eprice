@@ -9,7 +9,6 @@ from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 
 from pydantic import ValidationError
 
-
 # Public routes that do not require authentication
 # These routes can be accessed without a valid JWT token
 public_routes = [

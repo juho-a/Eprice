@@ -7,9 +7,13 @@ WORKDIR /app
 # Copy the requirements file into the container
 COPY requirements.txt .
 
+RUN pip install --upgrade pip
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+#RUN pip install --upgrade passlib
+# incompatibility issues with new bcrypt (revert to old version)
+RUN pip install bcrypt==3.2.0
 # Copy the rest of the application code into the container
 COPY . .
 
