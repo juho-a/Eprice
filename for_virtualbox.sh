@@ -40,3 +40,7 @@ cd Eprice/App/client
 deno install --allow-sctips
 
 sudo apt install tmux
+
+# RUN E2E-TESTS: docker compose run --rm --entrypoint=npx e2e-tests playwright test
+# RUN endpoint tests: docker compose --profile backend-tests up (assuming the test container has been built)
+
