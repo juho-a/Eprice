@@ -20,7 +20,7 @@ class WeatherDataPoint(BaseModel):
     wind_speed_mps: float = Field(..., example=2.2)
     closest_forecast_time: str = Field(..., example="2025-05-09T16:00:00Z")
 
-class PriceData(BaseModel):
+class PriceDataPoint(BaseModel):
     time: str = Field(..., example="2025-05-08T04:00:00.000Z")
     price: float = Field(..., example=10.01)
 
@@ -30,7 +30,7 @@ class DataPoint(BaseModel):
     value: float = Field(..., example=7883.61)
 
 # Define a model for Fingrid data
-class FingridData(BaseModel):
+class FingridDataPoint(BaseModel):
     startTime: str= Field(
         example="2024-05-01T00:00:00Z",
         description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)"
