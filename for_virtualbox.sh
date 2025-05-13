@@ -39,4 +39,4 @@ git clone git@github.com:wumpfroot/Eprice.git
 cd Eprice/App/client
 deno install --allow-sctips
 
-
+sudo apt install tmux
