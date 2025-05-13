@@ -6,6 +6,7 @@ import re
 class User(BaseModel):
     email: EmailStr  # Ensures the email is valid
     password: str
+    role: Optional[str] = "user"  # Default role is "user"
 
     @field_validator('password')
     def validate_password(cls, password: str) -> str:
