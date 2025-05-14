@@ -92,24 +92,17 @@ services:
       - ./data-preparation/data:/data
       - ./data-preparation/scripts:/scripts
     working_dir: /scripts # this is already done in the Dockerfile (remove for production)
+    depends_on:
+      - database-migrations
     env_file:
       - ./project.env
     entrypoint: >
       bash -c "
-      ./populate_porssisahko.sh
+      ./retrieve_porssisahko_update.sh
       #tail -f /dev/null # for debugging -- keeps the container running after the script finishes
       "
     profiles:
       - data-preparation
-
-    #If we end-up doing the data population in migrations, it'll depend on loaded data
-    # from the data-preparation service
-    #healthcheck: # This is to ensure data is available before running migrations
-    #  test: ["CMD", "bash", "-c", "if [ -f /data/porssisahko.csv ]; then exit 0; else exit 1; fi"]
-    #  interval: 10s
-    #  timeout: 5s
-    #  retries: 3
-    #  start_period: 30s
 
   backend-tests:
     build:
