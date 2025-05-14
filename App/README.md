@@ -57,7 +57,7 @@ The Eprice App is a containerized application that allows users to view the mark
     ```
 
 2. Build and start the containers:
-    ```
+    ```bash
     docker compose up --build
     ```
 
@@ -68,22 +68,20 @@ The Eprice App is a containerized application that allows users to view the mark
 * To stop the containers:
 
 4. To stop the containers:
-    ```
+    ```bash
     docker compose down
     ```
 
 ### Testing
 
-#### End-to-End Tests
 
-Run Playwright tests:
-    ```
+1. Run Playwright tests:
+    ```bash
     docker compose run --rm --entrypoint=npx e2e-tests playwright test
     ```
-#### Backend Tests
 
-Run Pytest for backend API:
-    ```
+2. Run Pytest for backend API:
+    ```bash
     docker compose run backend-tests pytest
     ```
 
@@ -93,8 +91,7 @@ Run Pytest for backend API:
 
 * Use `project.env` for containerrized development
 
-To inspect environment variables inside a container:
-
+* To inspect environment variables inside a container:
     ```bash
     docker exec -it <container_name> bash
     printenv
@@ -188,7 +185,7 @@ docker exec -it <container_name> bash # go into cmdline inside
 (container): printenv # or echo etc.
 ```
 
-And note that the container names are not necessarily same as the service name (they are derived from it though); you can check running cont's with `docker [container] ps`.
+And note that the container names are not necessarily same as the service name (they are derived from it though); you can check running cont's with `docker <container> ps`.
 
 ### Running without Docker
 
