@@ -65,7 +65,6 @@ The Eprice App is a containerized application that allows users to view the mark
 
 * Frontend: http://localhost:5173
 * Backend: http://localhost:8000
-* To stop the containers:
 
 4. To stop the containers:
     ```bash
