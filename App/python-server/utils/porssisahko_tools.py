@@ -43,15 +43,15 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
 
         # Return the dictionary
         return {
-            "Datetime": dt_naive,  # Use offset-naive datetime
-            "Date": dt_naive.date(),  # Extract the date part
-            "Year": dt_naive.year,
-            "Month": dt_naive.month,
-            "Day": dt_naive.day,
-            "Hour": dt_naive.hour,
-            "Weekday": weekday,
-            "Price": price,
-            "Predicted": predicted
+            "datetime": dt_naive,  # Use offset-naive datetime
+            "date": dt_naive.date(),  # Extract the date part
+            "year": dt_naive.year,
+            "month": dt_naive.month,
+            "day": dt_naive.day,
+            "hour": dt_naive.hour,
+            "weekday": weekday,
+            "price": price,
+            "predicted": predicted
         }
     except ValueError as e:
         # Handle invalid date format or parsing errors
