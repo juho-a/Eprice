@@ -1,10 +1,9 @@
+
 ## Python FastAPI server template for Eprice app
 
 You need to define `.env` -file for production. The defaults should work for development purposes. See config folder.
 
 * requirements.txt has all the requirements -- if you add more, upodate the requirements.
-
-* this is meant to be launched by docker compose from parent folder.
 
 ### Dockerized
 
