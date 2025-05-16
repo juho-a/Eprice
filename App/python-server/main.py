@@ -9,6 +9,8 @@ from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 
 from config.secrets import public_routes
 
+from chat.engine import gradio_app
+
 app = FastAPI()
 app.include_router(external_api_router)
 
@@ -28,6 +30,8 @@ app.include_router(auth_router)
 # everything that's not in public routes has to have a valid JWT token
 app.middleware("http")(create_jwt_middleware(public_routes))
 
+# Include the chat route
+app.mount("/chat", gradio_app)
 
 @app.on_event("startup")
 async def startup_event():
