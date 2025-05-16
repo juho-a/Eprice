@@ -26,3 +26,24 @@ JWT_SECRET = os.getenv("JWT_SECRET", "wsd-project-secret")  # Default value for 
 ALGORITHM = os.getenv("ALGORITHM", "HS256")  # Default algorithm
 COOKIE_KEY = os.getenv("COOKIE_KEY", "token")  # Default cookie key
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
+
+# Public routes that do not require authentication
+# These routes can be accessed without a valid JWT token
+public_routes = [
+    "/api/public/data",
+    "/api/public/data/today",
+    "/api/auth/login",
+    "/api/auth/register",
+    "/api/latest_prices",
+    "/api/public/weather",
+    "/api/public/weather/range",
+    "/api/public/windpower",
+    "/api/public/windpower/range",
+    "/api/public/consumption",
+    "/api/public/consumption/range",
+    "/api/public/production",
+    "/api/public/production/range",
+    "/api/public/price/range",
+    "/docs",
+    "/openapi.json"
+    ]

@@ -7,28 +7,7 @@ from controllers.data_controller import router as external_api_router
 from utils.scheduled_tasks import shutdown_scheduler  # Import the shutdown function to clean up the scheduler
 from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 
-from pydantic import ValidationError
-
-# Public routes that do not require authentication
-# These routes can be accessed without a valid JWT token
-public_routes = [
-    "/api/public/data",
-    "/api/public/data/today",
-    "/api/auth/login",
-    "/api/auth/register",
-    "/api/latest_prices",
-    "/api/public/weather",
-    "/api/public/weather/range",
-    "/api/public/windpower",
-    "/api/public/windpower/range",
-    "/api/public/consumption",
-    "/api/public/consumption/range",
-    "/api/public/production",
-    "/api/public/production/range",
-    "/api/public/price/range",
-    "/docs",
-    "/openapi.json"
-    ]
+from config.secrets import public_routes
 
 app = FastAPI()
 app.include_router(external_api_router)
