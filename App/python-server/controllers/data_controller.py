@@ -1,19 +1,23 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
-from services.data_service import *
 from pydantic import RootModel
 from typing import List
-from models.data_model import *
-
+from services.data_service import FingridDataService, PriceDataService, WeatherDataService
+from models.data_model import FingridDataPoint, TimeRangeRequest, WeatherRequest, WeatherDataPoint, PriceDataPoint, ErrorResponse
+from fastapi.exceptions import RequestValidationError
 
 router = APIRouter()
 fingrid_data_service = FingridDataService()
 price_data_service = PriceDataService()
-weather_data_service = WeatherdDataService()
+weather_data_service = WeatherDataService()
 
 
-@router.get("/api/public/windpower", response_model=RootModel[DataPoint])
+@router.get(
+    "/api/public/windpower",
+    response_model=RootModel[FingridDataPoint],
+    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+
 async def get_windpower():
     """
     Get wind power production forecast.
@@ -25,10 +29,12 @@ async def get_windpower():
     try:
         return await fingrid_data_service.fingrid_data(dataset_id=245)
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(status_code=500, content={ "error":e})
 
 
-@router.post("/api/public/windpower/range", response_model=RootModel[List[DataPoint]])
+@router.post("/api/public/windpower/range", response_model=RootModel[List[FingridDataPoint]],
+    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+
 async def post_windpower_range(time_range: TimeRangeRequest):
     """
     Get wind power production data for a given time range.
@@ -47,10 +53,12 @@ async def post_windpower_range(time_range: TimeRangeRequest):
             end_time=time_range.endTime)
     except Exception as e:
         return {"error":e}
-    
 
 
-@router.get("/api/public/consumption", response_model=RootModel[DataPoint])
+@router.get("/api/public/consumption",
+    response_model=RootModel[FingridDataPoint],
+    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+
 async def get_consumption():
     """
     Get electricity consumption forecast.
@@ -65,7 +73,9 @@ async def get_consumption():
         return {"error":e}
 
 
-@router.post("/api/public/consumption/range", response_model=RootModel[List[DataPoint]])
+@router.post("/api/public/consumption/range", response_model=RootModel[List[FingridDataPoint]],
+             responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+
 async def post_consumption_range(time_range: TimeRangeRequest):
     """
     Get electricity consumption data for a given time range.
@@ -87,7 +97,10 @@ async def post_consumption_range(time_range: TimeRangeRequest):
         return {"error":e}
 
 
-@router.get("/api/public/production", response_model=RootModel[DataPoint])
+@router.get("/api/public/production",
+    response_model=RootModel[FingridDataPoint],
+    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+
 async def get_production():
     """
     Get electricity production forecast.
@@ -101,7 +114,9 @@ async def get_production():
     except Exception as e:
         return {"error":e}
 
-@router.post("/api/public/production/range", response_model=RootModel[List[DataPoint]])
+@router.post("/api/public/production/range", response_model=RootModel[List[FingridDataPoint]],
+            responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+
 async def post_production_range(time_range: TimeRangeRequest):
     """
     Get electricity production data for a given time range.

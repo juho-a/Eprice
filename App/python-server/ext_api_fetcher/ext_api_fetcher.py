@@ -7,10 +7,13 @@ import os
 from models.data_model import *
 from zoneinfo import ZoneInfo
 from models.data_model import PriceDataPoint
+from fastapi.responses import JSONResponse
 
 
 load_dotenv(dotenv_path="./.env.local")
 FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
+
+
 
 class FetchFingridData:
     async def fetch_fingrid_data(self, dataset_id: int) -> FingridDataPoint | ErrorResponse:
@@ -39,8 +42,12 @@ class FetchFingridData:
                 closest_item.pop("datasetId", None)
                 return FingridDataPoint(**closest_item)
 
+
         except Exception as e:
-            return ErrorResponse(error=f"Failed to fetch data for dataset {dataset_id} from Fingrid API with error: {str(e)}")
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"Failed to fetch data for dataset {dataset_id} from Fingrid API with error: {str(e)}"}
+            )
 
 
     async def fetch_fingrid_data_range(self, dataset_id: int, start_time: str, end_time: str) -> List[FingridDataPoint] | ErrorResponse:
@@ -67,7 +74,10 @@ class FetchFingridData:
                     item.pop("datasetId", None)
                 return [FingridDataPoint(**item) for item in data]
         except Exception as e:
-            return ErrorResponse(error=f"Failed to fetch data for dataset {dataset_id} from Fingrid API: {str(e)}")
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"Failed to fetch data for dataset {dataset_id} from Fingrid API with error: {str(e)}"}
+            )
 
 
 class FetchWeatherData:
@@ -100,9 +110,15 @@ class FetchWeatherData:
             }
 
         except httpx.HTTPStatusError as exc:
-            return {"error": f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}"}
+            return JSONResponse(
+                status_code=exc.response.status_code,
+                content={"error": f"HTTP error occurred: {exc.response.text}"}
+            )
         except Exception as e:
-            return {"error": f"Unexpected error occurred: {str(e)}"}
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"Unexpected error occurred: {str(e)}"}
+            )
         
 
 class FetchPriceData:
@@ -141,7 +157,10 @@ class FetchPriceData:
                     else:
                         print(f"No data returned for {date_str} {hour_str}")
             except Exception as e:
-                return {"error": f"Failed to fetch price data: {str(e)}"}
+                return JSONResponse(
+                    status_code=500,
+                    content={"error": f"Unexpected error occurred: {str(e)}"}
+                )
 
             current_datetime += timedelta(hours=1)
 
@@ -166,8 +185,12 @@ class FetchPriceData:
                 data = response.json()["prices"]
                 for item in data:
                     item.pop("endDate", None)
+
         except Exception as e:
-            return {"error": f"Failed to fetch price data: {str(e)}"}
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"Unexpected error occurred: {str(e)}"}
+            )
         
         return [PriceDataPoint(**item) for item in data]
 
