@@ -27,18 +27,18 @@ class PorssisahkoRepository:
             # Insert the entry into the database
             await conn.execute(
                 """
-                INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+                INSERT INTO porssisahko (datetime, date, year, month, day, hour, weekday, price)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 ON CONFLICT (Datetime) DO NOTHING
                 """,
-                entry["Datetime"],
-                entry["Date"],
-                entry["Year"],
-                entry["Month"],
-                entry["Day"],
-                entry["Hour"],
-                entry["Weekday"],
-                entry["Price"]
+                entry["datetime"],
+                entry["date"],
+                entry["year"],
+                entry["month"],
+                entry["day"],
+                entry["hour"],
+                entry["weekday"],
+                entry["price"]
             )
         except asyncpg.PostgresError as e:
             print(f"Database error: {e}")
@@ -69,21 +69,21 @@ class PorssisahkoRepository:
 
             # Prepare the insert query
             insert_query = """
-                INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+                INSERT INTO porssisahko (datetime, date, year, month, day, hour, weekday, price)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 ON CONFLICT (Datetime) DO NOTHING
             """
             # Create a list of tuples for the entries
             values = [
                 (
-                    entry["Datetime"],
-                    entry["Date"],
-                    entry["Year"],
-                    entry["Month"],
-                    entry["Day"],
-                    entry["Hour"],
-                    entry["Weekday"],
-                    entry["Price"]
+                    entry["datetime"],
+                    entry["date"],
+                    entry["year"],
+                    entry["month"],
+                    entry["day"],
+                    entry["hour"],
+                    entry["weekday"],
+                    entry["price"]
                 )
                 for entry in formatted_entries
             ]
@@ -124,7 +124,7 @@ class PorssisahkoRepository:
                 f"""
                 SELECT {select_columns}
                 FROM porssisahko
-                WHERE Datetime BETWEEN $1 AND $2
+                WHERE datetime BETWEEN $1 AND $2
                 """,
                 start_date,
                 end_date
@@ -165,12 +165,12 @@ class PorssisahkoRepository:
                         $1::TIMESTAMP,
                         $2::TIMESTAMP,
                         '1 hour'::INTERVAL
-                    ) AS Datetime
+                    ) AS datetime
                 )
-                SELECT dr.Datetime
+                SELECT dr.datetime
                 FROM date_range dr
-                LEFT JOIN porssisahko p ON dr.Datetime = p.Datetime
-                WHERE p.Datetime IS NULL
+                LEFT JOIN porssisahko p ON dr.datetime = p.datetime
+                WHERE p.datetime IS NULL
                 """,
                 start_date,
                 end_date
@@ -178,7 +178,7 @@ class PorssisahkoRepository:
 
             # Return the missing entries as a list of tuples
             return [
-                (row["Datetime"].strftime("%Y-%m-%d"), row["Datetime"].hour)
+                (row["datetime"].strftime("%Y-%m-%d"), row["datetime"].hour)
                 for row in rows
             ]
         except asyncpg.PostgresError as e:

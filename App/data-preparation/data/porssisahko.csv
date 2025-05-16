@@ -1,4 +1,4 @@
-Datetime;Date;Year;Month;Day;Hour;Weekday;Price
+datetime;date;year;month;day;hour;weekday;price
 2021-01-01 00:00:00;2021/01/01;2021;1;1;0;4;3.094
 2021-01-01 01:00:00;2021/01/01;2021;1;1;1;4;3.019
 2021-01-01 02:00:00;2021/01/01;2021;1;1;2;4;2.974

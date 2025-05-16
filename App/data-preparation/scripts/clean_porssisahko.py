@@ -54,14 +54,14 @@ def clean_data(filename):
 
     # Create a new DataFrame
     df2 = pd.DataFrame({
-        "Datetime": datetimes,
-        "Date": dates,
-        "Year": years,
-        "Month": months,
-        "Day": days,
-        "Hour": hours,
-        "Weekday": weekdays,
-        "Price": prices
+        "datetime": datetimes,
+        "date": dates,
+        "year": years,
+        "month": months,
+        "day": days,
+        "hour": hours,
+        "weekday": weekdays,
+        "price": prices
     })
 
     # Save the cleaned data to a new CSV file

@@ -19,10 +19,10 @@ def populate_db(df):
     # Insert data into the table (on conflict do nothing)
     for _, row in df.iterrows():
         cursor.execute("""
-            INSERT INTO porssisahko (Datetime, Date, Year, Month, Day, Hour, Weekday, Price)
+            INSERT INTO porssisahko (datetime, date, year, month, day, hour, weekday, price)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (Datetime) DO NOTHING
-        """, (row["Datetime"], row["Date"], row["Year"], row["Month"], row["Day"], row["Hour"], row["Weekday"], row["Price"]))
+        """, (row['datetime'], row['date'], row['year'], row['month'], row['day'], row['hour'], row['weekday'], row['price']))
     # Commit the changes and close the connection
     conn.commit()
     cursor.close()
