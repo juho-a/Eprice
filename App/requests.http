@@ -49,6 +49,15 @@ Content-Type: application/json
   "endTime": "2025-05-08T06:00:00Z"
 }
 
+### Production data 
+POST http://localhost:8000/api/public/consumption/range
+Content-Type: application/json
+
+{
+  "startTime": "2025-05-08T04:00:00Z",
+  "endTime": "2025-05-08T06:00:00Z"
+}
+
 
 ### Get weather forecast (POST)
 POST http://localhost:8000/api/public/weather
