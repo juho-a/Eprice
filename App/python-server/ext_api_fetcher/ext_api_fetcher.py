@@ -129,9 +129,9 @@ class FetchPriceData:
         end_datetime = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
 
         result = []
-
         current_datetime = start_datetime
-        while current_datetime <=end_datetime:
+
+        while current_datetime <= end_datetime:
             date_str = current_datetime.strftime("%Y-%m-%d")
             hour_str = current_datetime.strftime("%H")
 
@@ -144,27 +144,23 @@ class FetchPriceData:
             try:
                 async with httpx.AsyncClient() as client:
                     response = await client.get(url)
-                    if response.status_code != 200:
-                        return {"error": f"HTTP error {response.status_code}"}
+                    response.raise_for_status()  # Tämä heittää virheen, jos status != 200
 
-                    data =response.json()
-
+                    data = response.json()
                     if data:
                         result.append({
                             "startDate": f"{date_str}T{hour_str}:00:00Z",
-                            "price": data['price']
-                            })
+                            "price": data["price"]
+                        })
                     else:
                         print(f"No data returned for {date_str} {hour_str}")
             except Exception as e:
-                return JSONResponse(
-                    status_code=500,
-                    content={"error": f"Unexpected error occurred: {str(e)}"}
-                )
+                raise Exception(f"Failed to fetch price data for {date_str} {hour_str}: {str(e)}")
 
             current_datetime += timedelta(hours=1)
 
         return result
+
 
     async def fetch_price_data_latest(self):
         """

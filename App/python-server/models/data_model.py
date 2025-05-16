@@ -1,13 +1,12 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
 
 
 class TimeRange(BaseModel):
-    startTime: datetime = Field(
+    startTime: str = Field(
         example="2024-05-01T00:00:00Z",
         description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)"
     )
-    endTime: datetime = Field(
+    endTime: str = Field(
         example="2024-05-02T00:00:00Z",
         description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)"
     )
@@ -18,8 +17,8 @@ class TimeRangeRequest(TimeRange):
 class WeatherRequest(BaseModel):
     lat: float = Field(description="Latitude", example=60.1699)
     lon: float = Field(description="Longitude", example=24.9384)
-    timestamp: datetime = Field(
-        description="UTC datetime in RFC 3339 format, e.g. 2024-05-05T13:30:00Z",
+    timestamp: str = Field(
+        description="UTC str in RFC 3339 format, e.g. 2024-05-05T13:30:00Z",
         example="2024-05-05T13:30:00Z"
         )
 
@@ -32,7 +31,7 @@ class WeatherDataPoint(BaseModel):
         example=2.2,
         description="Wind speed in meters per second based on the forecast."
     )
-    closest_forecast_time: datetime = Field(
+    closest_forecast_time: str = Field(
         example="2025-05-09T16:00:00Z",
         description="Timestamp (in UTC, RFC 3339 format) of the closest available weather forecast."
     )
@@ -45,7 +44,7 @@ class FingridDataPoint(TimeRange):
     )
 
 class PriceDataPoint(BaseModel):
-    startDate: datetime = Field(description="UTC datetime in RFC 3339 format", example="2025-05-08T04:00:00.000Z")
+    startDate: str = Field(description="UTC str in RFC 3339 format", example="2025-05-08T04:00:00.000Z")
     price: float = Field(description="Floating-point number representing the price in euro cents", example=0.61)
 
 # Define a model for error responses

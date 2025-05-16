@@ -13,10 +13,7 @@ price_data_service = PriceDataService()
 weather_data_service = WeatherDataService()
 
 
-@router.get(
-    "/api/public/windpower",
-    response_model=RootModel[FingridDataPoint],
-    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+@router.get("/api/public/windpower", response_model=FingridDataPoint, responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def get_windpower():
     """
@@ -32,7 +29,7 @@ async def get_windpower():
         return JSONResponse(status_code=500, content={ "error":e})
 
 
-@router.post("/api/public/windpower/range", response_model=RootModel[List[FingridDataPoint]],
+@router.post("/api/public/windpower/range", response_model=List[FingridDataPoint],
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def post_windpower_range(time_range: TimeRangeRequest):
@@ -56,7 +53,7 @@ async def post_windpower_range(time_range: TimeRangeRequest):
 
 
 @router.get("/api/public/consumption",
-    response_model=RootModel[FingridDataPoint],
+    response_model=FingridDataPoint,
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def get_consumption():
@@ -73,7 +70,7 @@ async def get_consumption():
         return {"error":e}
 
 
-@router.post("/api/public/consumption/range", response_model=RootModel[List[FingridDataPoint]],
+@router.post("/api/public/consumption/range", response_model=List[FingridDataPoint],
              responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def post_consumption_range(time_range: TimeRangeRequest):
@@ -98,7 +95,7 @@ async def post_consumption_range(time_range: TimeRangeRequest):
 
 
 @router.get("/api/public/production",
-    response_model=RootModel[FingridDataPoint],
+    response_model=FingridDataPoint,
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def get_production():
@@ -114,7 +111,7 @@ async def get_production():
     except Exception as e:
         return {"error":e}
 
-@router.post("/api/public/production/range", response_model=RootModel[List[FingridDataPoint]],
+@router.post("/api/public/production/range", response_model=List[FingridDataPoint],
             responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def post_production_range(time_range: TimeRangeRequest):
@@ -137,7 +134,7 @@ async def post_production_range(time_range: TimeRangeRequest):
     except Exception as e:
         return {"error":e}
 
-@router.post("/api/public/weather", response_model=RootModel[WeatherDataPoint])
+@router.post("/api/public/weather", response_model=WeatherDataPoint)
 async def post_weather(request: WeatherRequest):
     """
     Get weather forecast for a specific UTC time and location (POST version).
@@ -156,7 +153,7 @@ async def post_weather(request: WeatherRequest):
         return {"error":e}
 
 
-@router.post("/api/public/price/range", response_model=List[PriceDataPoint])
+@router.post("/api/public/price/range")
 async def post_price_range(time_range: TimeRangeRequest):
     """
     Get price data for specific time range from Porssisahko API
@@ -165,26 +162,37 @@ async def post_price_range(time_range: TimeRangeRequest):
         Timestamp in RFC 3339 format.
 
     Returns:
-        list[dict]: Price data or en error message
+        list[dict]: Price data or an error message
     """
 
     try:
-        return await price_data_service.price_data_range(time_range.startTime, time_range.endTime)
+        return await price_data_service.price_data_range(
+            time_range.startTime, time_range.endTime
+        )
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"{type(e).__name__}: {str(e)}"}
+        )
 
 
-@router.get("/api/public/data", response_model=List[PriceDataPoint])
+@router.get(
+    "/api/public/data",
+    response_model=List[PriceDataPoint],
+    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 async def get_prices():
     try:
         return await price_data_service.price_data_latest()
     except Exception as e:
-        return {"error": e}
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
-@router.get("/api/public/data/today", response_model=List[PriceDataPoint])
+@router.get(
+    "/api/public/data/today",
+    response_model=List[PriceDataPoint],
+    responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 async def get_prices_today():
     try:
         return await price_data_service.price_data_today()
     except Exception as e:
-        return {"error": e}
+        return JSONResponse(status_code=500, content={"error": str(e)})
     
