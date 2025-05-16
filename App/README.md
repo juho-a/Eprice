@@ -184,6 +184,8 @@ docker exec -it <container_name> bash # go into cmdline inside
 (container): printenv # or echo etc.
 ```
 
+**For developing client:** There is a sort of a bug in the denolands alpine image, which prevents us from installing with optional flags -- in our case `deno install --allow-scripts`. This means that the node modules need to be copied from local. This is not an issue if you are using linux (or wsl2 on Windows). Later, there might be a change in the client's base image later on to fix this issue.
+
 And note that the container names are not necessarily same as the service name (they are derived from it though); you can check running cont's with `docker <container> ps`.
 
 ### Running without Docker
