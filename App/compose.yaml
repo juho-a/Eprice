@@ -120,4 +120,3 @@ services:
       - PYTHONPATH=/app/python-server
     profiles:
       - backend-tests
-    #command: ["pytest", "tests"]
