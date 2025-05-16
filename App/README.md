@@ -79,9 +79,9 @@ The Eprice App is a containerized application that allows users to view the mark
     docker compose run --rm --entrypoint=npx e2e-tests playwright test
     ```
 
-2. Run Pytest for backend API:
+2. Run Pytest for backend API (using uv inside the container):
     ```bash
-    docker compose run backend-tests pytest
+    docker compose run backend-tests uv run pytest
     ```
 
 ### Environment Variables
