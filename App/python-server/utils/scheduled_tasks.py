@@ -47,10 +47,10 @@ def shutdown_scheduler():
     print("Shutting down scheduler...")
     ps_scheduler.shutdown()
 
-async def fetch_and_insert_missing_porssisahko_data(start_datetime: str):
+async def fetch_and_insert_missing_porssisahko_data(start_datetime_str: str):
     try:
-        # Convert the start_datetime string to a datetime object
-        start_datetime = datetime.fromisoformat(start_datetime)
+        # Convert the start_datetime string to a datetime object (db likes ISO format)
+        start_datetime = datetime.fromisoformat(start_datetime_str)
         
         # Get the current datetime
         end_datetime = datetime.utcnow()
@@ -84,5 +84,5 @@ async def fetch_and_insert_missing_porssisahko_data(start_datetime: str):
     except Exception as e:
         print(f"Unexpected error: {e}")
 
-def fetch_and_insert_missing_porssisahko_data_sync(start_datetime: datetime="2025-05-13T23:00:00"):
-    asyncio.run(fetch_and_insert_missing_porssisahko_data(start_datetime))
+def fetch_and_insert_missing_porssisahko_data_sync(start_datetime_str: str):
+    asyncio.run(fetch_and_insert_missing_porssisahko_data(start_datetime_str))
