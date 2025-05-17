@@ -3,6 +3,9 @@ from pydantic_core import PydanticCustomError
 from typing import Optional
 import re
 
+class EmailRequest(BaseModel):
+    email: EmailStr
+
 class UserCode(BaseModel):
     email: EmailStr
     code: str

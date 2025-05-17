@@ -33,6 +33,7 @@ public_routes = [
     "/api/auth/login",
     "/api/auth/register",
     "/api/auth/verify",
+    "/api/auth/resend",
     "/api/latest_prices",
     "/api/public/weather",
     "/api/public/weather/range",

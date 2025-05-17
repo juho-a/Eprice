@@ -40,6 +40,20 @@
     </p><br/>
   {/if}
 
+  {#if data.is_verified}
+    <p class="text-xl">
+      Your email has been verified. You can now login.
+    </p><br/>
+  {/if}
+
+  {#if form?.message==="Email not verified."}
+    <p class="text-xl">
+      Please check your email for the verification code.
+    </p><br/>
+  {/if}
+
+
+
   <form class="space-y-4" method="POST" action="?/{data.action}" enctype="application/json">
     <label class="label" for="email">
       <span class="label-text">Email</span>
@@ -80,3 +94,17 @@
       {title}<!-- === "login" ? "Login" : "Register"}-->
     </button>
   </form>
+
+
+  {#if form?.message==="Email not verified."}
+  <br/>
+  <div class="flex gap-2">
+    <a href="/send" class="btn preset-filled-primary-500">
+      Resend Verification Email
+    </a>
+    <a href="/auth/verify" class="btn preset-filled-primary-500 w-full">
+      Verify Email
+    </a>
+  </div>
+  <br/>
+{/if}

@@ -54,3 +54,13 @@ class AuthService:
         if not result:
             raise Exception("Verification failed")
         
+    async def update_verification_code(self, email: str):
+        """Update the verification code for the user."""
+        new_code = self.generate_verification_code()
+        try:
+            await self.user_repository.update_code(email, new_code)
+        except Exception as e:
+            raise e
+        # Only send email if update succeeded
+        await send_email_async(email, new_code)
+        

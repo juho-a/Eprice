@@ -20,6 +20,11 @@ export const load = ({ params, url }) => {
   } else {
     params.code = null;
   }
+  if (url.searchParams.has("is_verified")) {
+    params.is_verified = true;
+  } else {
+    params.is_verified = null;
+  }
 
   return params;
 };

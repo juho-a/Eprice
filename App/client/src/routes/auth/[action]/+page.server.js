@@ -30,7 +30,7 @@ export const actions = {
       cookies.set(COOKIE_KEY, cookieValue, { path: "/", secure: false });
       throw redirect(302, "/");
     }
-
+    
     return response.json();
   },
   
@@ -56,7 +56,7 @@ export const actions = {
     );
 
     if (response.ok) {
-      throw redirect(302, "/auth/login");
+      throw redirect(302, "/auth/login?is_verified=true");
     }
 
     return await response.json();

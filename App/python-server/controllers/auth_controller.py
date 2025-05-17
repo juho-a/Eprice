@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from jose import jwt, JWTError
 from services.auth_service import AuthService
 from repositories.user_repository import UserRepository
-from models.user_model import User, UserCode
+from models.user_model import User, UserCode, EmailRequest
 from config.secrets import DATABASE_URL, JWT_SECRET, ALGORITHM, COOKIE_KEY
 import asyncpg
 
@@ -38,6 +38,7 @@ async def login(user: User, response: Response):
         return {"message": "Incorrect email or password."}
     
     if not db_user["is_verified"]:
+        print(f"Email not verified: {user.email.lower()}")
         response.status_code = 401
         return {"message": "Email not verified."}
 
@@ -72,6 +73,19 @@ async def verify(user_code: UserCode, response: Response):
         response.status_code = 400
         return {"message": "Verification failed."}
 
+
+@router.post("/api/auth/resend")
+async def resend_verification_code(request: EmailRequest, response: Response):
+    try:
+        await auth_service.update_verification_code(request.email.lower())
+        return {"message": "Verification code resent successfully."}
+    except Exception as e:
+        print(f"Error during resending verification code: {str(e)}")
+        response.status_code = 400
+        return {"message": "Failed to resend verification code."}
+
+
+                                   
 def create_jwt_middleware(public_routes):
     """
     Middleware factory to validate JWT token and attach user info to the request.

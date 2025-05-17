@@ -30,3 +30,13 @@ class UserRepository:
             return result
         finally:
             await conn.close()
+
+    async def update_code(self, email: str, new_code: str):
+        conn = await asyncpg.connect(self.database_url)
+        try:
+            await conn.execute(
+                "UPDATE users SET verification_code = $1 WHERE email = $2",
+                new_code, email
+            )
+        finally:
+            await conn.close()
