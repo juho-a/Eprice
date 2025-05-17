@@ -9,9 +9,6 @@ from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 
 from config.secrets import public_routes
 
-from chat.engine import chat_app
-from utils.email_tools import send_email_async
-
 app = FastAPI()
 app.include_router(external_api_router)
 
@@ -32,7 +29,7 @@ app.include_router(auth_router)
 app.middleware("http")(create_jwt_middleware(public_routes))
 
 # Include the chat route
-app.mount("/chat", chat_app)
+#app.mount("/chat", chat_app)
 
 @app.on_event("startup")
 async def startup_event():
@@ -54,11 +51,3 @@ async def shutdown_event():
     '''
     shutdown_scheduler()
 
-@app.get("/email")
-async def send_email(
-    email_to: str,
-    verification_code: str
-):
-    '''Send an email to the user with the verification code'''
-    await send_email_async(email_to, verification_code)
-    return {"message": "Email sent"}

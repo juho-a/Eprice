@@ -9,5 +9,4 @@ httpx
 asyncio
 apscheduler
 requests
-gradio
 fastapi-mail
