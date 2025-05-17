@@ -42,7 +42,21 @@ export const actions = {
     );
 
     if (response.ok) {
-      throw redirect(302, "/auth/login?registered=true");
+      throw redirect(302, "/auth/verify?registered=true");
+    }
+
+    return await response.json();
+  },
+
+  verify: async ({ request }) => {
+    const data = await request.formData();
+    const response = await apiRequest(
+      "/api/auth/verify",
+      Object.fromEntries(data),
+    );
+
+    if (response.ok) {
+      throw redirect(302, "/auth/login");
     }
 
     return await response.json();

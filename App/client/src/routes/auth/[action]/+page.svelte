@@ -1,9 +1,29 @@
 <script>
     let { data, form } = $props();
+    let title = $state("");
+    let email = $state("");
+    let code = $state("");
+
+    $effect(() => {
+        if (data.action === "login") {
+            title = "Login";
+        } else if (data.action === "register") {
+            title = "Register";
+        } else if (data.action === "verify") {
+            title = "Verify";
+        }
+        if (data.code && data.action === "verify") {
+            code = data.code;
+        }
+        if (data.email) {
+            email = data.email;
+        }
+    });
+
 </script>
   
-  <h1 id="mainheading" class="text-center"><!--class="text-xl pb-4"> h2-->
-    {data.action === "login" ? "Login" : "Register"} form
+  <h1 id="minorheading" class="text-center"><!--class="text-xl pb-4"> h2-->
+    {title} Form<!--{data.action === "login" ? "Login" : "Register"} form-->
   </h1>
   
   {#if form?.message}
@@ -16,11 +36,11 @@
 
   {#if data.registered}
     <p class="text-xl">
-      You have successfully registered. Please login to continue.
-    </p>
+      Verification has been sent to your email. Please verify your account to continue.
+    </p><br/>
   {/if}
 
-  <form class="space-y-4" method="POST" action="?/{data.action}">
+  <form class="space-y-4" method="POST" action="?/{data.action}" enctype="application/json">
     <label class="label" for="email">
       <span class="label-text">Email</span>
       <input
@@ -29,17 +49,34 @@
         name="email"
         type="email"
         placeholder="Email"
+        bind:value={email}
+        required
       />
     </label>
-    <label class="label" for="password">
-      <span class="label-text">Password</span>
-      <input 
-        class="input"
-        id="password"
-        name="password"
-        type="password" />
-    </label>
+    {#if data.action === "verify"}
+      <label class="label" for="code">
+        <span class="label-text">Verification Code</span>
+        <input
+          class="input"
+          id="code"
+          name="code"
+          type="text"
+          bind:value={code}
+        />
+      </label>
+    <!--else if login or register, show password-->
+    {:else}
+      <label class="label" for="password">
+        <span class="label-text">Password</span>
+        <input 
+          class="input"
+          id="password"
+          name="password"
+          type="password"
+          required />
+      </label>
+    {/if}
     <button class="w-full btn preset-filled-primary-500" type="submit">
-      {data.action === "login" ? "Login" : "Register"}
+      {title}<!-- === "login" ? "Login" : "Register"}-->
     </button>
   </form>

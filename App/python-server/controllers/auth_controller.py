@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from jose import jwt, JWTError
 from services.auth_service import AuthService
 from repositories.user_repository import UserRepository
-from models.user_model import User
+from models.user_model import User, UserCode
 from config.secrets import DATABASE_URL, JWT_SECRET, ALGORITHM, COOKIE_KEY
 import asyncpg
 
@@ -37,6 +37,10 @@ async def login(user: User, response: Response):
         response.status_code = 401
         return {"message": "Incorrect email or password."}
     
+    if not db_user["is_verified"]:
+        response.status_code = 401
+        return {"message": "Email not verified."}
+
     payload = {"email": db_user["email"], "id": db_user["id"]}
     token = auth_service.create_access_token(payload)
     response.set_cookie(key=COOKIE_KEY,
@@ -57,6 +61,16 @@ async def logout(response: Response):
     )
     return {"message": "User has successfully logged out"}
 
+@router.post("/api/auth/verify")
+async def verify(user_code: UserCode, response: Response):
+    """Verify the user by checking the verification code."""
+    try:
+        await auth_service.verify_user(user_code.email.lower(), user_code.code)
+        return {"message": "Email verified successfully."}
+    except Exception as e:
+        print(f"Error during verification: {str(e)}")
+        response.status_code = 400
+        return {"message": "Verification failed."}
 
 def create_jwt_middleware(public_routes):
     """
