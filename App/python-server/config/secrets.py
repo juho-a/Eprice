@@ -1,12 +1,9 @@
 import os
-import dotenv
 
-dotenv.load_dotenv("../.env.development")
 # Database configuration
 # check if environment variables for postgres are set, otherwise use default values
 # Default values are for development purposes only
 # and should not be used in production
-
 
 if os.getenv("POSTGRES_USER") is None:
     os.environ["POSTGRES_USER"] = "username"
@@ -30,10 +27,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 # Public routes that do not require authentication
 # These routes can be accessed without a valid JWT token
 public_routes = [
+    "/email",
     "/api/public/data",
     "/api/public/data/today",
     "/api/auth/login",
     "/api/auth/register",
+    "/api/auth/verify",
     "/api/latest_prices",
     "/api/public/weather",
     "/api/public/weather/range",
