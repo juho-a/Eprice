@@ -24,6 +24,14 @@ ALGORITHM = os.getenv("ALGORITHM", "HS256")  # Default algorithm
 COOKIE_KEY = os.getenv("COOKIE_KEY", "token")  # Default cookie key
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+MAIL_USERNAME=os.getenv("MAIL_USERNAME", "eprice.varmennus@gmail.com")  # Default sender
+MAIL_PASSWORD=os.getenv("MAIL_PASSWORD")  # Default password
+MAIL_FROM=os.getenv("MAIL_FROM", "eprice.varmennus@gmail.com")  # Default sender email
+MAIL_PORT=os.getenv("MAIL_PORT", 587)  # Default port for TLS
+MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com")  # Default SMTP server
+MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME", "Eprice-verification")
+
+
 # Public routes that do not require authentication
 # These routes can be accessed without a valid JWT token
 public_routes = [

@@ -7,6 +7,7 @@ from controllers.data_controller import router as external_api_router
 from utils.scheduled_tasks import shutdown_scheduler  # Import the shutdown function to clean up the scheduler
 from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 
+import config # ensure the environment variables are loaded properly
 from config.secrets import public_routes
 
 app = FastAPI()
