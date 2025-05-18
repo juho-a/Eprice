@@ -1,5 +1,5 @@
 from models.data_model import *
-from ext_api_fetcher.ext_api_fetcher import *
+from ext_apis.ext_apis import *
 
 
 class FingridDataService:

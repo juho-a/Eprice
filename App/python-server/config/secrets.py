@@ -27,6 +27,9 @@ ALGORITHM = os.getenv("ALGORITHM", "HS256")  # Default algorithm
 COOKIE_KEY = os.getenv("COOKIE_KEY", "token")  # Default cookie key
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+#Fingrid API key
+FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
+
 # Public routes that do not require authentication
 # These routes can be accessed without a valid JWT token
 public_routes = [

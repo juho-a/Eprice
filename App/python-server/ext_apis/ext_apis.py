@@ -7,7 +7,7 @@ import os
 from models.data_model import *
 from zoneinfo import ZoneInfo
 from models.data_model import PriceDataPoint
-from fastapi.responses import JSONResponse
+from fastapi import HTTPException
 
 
 load_dotenv(dotenv_path="./.env.local")
@@ -16,8 +16,10 @@ FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
 
 
 class FetchFingridData:
-    async def fetch_fingrid_data(self, dataset_id: int) -> FingridDataPoint | ErrorResponse:
-        url = f"https://data.fingrid.fi/api/datasets/{dataset_id}/data"
+    base_url = "https://data.fingrid.fi/api/datasets/"
+
+    async def fetch_fingrid_data(self, dataset_id: int) -> FingridDataPoint:
+        url = f"{self.base_url}{dataset_id}/data"
         headers = {"x-api-key": FINGRID_API_KEY}
 
         try:
@@ -28,11 +30,10 @@ class FetchFingridData:
                 data = full_data.get("data", [])
 
                 if not data:
-                    return ErrorResponse(error="No data available from Fingrid API")
+                    raise ValueError("No data available from Fingrid API")
 
                 now = datetime.now(timezone.utc)
 
-                # Find the data point closest to the current time
                 def time_diff(item):
                     start = datetime.fromisoformat(item["startTime"].replace("Z", "+00:00"))
                     end = datetime.fromisoformat(item["endTime"].replace("Z", "+00:00"))
@@ -42,16 +43,20 @@ class FetchFingridData:
                 closest_item.pop("datasetId", None)
                 return FingridDataPoint(**closest_item)
 
-
+        except httpx.HTTPStatusError as exc:
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API with error message: {str(exc)}"
+            ) from exc
         except Exception as e:
-            return JSONResponse(
+            raise HTTPException(
                 status_code=500,
-                content={"error": f"Failed to fetch data for dataset {dataset_id} from Fingrid API with error: {str(e)}"}
-            )
-
+                detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API: {str(e)}"
+            ) from e
+        
 
     async def fetch_fingrid_data_range(self, dataset_id: int, start_time: str, end_time: str) -> List[FingridDataPoint] | ErrorResponse:
-        base_url = f"https://data.fingrid.fi/api/datasets/{dataset_id}/data"
+        url = f"{self.base_url}{dataset_id}/data"
         headers = {"x-api-key": FINGRID_API_KEY}
         
         query_params = {
@@ -62,7 +67,7 @@ class FetchFingridData:
             "pageSize": "20000"
         }
 
-        url = f"{base_url}?{urlencode(query_params)}"
+        url = f"{url}?{urlencode(query_params)}"
 
         try:
             async with httpx.AsyncClient() as client:
@@ -73,11 +78,17 @@ class FetchFingridData:
                 for item in data:
                     item.pop("datasetId", None)
                 return [FingridDataPoint(**item) for item in data]
+        except httpx.HTTPStatusError as exc:
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API with error message: {str(exc)}"
+            ) from exc
         except Exception as e:
-            return JSONResponse(
+            raise HTTPException(
                 status_code=500,
-                content={"error": f"Failed to fetch data for dataset {dataset_id} from Fingrid API with error: {str(e)}"}
-            )
+                detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API: {str(e)}"
+            ) from e
+        
 
 
 class FetchWeatherData:
@@ -95,7 +106,7 @@ class FetchWeatherData:
 
             timeseries = data.get("properties", {}).get("timeseries", [])
             if not timeseries:
-                return {"error": "No timeseries data available"}
+                raise ValueError("No timeseries data available from weather API")
 
             closest_entry = min(
                 timeseries,
@@ -110,21 +121,21 @@ class FetchWeatherData:
             }
 
         except httpx.HTTPStatusError as exc:
-            return JSONResponse(
+            raise HTTPException(
                 status_code=exc.response.status_code,
-                content={"error": f"HTTP error occurred: {exc.response.text}"}
-            )
+                detail=f"HTTP error while fetching data from met.no: {exc.response.status_code}: {exc.response.text}"
+            ) from exc
         except Exception as e:
-            return JSONResponse(
+            raise HTTPException(
                 status_code=500,
-                content={"error": f"Unexpected error occurred: {str(e)}"}
-            )
-        
+                detail=f"Unexpected error occurred while fetching weather data: {str(e)}"
+            ) from e
+
 
 class FetchPriceData:
-    async def fetch_price_data_range(self, start_time: str, end_time: str):
-        base_url = "https://api.porssisahko.net/v1/price.json"
+    base_url = "https://api.porssisahko.net/v1/price.json"
 
+    async def fetch_price_data_range(self, start_time: str, end_time: str):
         start_datetime = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
         end_datetime = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
 
@@ -140,22 +151,30 @@ class FetchPriceData:
                 "hour": hour_str
             }
 
-            url = f"{base_url}?{urlencode(query_params)}"
+            url = f"{self.base_url}?{urlencode(query_params)}"
             try:
                 async with httpx.AsyncClient() as client:
                     response = await client.get(url)
-                    response.raise_for_status()  # Tämä heittää virheen, jos status != 200
+                    response.raise_for_status()
 
                     data = response.json()
-                    if data:
-                        result.append({
-                            "startDate": f"{date_str}T{hour_str}:00:00Z",
-                            "price": data["price"]
-                        })
-                    else:
-                        print(f"No data returned for {date_str} {hour_str}")
+                    if not data:
+                        raise ValueError(f"No price data returned for {date_str} {hour_str}")
+
+                    result.append({
+                        "startDate": f"{date_str}T{hour_str}:00:00Z",
+                        "price": data["price"]
+                    })
+            except httpx.HTTPStatusError as exc:
+                raise HTTPException(
+                    status_code=exc.response.status_code,
+                    detail=f"HTTP error while fetching price data from Porssisahko: {exc.response.status_code}: {exc.response.text}"
+                ) from exc
             except Exception as e:
-                raise Exception(f"Failed to fetch price data for {date_str} {hour_str}: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Unexpected error occurred while fetching data from Porssisahko: {str(e)}"
+                ) from e
 
             current_datetime += timedelta(hours=1)
 
@@ -169,27 +188,32 @@ class FetchPriceData:
         Returns the prices as a list with the 'endDate' field removed from each entry.
 
         Returns:
-            list: A list of dictionaries containing hourly electricity price data.
-                The 'endDate' key is removed from each dictionary.
+            list: A list of PriceDataPoint instances containing hourly electricity price data.
+                  The 'endDate' key is removed from each dictionary.
         """
-
         url = "https://api.porssisahko.net/v1/latest-prices.json"
+
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(url)
                 response.raise_for_status()
                 data = response.json()["prices"]
+
                 for item in data:
                     item.pop("endDate", None)
 
-        except Exception as e:
-            return JSONResponse(
-                status_code=500,
-                content={"error": f"Unexpected error occurred: {str(e)}"}
-            )
-        
-        return [PriceDataPoint(**item) for item in data]
+                return [PriceDataPoint(**item) for item in data]
 
+        except httpx.HTTPStatusError as exc:
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"HTTP error while fetching latest price data from Porssisahko: {exc.response.status_code} - {exc.response.text}"
+            ) from exc
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Unexpected error while fetching latest price data from Porssisahko: {str(e)}"
+            ) from e
 
 
 

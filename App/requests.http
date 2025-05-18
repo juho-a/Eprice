@@ -34,8 +34,6 @@ Content-Type: application/json
 }
 
 
-
-
 ### Fingrid data endpoints
 ### fingrid wind power prooduction data now
 curl -X GET http://localhost:8000/api/public/windpower -v
@@ -89,7 +87,7 @@ POST http://localhost:8000/api/public/weather
 Content-Type: application/json
 
 {
-  "lat": 60.1699,
+  "lat": 60.169,
   "lon": 24.9384,
   "timestamp": "2024-05-05T13:30:00Z"
 }
