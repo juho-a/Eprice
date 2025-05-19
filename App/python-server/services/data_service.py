@@ -2,6 +2,10 @@ from models.data_model import *
 from ext_apis.ext_apis import *
 
 
+
+
+
+
 class FingridDataService:
     def __init__(self):
         self.fetcher = FetchFingridData()

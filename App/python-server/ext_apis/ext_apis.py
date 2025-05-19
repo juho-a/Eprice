@@ -8,6 +8,7 @@ from models.data_model import *
 from zoneinfo import ZoneInfo
 from models.data_model import PriceDataPoint
 from fastapi import HTTPException
+import asyncio
 
 
 load_dotenv(dotenv_path="./.env.local")
@@ -18,47 +19,71 @@ FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
 class FetchFingridData:
     base_url = "https://data.fingrid.fi/api/datasets/"
 
+    def __init__(self):
+        self._lock = asyncio.Lock()
+        self._last_call_time: datetime | None = None
+        self._sleep_time = 1.5
+
+    async def _rate_limiter(self):
+        async with self._lock:
+            if self._last_call_time:
+                elapsed = (datetime.now(timezone.utc)- self._last_call_time).total_seconds()
+                if elapsed < self._sleep_time:
+                    await asyncio.sleep(self._sleep_time - elapsed)
+            self._last_call_time = datetime.now(timezone.utc)
+
     async def fetch_fingrid_data(self, dataset_id: int) -> FingridDataPoint:
+        await self._rate_limiter() 
         url = f"{self.base_url}{dataset_id}/data"
         headers = {"x-api-key": FINGRID_API_KEY}
+        max_retries = 3
+        retry_delay = 3
 
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers)
-                response.raise_for_status()
-                full_data = response.json()
-                data = full_data.get("data", [])
+        for attempt in range(max_retries):
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(url, headers=headers)
+                    response.raise_for_status()
+                    full_data = response.json()
+                    data = full_data.get("data", [])
 
-                if not data:
-                    raise ValueError("No data available from Fingrid API")
+                    if not data:
+                        raise ValueError("No data available from Fingrid API")
 
-                now = datetime.now(timezone.utc)
+                    now = datetime.now(timezone.utc)
 
-                def time_diff(item):
-                    start = datetime.fromisoformat(item["startTime"].replace("Z", "+00:00"))
-                    end = datetime.fromisoformat(item["endTime"].replace("Z", "+00:00"))
-                    return min(abs(start - now), abs(end - now))
+                    def time_diff(item):
+                        start = datetime.fromisoformat(item["startTime"].replace("Z", "+00:00"))
+                        end = datetime.fromisoformat(item["endTime"].replace("Z", "+00:00"))
+                        return min(abs(start - now), abs(end - now))
 
-                closest_item = min(data, key=time_diff)
-                closest_item.pop("datasetId", None)
-                return FingridDataPoint(**closest_item)
+                    closest_item = min(data, key=time_diff)
+                    closest_item.pop("datasetId", None)
+                    return FingridDataPoint(**closest_item)
 
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(
-                status_code=exc.response.status_code,
-                detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API with error message: {str(exc)}"
-            ) from exc
-        except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API: {str(e)}"
-            ) from e
+            except httpx.HTTPStatusError as exc:
+                if attempt == max_retries - 1:
+                    raise HTTPException(
+                        status_code=exc.response.status_code,
+                        detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API with error message: {str(exc)} Number of attempts: {attempt +1}"
+                    ) from exc
+                await asyncio.sleep(retry_delay)
+
+            except Exception as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API: {str(e)}"
+                ) from e
         
 
     async def fetch_fingrid_data_range(self, dataset_id: int, start_time: str, end_time: str) -> List[FingridDataPoint] | ErrorResponse:
+        await self._rate_limiter() 
         url = f"{self.base_url}{dataset_id}/data"
         headers = {"x-api-key": FINGRID_API_KEY}
-        
+        max_retries = 3
+        retry_delay = 1
+
+       
         query_params = {
             "startTime": start_time,
             "endTime": end_time,
@@ -68,26 +93,29 @@ class FetchFingridData:
         }
 
         url = f"{url}?{urlencode(query_params)}"
+        for attempt in range(max_retries):
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(url, headers=headers)
+                    response.raise_for_status()
+                    full_data = response.json()
+                    data = full_data.get("data", [])
+                    for item in data:
+                        item.pop("datasetId", None)
+                    return [FingridDataPoint(**item) for item in data]
+            except httpx.HTTPStatusError as exc:
+                if attempt == max_retries - 1:
+                    raise HTTPException(
+                        status_code=exc.response.status_code,
+                        detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API with error message: {str(exc)}. Number of attempts: {attempt +1}"
+                    ) from exc
+                await asyncio.sleep(retry_delay)
 
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers)
-                response.raise_for_status()
-                full_data = response.json()
-                data = full_data.get("data", [])
-                for item in data:
-                    item.pop("datasetId", None)
-                return [FingridDataPoint(**item) for item in data]
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(
-                status_code=exc.response.status_code,
-                detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API with error message: {str(exc)}"
-            ) from exc
-        except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API: {str(e)}"
-            ) from e
+            except Exception as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API: {str(e)}"
+                ) from e
         
 
 
