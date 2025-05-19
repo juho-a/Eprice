@@ -7,8 +7,7 @@ class DateTimeValidatedModel(BaseModel):
     @classmethod
     @field_validator('startTime', 'endTime', 'timestamp', 'startDate', mode='before')
     def validate_datetime(cls, v):
-        if isinstance(v, str):
-            datetime.fromisoformat(v.replace("Z", "+00:00"))
+        datetime.fromisoformat(v.replace("Z", "+00:00"))
         return v
 
 class TimeRange(DateTimeValidatedModel):
