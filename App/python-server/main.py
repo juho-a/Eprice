@@ -7,6 +7,7 @@ from controllers.data_controller import router as external_api_router
 from utils.scheduled_tasks import shutdown_scheduler  # Import the shutdown function to clean up the scheduler
 from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 
+import config # ensure the environment variables are loaded properly
 from config.secrets import public_routes
 
 app = FastAPI()
@@ -28,6 +29,8 @@ app.include_router(auth_router)
 # everything that's not in public routes has to have a valid JWT token
 app.middleware("http")(create_jwt_middleware(public_routes))
 
+# Include the chat route
+#app.mount("/chat", chat_app)
 
 @app.on_event("startup")
 async def startup_event():
@@ -48,3 +51,4 @@ async def shutdown_event():
     It cleans up the scheduler to prevent any background tasks from running after the application has stopped.
     '''
     shutdown_scheduler()
+

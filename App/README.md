@@ -191,3 +191,14 @@ And note that the container names are not necessarily same as the service name (
 ### Running without Docker
 
 Can be done, but needlessly cumbersome. Ask Paavo for the how.
+
+
+### Starting a new client build from scratch
+
+If you want to start the client build from scratch, for example with typescript checking enabled, run:
+
+```bash
+deno run -A npm:sv@latest create client
+```
+
+from the root directory, and choose from the given options. For this project, we have used the most minimal build setup (SveleteKit minimal, no TS typechecking, nothing added, with deno itself for dependency management).

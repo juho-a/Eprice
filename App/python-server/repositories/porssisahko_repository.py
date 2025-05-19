@@ -1,5 +1,6 @@
 import asyncpg
 from utils.porssisahko_tools import convert_to_porssisahko_entry
+from datetime import datetime
 
 class PorssisahkoRepository:
     def __init__(self, database_url: str):
@@ -103,7 +104,7 @@ class PorssisahkoRepository:
             if conn:
                 await conn.close()
 
-    async def get_entries(self, start_date: str, end_date: str, select_columns: str = "*"):
+    async def get_entries(self, start_date: datetime, end_date: datetime, select_columns: str = "*"):
         """
         Retrieves entries from the porssisahko table between two dates.
 
@@ -142,7 +143,7 @@ class PorssisahkoRepository:
             if conn:
                 await conn.close()
 
-    async def get_missing_entries(self, start_date: str, end_date: str):
+    async def get_missing_entries(self, start_date: datetime, end_date: datetime):
         """
         Retrieves missing entries from the porssisahko table between two dates.
 
