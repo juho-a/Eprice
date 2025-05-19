@@ -7,28 +7,25 @@ async def custom_validation_exception_handler(request: Request, exc: RequestVali
     status_code = 422
     if exc.errors():
         error_detail = exc.errors()[0]
-        print(".".join(error_detail.get("loc",[])))
-
-        loc_str = ".".join(str(loc) for loc in error_detail.get("loc", []))
+        # Extracting the first error detail
+        loc_list = error_detail.get("loc", [])
+        str_parts = [str(loc) for loc in loc_list]
+        loc_str = ".".join(str_parts)
 
         msg = error_detail.get("msg", "Validation error")
         type_str = error_detail.get("type", "validation_error")
 
-        encoded_url = quote(str(request.url), safe=':/?&=')
-
         error_message = (
-            f"Failed to process request due to validation error '{type_str}' at '{loc_str}': {msg} "
-            f"for url '{encoded_url}'"
+            f"Failed to process request due to validation error: '{type_str}' at '{loc_str}': {msg}."
         )
 
     else:
-        encoded_url = quote(str(request.url), safe=':/?&=')
-        error_message = f"Validation failed for unknown reason at url '{encoded_url}'"
+        error_message = f"Validation failed for unknown reason."
 
     return JSONResponse(
         status_code=status_code,
         content={
-            "error": error_message,
-            "status_code": status_code
+            "error": "RequestValidationError",
+            "message": error_message
         }
     )
