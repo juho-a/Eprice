@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
-from pydantic import RootModel
 from typing import List
 from services.data_service import FingridDataService, PriceDataService, WeatherDataService
 from models.data_model import FingridDataPoint, TimeRangeRequest, WeatherRequest, WeatherDataPoint, PriceDataPoint, ErrorResponse
-from fastapi.exceptions import RequestValidationError
+from fastapi import HTTPException
 
 router = APIRouter()
 fingrid_data_service = FingridDataService()
@@ -25,8 +24,10 @@ async def get_windpower():
     """
     try:
         return await fingrid_data_service.fingrid_data(dataset_id=245)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return JSONResponse(status_code=500, content={ "error":e})
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 
 @router.post("/api/public/windpower/range", response_model=List[FingridDataPoint],
@@ -48,8 +49,10 @@ async def post_windpower_range(time_range: TimeRangeRequest):
             dataset_id=245,
             start_time=time_range.startTime,
             end_time=time_range.endTime)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 
 @router.get("/api/public/consumption",
@@ -66,8 +69,10 @@ async def get_consumption():
     """
     try:
         return await fingrid_data_service.fingrid_data(dataset_id=165)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 
 @router.post("/api/public/consumption/range", response_model=List[FingridDataPoint],
@@ -90,8 +95,10 @@ async def post_consumption_range(time_range: TimeRangeRequest):
             start_time=time_range.startTime,
             end_time=time_range.endTime
         )
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 
 @router.get("/api/public/production",
@@ -108,8 +115,10 @@ async def get_production():
     """
     try:
         return await fingrid_data_service.fingrid_data(dataset_id=241)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 @router.post("/api/public/production/range", response_model=List[FingridDataPoint],
             responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
@@ -131,8 +140,10 @@ async def post_production_range(time_range: TimeRangeRequest):
             start_time=time_range.startTime,
             end_time=time_range.endTime
         )
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return {"error":e}
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 @router.post("/api/public/weather", response_model=WeatherDataPoint)
 async def post_weather(request: WeatherRequest):
@@ -149,31 +160,24 @@ async def post_weather(request: WeatherRequest):
     try:
         requested_dt = datetime.fromisoformat(request.timestamp.replace("Z", "+00:00")).replace(tzinfo=timezone.utc)
         return await weather_data_service.weather_data(request.lat, request.lon, requested_dt)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return {"error":e}
-
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 @router.post("/api/public/price/range")
 async def post_price_range(time_range: TimeRangeRequest):
     """
     Get price data for specific time range from Porssisahko API
-    
-    Args:
-        Timestamp in RFC 3339 format.
-
-    Returns:
-        list[dict]: Price data or an error message
     """
-
     try:
         return await price_data_service.price_data_range(
             time_range.startTime, time_range.endTime
         )
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"error": f"{type(e).__name__}: {str(e)}"}
-        )
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 
 @router.get(
@@ -183,8 +187,10 @@ async def post_price_range(time_range: TimeRangeRequest):
 async def get_prices():
     try:
         return await price_data_service.price_data_latest()
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})
 
 @router.get(
     "/api/public/data/today",
@@ -193,6 +199,7 @@ async def get_prices():
 async def get_prices_today():
     try:
         return await price_data_service.price_data_today()
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": e.detail, "status_code": e.status_code})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
-    
+        return JSONResponse(status_code=500, content={"error": str(e), "status_code": 500})

@@ -10,8 +10,15 @@ from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 import config # ensure the environment variables are loaded properly
 from config.secrets import public_routes
 
+from controllers.exceptions import custom_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
+
+
 app = FastAPI()
+app.add_exception_handler(RequestValidationError, custom_validation_exception_handler)
 app.include_router(external_api_router)
+
+
 
 # Add CORS middleware
 app.add_middleware(
@@ -51,4 +58,6 @@ async def shutdown_event():
     It cleans up the scheduler to prevent any background tasks from running after the application has stopped.
     '''
     shutdown_scheduler()
+
+
 
