@@ -76,6 +76,7 @@
           name="code"
           type="text"
           bind:value={code}
+          required
         />
       </label>
     <!--else if login or register, show password-->
