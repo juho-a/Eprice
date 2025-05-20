@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 from pydantic import BaseModel, field_validator
 from datetime import datetime
-from pydantic import ValidationError
 
 
 class DateTimeValidatedModel(BaseModel):

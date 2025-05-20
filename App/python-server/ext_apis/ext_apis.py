@@ -14,8 +14,6 @@ import asyncio
 load_dotenv(dotenv_path="./.env.local")
 FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
 
-
-
 class FetchFingridData:
     base_url = "https://data.fingrid.fi/api/datasets/"
 
@@ -76,7 +74,7 @@ class FetchFingridData:
                 ) from e
         
 
-    async def fetch_fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint] | ErrorResponse:
+    async def fetch_fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint]:
         await self._rate_limiter() 
         url = f"{self.base_url}{dataset_id}/data"
         headers = {"x-api-key": FINGRID_API_KEY}
