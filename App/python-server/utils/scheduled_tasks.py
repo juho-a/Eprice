@@ -53,7 +53,7 @@ async def fetch_and_insert_missing_porssisahko_data(start_datetime_str: str):
         start_datetime = datetime.fromisoformat(start_datetime_str)
         
         # Get the current datetime + 24 hours
-        end_datetime = datetime.utcnow() + timedelta(days=1)
+        end_datetime = datetime.utcnow() + timedelta(days=1, hours=3)
         end_datetime = end_datetime.replace(minute=0, second=0, microsecond=0)
         
         # Retrieve missing entries from the repository
