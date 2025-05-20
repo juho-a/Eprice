@@ -3,7 +3,7 @@ import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 #from apscheduler.triggers.interval import IntervalTrigger
-from datetime import datetime
+from datetime import datetime, timedelta
 from repositories.porssisahko_repository import PorssisahkoRepository
 from config.secrets import DATABASE_URL
 
@@ -52,8 +52,8 @@ async def fetch_and_insert_missing_porssisahko_data(start_datetime_str: str):
         # Convert the start_datetime string to a datetime object (db likes ISO format)
         start_datetime = datetime.fromisoformat(start_datetime_str)
         
-        # Get the current datetime
-        end_datetime = datetime.utcnow()
+        # Get the current datetime + 24 hours
+        end_datetime = datetime.utcnow() + timedelta(days=1)
         end_datetime = end_datetime.replace(minute=0, second=0, microsecond=0)
         
         # Retrieve missing entries from the repository
@@ -70,11 +70,14 @@ async def fetch_and_insert_missing_porssisahko_data(start_datetime_str: str):
         # Fetch data for the missing entries
         for date, hour in missing_entries:
             # Construct the API URL for the specific date and hour
-            api_url = f"https://api.porssisahko.net/v1/price.json?date={date}&hour={hour}"
-            response = requests.get(api_url)
-            response.raise_for_status()  # Raise an exception for HTTP errors
-            data = response.json()  # Parse the JSON response
-
+            try:
+                api_url = f"https://api.porssisahko.net/v1/price.json?date={date}&hour={hour}"
+                response = requests.get(api_url)
+                response.raise_for_status()  # Raise an exception for HTTP errors
+                data = response.json()  # Parse the JSON response
+            except requests.RequestException as e:
+                print(f"Error fetching data for {date} hour {hour}: {e}")
+                continue
             # Insert the data into the database -- datetime format:  "2022-11-14THH:00:00.000Z"
             await porssisahko_repository.insert_entry(data["price"], f"{date}T{hour:02d}:00.000Z")
 
