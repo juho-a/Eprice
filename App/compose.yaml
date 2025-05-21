@@ -92,8 +92,6 @@ services:
       - ./data-preparation/data:/data
       - ./data-preparation/scripts:/scripts
     working_dir: /scripts # this is already done in the Dockerfile (remove for production)
-    depends_on:
-      - database-migrations
     env_file:
       - ./project.env
     entrypoint: >

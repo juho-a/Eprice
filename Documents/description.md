@@ -1,6 +1,12 @@
-# System Topology
+# System description
 
 This document describes the basic topology of the system (as defined in the compose.yaml file). The system consists of multiple services that work together to provide functionality, including a database, backend server, client application, and additional components for migrations, testing, and a chat engine.
+
+## Application Overview
+
+Eprice is an application that show users market electricity price and additional related information, such as electricity consumption and production. For non-registered users, only the current 24 hour period is covered, and only the market price is shown. For registered users, also historical data is available for market price and for production/consumption. The data is represented with graphs and statistics.
+
+For registered users there is also a chat-engine available, which has access to specific source material, and which augments the user queries with retrieved context information. 
 
 ---
 
@@ -40,7 +46,15 @@ This document describes the basic topology of the system (as defined in the comp
 ```plantuml
 
 @startuml
-title System Topology: 6 containers 
+title Main services and their interactions
+skinparam rectangle {
+    BackgroundColor #FDF6E3
+    BorderColor #586e75
+}
+skinparam cloud {
+    BackgroundColor #FDF6E3
+    BorderColor #586e75
+}
 
 cloud "Docker Network\nmanages networking" as DockerNetwork
 
@@ -75,3 +89,16 @@ end note
 
 @enduml
 ```
+
+## Additional Services Overview
+
+### Data-preparation
+
+- **Purpose**: Can be used independently to retrieve or update data. Saves data to a location that is available to migrations and the database.
+
+### Backend-tests
+
+- **Purpose**: Can be used to test backend functionality independently from the frontend. Beyond fault testing, backend-tests also give additional information and warnings which would be hidden from the e2e-tests.
+- **Depends On**: Database and Server.
+
+The backend tests are mainly for development purposes, as the e2e-tests should cover the main functionalities by the end of development.
