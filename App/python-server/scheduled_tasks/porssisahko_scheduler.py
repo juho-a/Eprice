@@ -3,7 +3,7 @@ import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 #from apscheduler.triggers.interval import IntervalTrigger
-from datetime import datetime
+from datetime import datetime, timedelta
 from repositories.porssisahko_repository import PorssisahkoRepository
 from config.secrets import DATABASE_URL
 
@@ -33,8 +33,8 @@ async def fetch_and_insert_missing_porssisahko_data(start_datetime_str: str):
         # Convert the start_datetime string to a datetime object (db likes ISO format)
         start_datetime = datetime.fromisoformat(start_datetime_str)
         
-        # Get the current datetime
-        end_datetime = datetime.utcnow()
+        # Calculate the end datetime (24 hours later)
+        end_datetime = datetime.now() + timedelta(days=1)
         end_datetime = end_datetime.replace(minute=0, second=0, microsecond=0)
         
         # Retrieve missing entries from the repository
