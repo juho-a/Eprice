@@ -1,6 +1,14 @@
 
 @startuml
-title System Topology: 6 containers 
+title Main services and their interactions
+skinparam rectangle {
+    BackgroundColor #FDF6E3
+    BorderColor #586e75
+}
+skinparam cloud {
+    BackgroundColor #FDF6E3
+    BorderColor #586e75
+}
 
 cloud "Docker Network\nmanages networking" as DockerNetwork
 
