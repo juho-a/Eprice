@@ -29,7 +29,7 @@ class FingridDataService:
         """
         return await self.ext_api_fetcher.fetch_fingrid_data(dataset_id)
     
-    async def fingrid_data_range(self, dataset_id: int, start_time: str, end_time: str) -> List[FingridDataPoint] | ErrorResponse:
+    async def fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint] | ErrorResponse:
         """
         Fetch Fingrid data for a given dataset ID and time range.
 

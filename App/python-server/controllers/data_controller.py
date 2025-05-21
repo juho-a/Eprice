@@ -48,7 +48,8 @@ async def post_windpower_range(time_range: TimeRangeRequest):
         return await fingrid_data_service.fingrid_data_range(
             dataset_id=245,
             start_time=time_range.startTime,
-            end_time=time_range.endTime)
+            end_time=time_range.endTime,
+)
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:

@@ -33,14 +33,18 @@ class FetchFingridData:
     async def fetch_fingrid_data(self, dataset_id: int) -> FingridDataPoint:
         await self._rate_limiter() 
         url = f"{self.base_url}{dataset_id}/data"
-        headers = {"x-api-key": FINGRID_API_KEY}
+        headers = {}
+        if FINGRID_API_KEY is not None:
+            headers["x-api-key"] = FINGRID_API_KEY
         max_retries = 3
         retry_delay = 3
 
         for attempt in range(max_retries):
             try:
                 async with httpx.AsyncClient() as client:
-                    response = await client.get(url, headers=headers)
+                    # Remove any None values from headers to satisfy type checker
+                    clean_headers = {k: v for k, v in headers.items() if v is not None}
+                    response = await client.get(url, headers=clean_headers)
                     response.raise_for_status()
                     full_data = response.json()
                     data = full_data.get("data", [])
@@ -72,12 +76,17 @@ class FetchFingridData:
                     status_code=500,
                     detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API."
                 ) from e
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch data for dataset {dataset_id} from Fingrid API after {max_retries} attempts."
+        )
         
 
     async def fetch_fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint]:
-        await self._rate_limiter() 
+        headers = {"x-api-key": FINGRID_API_KEY} if FINGRID_API_KEY is not None else {}
+        # Remove any None values from headers to satisfy type checker
+        headers = {k: v for k, v in headers.items() if v is not None}
         url = f"{self.base_url}{dataset_id}/data"
-        headers = {"x-api-key": FINGRID_API_KEY}
         max_retries = 3
         retry_delay = 1
 
@@ -114,7 +123,10 @@ class FetchFingridData:
                     status_code=500,
                     detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API."
                 ) from e
-        
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch data for dataset {dataset_id} from Fingrid API after {max_retries} attempts."
+        )
 
 class FetchPriceData:
     base_url = "https://api.porssisahko.net/v1/price.json"
