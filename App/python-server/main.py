@@ -10,7 +10,7 @@ from utils.scheduled_tasks import fetch_and_insert_missing_porssisahko_data
 import config # ensure the environment variables are loaded properly
 from config.secrets import public_routes
 
-from controllers.exceptions import custom_validation_exception_handler
+from models.custom_exception import custom_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
 
 

@@ -34,7 +34,7 @@ class PorssisahkoServiceTools:
         start_time = (end_time - timedelta(hours=48)).replace(tzinfo=None)
         return start_time, end_time
 
-    def _convert_to_price_data(self, data: List[dict]) -> List[PriceDataPoint]:
+    def convert_to_price_data(self, data: List[dict]) -> List[PriceDataPoint]:
         """
         Convert a list of database dicts to a sorted list of PriceDataPoint objects in UTC.
 
@@ -51,7 +51,7 @@ class PorssisahkoServiceTools:
             ) for item in data
         ], key=lambda x: x.startDate, reverse=True)
 
-    async def _fill_missing_entries(self, result: List[PriceDataPoint], missing_entries: List[PriceDataPoint]):
+    async def fill_missing_entries(self, result: List[PriceDataPoint], missing_entries: List[PriceDataPoint]):
         """
         Fetch and insert missing price data entries from the external API.
 
@@ -100,7 +100,7 @@ class PorssisahkoServiceTools:
         if not raw_data:
             return []
 
-        result = self._convert_to_price_data(raw_data)
+        result = self.convert_to_price_data(raw_data)
 
         missing_entries = self.find_missing_entries_utc(
             start_date.astimezone(ZoneInfo("UTC")),
@@ -108,7 +108,7 @@ class PorssisahkoServiceTools:
             result
         )
         if missing_entries:
-            await self._fill_missing_entries(result, missing_entries)
+            await self.fill_missing_entries(result, missing_entries)
 
         return sorted(result, key=lambda x: x.startDate, reverse=True)
 

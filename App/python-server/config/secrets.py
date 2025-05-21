@@ -37,21 +37,10 @@ MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME", "Eprice-verification")
 public_routes = [
     "/email",
     "/api/public/data",
-    "/api/public/data/today",
     "/api/auth/login",
     "/api/auth/register",
     "/api/auth/verify",
     "/api/auth/resend",
-    "/api/latest_prices",
-    "/api/public/weather",
-    "/api/public/weather/range",
-    "/api/public/windpower",
-    "/api/public/windpower/range",
-    "/api/public/consumption",
-    "/api/public/consumption/range",
-    "/api/public/production",
-    "/api/public/production/range",
-    "/api/public/price/range",
     "/docs",
     "/openapi.json"
     ]

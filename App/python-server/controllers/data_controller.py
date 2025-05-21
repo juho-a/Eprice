@@ -12,7 +12,7 @@ price_data_service = PriceDataService()
 
 
 
-@router.get("/api/public/windpower", response_model=FingridDataPoint, responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
+@router.get("/api/windpower", response_model=FingridDataPoint, responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def get_windpower():
     """
@@ -30,7 +30,7 @@ async def get_windpower():
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 
-@router.post("/api/public/windpower/range", response_model=List[FingridDataPoint],
+@router.post("/api/windpower/range", response_model=List[FingridDataPoint],
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def post_windpower_range(time_range: TimeRangeRequest):
@@ -55,7 +55,7 @@ async def post_windpower_range(time_range: TimeRangeRequest):
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 
-@router.get("/api/public/consumption",
+@router.get("/api/consumption",
     response_model=FingridDataPoint,
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
@@ -75,7 +75,7 @@ async def get_consumption():
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 
-@router.post("/api/public/consumption/range", response_model=List[FingridDataPoint],
+@router.post("/api/consumption/range", response_model=List[FingridDataPoint],
              responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def post_consumption_range(time_range: TimeRangeRequest):
@@ -101,7 +101,7 @@ async def post_consumption_range(time_range: TimeRangeRequest):
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 
-@router.get("/api/public/production",
+@router.get("/api/production",
     response_model=FingridDataPoint,
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
@@ -120,7 +120,7 @@ async def get_production():
     except Exception as e:
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
-@router.post("/api/public/production/range", response_model=List[FingridDataPoint],
+@router.post("/api/production/range", response_model=List[FingridDataPoint],
             responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 
 async def post_production_range(time_range: TimeRangeRequest):
@@ -146,7 +146,7 @@ async def post_production_range(time_range: TimeRangeRequest):
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 
-@router.post("/api/public/price/range")
+@router.post("/api/price/range")
 async def post_price_range(time_range: TimeRangeRequest):
     """
     Get price data for specific time range from Porssisahko API
@@ -176,7 +176,7 @@ async def get_prices():
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 @router.get(
-    "/api/public/data/today",
+    "/api/data/today",
     response_model=List[PriceDataPoint],
     responses={500: {"model": ErrorResponse, "description": "Internal server error"}})
 async def get_prices_today():
