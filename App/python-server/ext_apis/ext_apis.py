@@ -122,11 +122,12 @@ class FetchPriceData:
     async def fetch_price_data_range(self, start_time: datetime, end_time: datetime):
 
         result = []
-        current_time = start_time
+        current_time_utc = start_time
+        current_time_helsinki = start_time.astimezone(ZoneInfo("Europe/Helsinki"))
 
-        while current_time <= end_time:
-            date_str = current_time.strftime("%Y-%m-%d")
-            hour_str = current_time.strftime("%H")
+        while current_time_helsinki <= end_time:
+            date_str = current_time_helsinki.strftime("%Y-%m-%d")
+            hour_str = current_time_helsinki.strftime("%H")
 
             query_params = {
                 "date": date_str,
@@ -143,8 +144,9 @@ class FetchPriceData:
                     if not data:
                         raise ValueError(f"No price data returned for {date_str} {hour_str}")
 
+
                     result.append({
-                        "startDate": f"{date_str}T{hour_str}:00:00Z",
+                        "startDate": current_time_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "price": data["price"]
                     })
             except httpx.HTTPStatusError as exc:
@@ -158,7 +160,8 @@ class FetchPriceData:
                     detail=f"Unexpected error occurred while fetching data from Porssisahko: {str(e)}"
                 ) from e
 
-            current_time += timedelta(hours=1)
+            current_time_helsinki += timedelta(hours=1)
+            current_time_utc += timedelta(hours=1)
 
         return result
 

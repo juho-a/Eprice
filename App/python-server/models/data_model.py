@@ -10,6 +10,9 @@ class DateTimeValidatedModel(BaseModel):
         datetime.fromisoformat(v.replace("Z", "+00:00"))
         return v
 
+class StartDateModel(BaseModel):
+    startDate: datetime
+
 class TimeRange(DateTimeValidatedModel):
     startTime: datetime = Field(
         example="2024-05-01T00:00:00Z",
@@ -45,7 +48,7 @@ class FingridDataPoint(TimeRange):
             raise ValueError("value must be non-negative")
         return v
 
-class PriceDataPoint(BaseModel):
+class PriceDataPoint(StartDateModel):
     startDate: datetime = Field(
         description="UTC str in RFC 3339 format",
         example="2025-05-08T04:00:00.000Z"
