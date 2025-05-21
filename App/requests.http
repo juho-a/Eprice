@@ -43,12 +43,12 @@ POST http://localhost:8000/api/windpower/range
 Content-Type: application/json
 
 {
-  "startTime": "205-05-08T04:00:00Z",
+  "startTime": "2025-05-08T04:00:00Z",
   "endTime": "2025-05-08T06:00:00Z"
 }
 
 ### fingrid consumption data now
-curl -X GET http://localhost:8000/api/public/consumption -v
+curl -X GET http://localhost:8000/api/consumption -v
 
 ### fingrid consumption data range
 POST http://localhost:8000/api/consumption/range
@@ -63,7 +63,7 @@ Content-Type: application/json
 curl -X GET http://localhost:8000/api/production -v
 
 ### Fingrid total production data range
-POST http://localhost:8000/api/public/production/range
+POST http://localhost:8000/api/production/range
 Content-Type: application/json
 
 {

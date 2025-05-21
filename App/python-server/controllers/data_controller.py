@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from datetime import datetime, timezone
 from typing import List
 from services.data_service import FingridDataService, PriceDataService
 from models.data_model import FingridDataPoint, TimeRangeRequest, PriceDataPoint, ErrorResponse

@@ -2,7 +2,6 @@ from models.data_model import *
 from ext_apis.ext_apis import *
 from repositories.porssisahko_repository import *
 from utils.porssisahko_service_tools import *
-from config.secrets import DATABASE_URL
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
