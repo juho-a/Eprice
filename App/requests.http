@@ -22,24 +22,24 @@ curl -X GET http://localhost:8000/api/auth/logout -v
 curl -X GET http://localhost:8000/api/public/data -v
 
 ### Price data today
-curl -X GET http://localhost:8000/api/public/data/today -v
+curl -X GET http://localhost:8000/api/data/today -v
 
 ### Price data with range
-POST http://localhost:8000/api/public/price/range
+POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2024-05-01T00:00:00Z",
-  "endTime": "2024-05-01T05:00:00Z"
+  "startTime": "2025-05-20T00:00:00Z",
+  "endTime": "2025-05-22T00:00:00Z"
 }
 
 
 ### Fingrid data endpoints
 ### fingrid wind power prooduction data now
-curl -X GET http://localhost:8000/api/public/windpower -v
+curl -X GET http://localhost:8000/api/windpower -v
 
 ### Fingrid Windpower range
-POST http://localhost:8000/api/public/windpower/range
+POST http://localhost:8000/api/windpower/range
 Content-Type: application/json
 
 {
@@ -48,10 +48,10 @@ Content-Type: application/json
 }
 
 ### fingrid consumption data now
-curl -X GET http://localhost:8000/api/public/consumption -v
+curl -X GET http://localhost:8000/api/consumption -v
 
 ### fingrid consumption data range
-POST http://localhost:8000/api/public/consumption/range
+POST http://localhost:8000/api/consumption/range
 Content-Type: application/json
 
 {
@@ -60,34 +60,13 @@ Content-Type: application/json
 }
 
 ### fingrid total production data
-curl -X GET http://localhost:8000/api/public/production -v
+curl -X GET http://localhost:8000/api/production -v
 
 ### Fingrid total production data range
-POST http://localhost:8000/api/public/production/range
+POST http://localhost:8000/api/production/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-08T04:00:00Z",
-  "endTime": "2025-05-08T06:00:00Z"
-}
-
-### Production data 
-POST http://localhost:8000/api/public/consumption/range
-Content-Type: application/json
-
-{
-  "startTime": "2025-05-08T04:00:00Z",
-  "endTime": "2025-05-08T06:00:00Z"
-}
-
-
-### Weather data endpoint
-### Get weather forecast (POST)
-POST http://localhost:8000/api/public/weather
-Content-Type: application/json
-
-{
-  "lat": 60.169,
-  "lon": 24.9384,
-  "timestamp": "2024-05-05T13:30:00Z"
+  "startTime": "2025-01-08T04:00:00Z",
+  "endTime": "2025-01-08T06:00:00Z"
 }
