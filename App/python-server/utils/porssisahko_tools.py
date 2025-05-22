@@ -3,6 +3,16 @@ import asyncpg
 import time
 
 async def wait_for_database(database_url):
+    """
+    Wait for the database to be ready by attempting to connect to it.
+
+    Args:
+        database_url: The URL of the database to connect to.
+
+    Raises:
+        Exception: If the database is not ready after multiple attempts.
+        (logs attempts and failure)
+    """
     max_retries = 10
     retry_delay = 5  # seconds
     for attempt in range(max_retries):

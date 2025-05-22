@@ -62,6 +62,7 @@ def parse_directory_path(
 def flatten_dict_with_paths(d, parent_path="", append_root=False):
     """
     Flattens a nested dictionary from parse_directory_path, prepending keys with their full path.
+    The key will be the full path from the root directory.
     """
     flat = {}
     for k, v in d.items():
@@ -69,23 +70,18 @@ def flatten_dict_with_paths(d, parent_path="", append_root=False):
         if isinstance(v, dict):
             flat.update(flatten_dict_with_paths(v, current_path))
         else:
-            flat[current_path] = v
+            # Use the full path as the key (normalized)
+            flat[os.path.normpath(current_path)] = v
     if append_root:
-        flat = {os.path.join("./", k): v for k, v in flat.items()}
+        flat = {os.path.normpath(os.path.join("./", k)): v for k, v in flat.items()}
     return flat
 
-def replace_path_prefix(flat_dict, old_prefix):
+def append_prefix(flat_dict, prefix):
     """
-    Replace the beginning of each key in the dict with just the filename if it starts with old_prefix.
+    Append the beginning of each key in the dict with the given prefix.
     """
-    new_dict = {}
-    for k, v in flat_dict.items():
-        if k.startswith(old_prefix):
-            new_key = os.path.basename(k)
-        else:
-            new_key = k
-        new_dict[new_key] = v
-    return new_dict
+    return {os.path.join(prefix, k): v for k, v in flat_dict.items()}
+
 
 def save_dict_to_json(d, output_path):
     with open(output_path, "w", encoding="utf-8") as f:
@@ -95,7 +91,7 @@ def main():
     parser = argparse.ArgumentParser(description="Parse a project directory and output file contents as JSON.")
     parser.add_argument("directory", help="Path to the directory to parse.")
     parser.add_argument("-o", "--output", help="Output JSON file path.", default="file_contents.json")
-    parser.add_argument("--replace-source", help="Filepath prefix to replace with filename.", default=None)
+    parser.add_argument("--append-prefix", help="Filepath prefix.", default="./")
     parser.add_argument("--exclude-dirs", help="Path to file with directory names to exclude.", default=None)
     parser.add_argument("--exclude-files", help="Path to file with file names or endings to exclude.", default=None)
     args = parser.parse_args()
@@ -110,9 +106,7 @@ def main():
         recursive=True
     )
     flat = flatten_dict_with_paths(nested, append_root=True)
-
-    if args.replace_source:
-        flat = replace_path_prefix(flat, args.replace_source)
+    flat = append_prefix(flat, args.append_prefix)
 
     if args.output:
         save_dict_to_json(flat, args.output)

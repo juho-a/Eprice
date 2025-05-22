@@ -1,3 +1,20 @@
+"""
+This module provides utility functions for sending emails in the Eprice backend.
+
+Features:
+- Asynchronous email sending using FastAPI-Mail.
+- Configures SMTP connection using environment variables from the secrets configuration.
+- Sends verification emails with a code and a direct verification link for user registration and authentication flows.
+
+Dependencies:
+- fastapi_mail for asynchronous email delivery.
+- config.secrets for SMTP credentials and configuration.
+
+Intended Usage:
+- Used by authentication and user management services to send verification codes to users.
+- Can be extended for other email-related utilities as needed.
+"""
+
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from config.secrets import (
     MAIL_USERNAME,
