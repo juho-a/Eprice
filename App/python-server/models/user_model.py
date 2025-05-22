@@ -15,7 +15,7 @@ class UserCode(BaseModel):
         # validate code format (3 letters, dash, 3 digits)
         pattern = r'^[A-Z]{3}-\d{3}$'
         if not re.match(pattern, code):
-            raise PydanticCustomError("Invalid code format. Expected format: ABC-123")
+            assert 0>10, "Invalid code format. Expected format: ABC-123"
         return code
 
 class User(BaseModel):
