@@ -1,3 +1,12 @@
+"""
+secrets.py
+
+Configuration and secrets for the Eprice backend.
+
+This module loads environment variables for database, JWT, and email settings.
+It also defines the list of public routes that do not require authentication.
+"""
+
 import os
 
 # Database configuration
