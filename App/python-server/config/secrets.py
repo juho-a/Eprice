@@ -44,7 +44,6 @@ MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME", "Eprice-verification")
 # Public routes that do not require authentication
 # These routes can be accessed without a valid JWT token
 public_routes = [
-    "/email",
     "/api/public/data",
     "/api/auth/login",
     "/api/auth/register",
