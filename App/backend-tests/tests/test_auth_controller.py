@@ -1,7 +1,6 @@
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
-from main import app
 import random
 
 # Create a pytest-asyncio fixture for the test client
@@ -33,7 +32,18 @@ async def test_register_user_invalid_email(client):
         headers={"Content-Type": "application/json"}
     )
     assert response.status_code == 422
-    assert "value is not a valid email address" in response.json()["detail"][0]["msg"]
+    assert "value is not a valid email address: An email address must have an @-sign." in response.json()["message"]
+
+@pytest.mark.asyncio
+async def test_register_user_invalid_email_end(client):
+    response = await client.post(
+        "/api/auth/register",
+        json={"email": "invalid-email@", "password": "newpassword"},
+        headers={"Content-Type": "application/json"}
+    )
+    assert response.status_code == 422
+    assert "value is not a valid email address: There must be something after the @-sign." in response.json()["message"]
+
 
 @pytest.mark.asyncio
 async def test_register_user_short_password(client):
@@ -50,5 +60,5 @@ async def test_register_user_short_password(client):
 
     # Assert the response status code
     assert response.status_code == 422
-    assert "Password must be at least 4 characters long" in response.json()["detail"][0]["msg"]
+    assert "Password must be at least 4 characters long" in response.json()["message"]
 

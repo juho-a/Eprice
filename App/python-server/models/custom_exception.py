@@ -17,7 +17,7 @@ async def custom_validation_exception_handler(request: Request, exc: RequestVali
         type_str = error_detail.get("type", "validation_error")
 
         error_message = (
-            f"Failed to process request due to validation error: '{type_str}' at '{loc_str}': {msg}."
+            f"{msg}."
         )
 
     else:
