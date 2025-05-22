@@ -48,7 +48,7 @@ class PorssisahkoServiceTools:
                 startDate=item["datetime"].astimezone(ZoneInfo("UTC")),
                 price=item["price"]
             ) for item in data
-        ], key=lambda x: x.startDate, reverse=True)
+        ], key=lambda x: x.startDate, reverse=False)
 
     async def fill_missing_entries(self, result: List[PriceDataPoint], missing_entries: List[PriceDataPoint]):
         """
@@ -109,7 +109,7 @@ class PorssisahkoServiceTools:
         if missing_entries:
             await self.fill_missing_entries(result, missing_entries)
 
-        return sorted(result, key=lambda x: x.startDate, reverse=True)
+        return sorted(result, key=lambda x: x.startDate, reverse=False)
 
     def find_missing_entries_utc(self, start_date_utc: datetime, end_date_utc: datetime, data_utc: List[PriceDataPoint]):
         """
@@ -129,5 +129,5 @@ class PorssisahkoServiceTools:
             if not any(item.startDate == current_date_utc for item in data_utc):
                 result.append(StartDateModel(startDate=current_date_utc))
             current_date_utc += timedelta(hours=1)
-        result.sort(key=lambda x: x.startDate, reverse=True)
+        result.sort(key=lambda x: x.startDate, reverse=False)
         return result

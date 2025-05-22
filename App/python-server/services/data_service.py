@@ -102,7 +102,7 @@ class PriceDataService:
             now_fi = datetime.now(ZoneInfo("Europe/Helsinki"))
             today_fi = now_fi.date()
             filtered_data = [item for item in data if item.startDate.astimezone(ZoneInfo("Europe/Helsinki")).date() == today_fi]
-            return sorted(filtered_data, key=lambda x: x.startDate, reverse=True)
+            return sorted(filtered_data, key=lambda x: x.startDate, reverse=False)
         else:
             return await self.ext_api_fetcher.fetch_price_data_today()
     
