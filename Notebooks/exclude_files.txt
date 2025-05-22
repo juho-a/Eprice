@@ -1,0 +1,6 @@
+config.json
+config.js
+package.json
+package-lock.json
+lock
+pyproject.toml
