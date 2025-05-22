@@ -17,7 +17,7 @@
     let dailyAverage = null; // Store the calculated daily average
 
     // Calculate the current price and daily average
-    $: {
+    onMount(() => {
         if (pricesState) {
             console.log("Chart Values:", pricesState);
             const now = new Date();
@@ -40,16 +40,8 @@
             dailyAverage = dailyAverage.toFixed(3); // Format to 2 decimal places
         }
     }
+    );
 
-    onMount(async () => {
-        // Fetch data from the API
-        try {
-            await update();
-        } catch (err) {
-            error = "Failed to fetch electricity prices.";
-            console.error("Error fetching data:", err);
-        }
-    });
 
     //let { data, form } = $props();
 </script>
