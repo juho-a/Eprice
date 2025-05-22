@@ -29,8 +29,8 @@ POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2023-05-01T00:00:00Z",
-  "endTime": "2023-05-01T01:00:00Z"
+  "startTime": "2025-05-20T00:00:00Z",
+  "endTime": "2025-05-22T00:00:00Z"
 }
 
 
@@ -67,6 +67,6 @@ POST http://localhost:8000/api/production/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-08T04:00:00Z",
-  "endTime": "2025-05-08T06:00:00Z"
+  "startTime": "2025-01-08T04:00:00Z",
+  "endTime": "2025-01-08T06:00:00Z"
 }

@@ -5,11 +5,11 @@
         "version": "0.1.0"
     },
     "paths": {
-        "/api/public/windpower": {
+        "/api/windpower": {
             "get": {
                 "summary": "Get Windpower",
                 "description": "Get wind power production forecast.\nFetches forecast data from Fingrid dataset ID 245.\n\nReturns:\n    dict: A data point or an error message.",
-                "operationId": "get_windpower_api_public_windpower_get",
+                "operationId": "get_windpower_api_windpower_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -34,11 +34,11 @@
                 }
             }
         },
-        "/api/public/windpower/range": {
+        "/api/windpower/range": {
             "post": {
                 "summary": "Post Windpower Range",
                 "description": "Get wind power production data for a given time range.\nFetches data from Fingrid dataset ID 245.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
-                "operationId": "post_windpower_range_api_public_windpower_range_post",
+                "operationId": "post_windpower_range_api_windpower_range_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -59,7 +59,7 @@
                                         "$ref": "#/components/schemas/FingridDataPoint"
                                     },
                                     "type": "array",
-                                    "title": "Response Post Windpower Range Api Public Windpower Range Post"
+                                    "title": "Response Post Windpower Range Api Windpower Range Post"
                                 }
                             }
                         }
@@ -87,11 +87,11 @@
                 }
             }
         },
-        "/api/public/consumption": {
+        "/api/consumption": {
             "get": {
                 "summary": "Get Consumption",
                 "description": "Get electricity consumption forecast.\nFetches consumption data from Fingrid dataset ID 165.\n\nReturns:\n    dict: A data point or an error message.",
-                "operationId": "get_consumption_api_public_consumption_get",
+                "operationId": "get_consumption_api_consumption_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -116,11 +116,11 @@
                 }
             }
         },
-        "/api/public/consumption/range": {
+        "/api/consumption/range": {
             "post": {
                 "summary": "Post Consumption Range",
                 "description": "Get electricity consumption data for a given time range.\nFetches consumption data from Fingrid dataset ID 165.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
-                "operationId": "post_consumption_range_api_public_consumption_range_post",
+                "operationId": "post_consumption_range_api_consumption_range_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -141,7 +141,7 @@
                                         "$ref": "#/components/schemas/FingridDataPoint"
                                     },
                                     "type": "array",
-                                    "title": "Response Post Consumption Range Api Public Consumption Range Post"
+                                    "title": "Response Post Consumption Range Api Consumption Range Post"
                                 }
                             }
                         }
@@ -169,11 +169,11 @@
                 }
             }
         },
-        "/api/public/production": {
+        "/api/production": {
             "get": {
                 "summary": "Get Production",
                 "description": "Get electricity production forecast.\nFetches production data from Fingrid dataset ID 241.\n\nReturns:\n    dict: A data point or an error message.",
-                "operationId": "get_production_api_public_production_get",
+                "operationId": "get_production_api_production_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -198,11 +198,11 @@
                 }
             }
         },
-        "/api/public/production/range": {
+        "/api/production/range": {
             "post": {
                 "summary": "Post Production Range",
                 "description": "Get electricity production data for a given time range.\nFetches production data from Fingrid dataset ID 241.\n\nArgs:\n    time_range (TimeRangeRequest): Start and end time in RFC 3339 format.\n\nReturns:\n    list[dict]: A list of data points or an error message.",
-                "operationId": "post_production_range_api_public_production_range_post",
+                "operationId": "post_production_range_api_production_range_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -223,7 +223,7 @@
                                         "$ref": "#/components/schemas/FingridDataPoint"
                                     },
                                     "type": "array",
-                                    "title": "Response Post Production Range Api Public Production Range Post"
+                                    "title": "Response Post Production Range Api Production Range Post"
                                 }
                             }
                         }
@@ -251,50 +251,11 @@
                 }
             }
         },
-        "/api/public/weather": {
-            "post": {
-                "summary": "Post Weather",
-                "description": "Get weather forecast for a specific UTC time and location (POST version).\nFetches weather forecast data from the MET API.\n\nArgs:\n    request (WeatherRequest): Contains latitude, longitude, and timestamp in RFC 3339 format.\n\nReturns:\n    dict: Weather forecast data or an error message.",
-                "operationId": "post_weather_api_public_weather_post",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/WeatherRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/WeatherDataPoint"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/public/price/range": {
+        "/api/price/range": {
             "post": {
                 "summary": "Post Price Range",
-                "description": "Get price data for specific time range from Porssisahko API\n\nArgs:\n    Timestamp in RFC 3339 format.\n\nReturns:\n    list[dict]: Price data or an error message",
-                "operationId": "post_price_range_api_public_price_range_post",
+                "description": "Get price data for specific time range from Porssisahko API",
+                "operationId": "post_price_range_api_price_range_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -359,10 +320,10 @@
                 }
             }
         },
-        "/api/public/data/today": {
+        "/api/data/today": {
             "get": {
                 "summary": "Get Prices Today",
-                "operationId": "get_prices_today_api_public_data_today_get",
+                "operationId": "get_prices_today_api_data_today_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -373,7 +334,7 @@
                                         "$ref": "#/components/schemas/PriceDataPoint"
                                     },
                                     "type": "array",
-                                    "title": "Response Get Prices Today Api Public Data Today Get"
+                                    "title": "Response Get Prices Today Api Data Today Get"
                                 }
                             }
                         }
@@ -478,17 +439,106 @@
                     }
                 }
             }
+        },
+        "/api/auth/verify": {
+            "post": {
+                "summary": "Verify",
+                "description": "Verify the user by checking the verification code.",
+                "operationId": "verify_api_auth_verify_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCode"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/resend": {
+            "post": {
+                "summary": "Resend Verification Code",
+                "operationId": "resend_verification_code_api_auth_resend_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "EmailRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "title": "EmailRequest"
+            },
             "ErrorResponse": {
                 "properties": {
                     "error": {
                         "type": "string",
                         "title": "Error",
                         "description": "Error message describing the issue.",
-                        "example": "An error occurred"
+                        "examples": [
+                            "An error occurred"
+                        ]
                     }
                 },
                 "type": "object",
@@ -501,21 +551,29 @@
                 "properties": {
                     "startTime": {
                         "type": "string",
+                        "format": "date-time",
                         "title": "Starttime",
                         "description": "Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)",
-                        "example": "2024-05-01T00:00:00Z"
+                        "examples": [
+                            "2024-05-01T00:00:00Z"
+                        ]
                     },
                     "endTime": {
                         "type": "string",
+                        "format": "date-time",
                         "title": "Endtime",
                         "description": "End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)",
-                        "example": "2024-05-02T00:00:00Z"
+                        "examples": [
+                            "2024-05-02T00:00:00Z"
+                        ]
                     },
                     "value": {
                         "type": "number",
                         "title": "Value",
                         "description": "Value of the data point",
-                        "example": "7883.61"
+                        "examples": [
+                            7883.61
+                        ]
                     }
                 },
                 "type": "object",
@@ -543,15 +601,20 @@
                 "properties": {
                     "startDate": {
                         "type": "string",
+                        "format": "date-time",
                         "title": "Startdate",
                         "description": "UTC str in RFC 3339 format",
-                        "example": "2025-05-08T04:00:00.000Z"
+                        "examples": [
+                            "2025-05-08T04:00:00.000Z"
+                        ]
                     },
                     "price": {
                         "type": "number",
                         "title": "Price",
                         "description": "Floating-point number representing the price in euro cents",
-                        "example": 0.61
+                        "examples": [
+                            0.61
+                        ]
                     }
                 },
                 "type": "object",
@@ -565,15 +628,21 @@
                 "properties": {
                     "startTime": {
                         "type": "string",
+                        "format": "date-time",
                         "title": "Starttime",
                         "description": "Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)",
-                        "example": "2024-05-01T00:00:00Z"
+                        "examples": [
+                            "2024-05-01T00:00:00Z"
+                        ]
                     },
                     "endTime": {
                         "type": "string",
+                        "format": "date-time",
                         "title": "Endtime",
                         "description": "End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)",
-                        "example": "2024-05-02T00:00:00Z"
+                        "examples": [
+                            "2024-05-02T00:00:00Z"
+                        ]
                     }
                 },
                 "type": "object",
@@ -593,18 +662,6 @@
                     "password": {
                         "type": "string",
                         "title": "Password"
-                    },
-                    "role": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Role",
-                        "default": "user"
                     }
                 },
                 "type": "object",
@@ -613,6 +670,25 @@
                     "password"
                 ],
                 "title": "User"
+            },
+            "UserCode": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    },
+                    "code": {
+                        "type": "string",
+                        "title": "Code"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email",
+                    "code"
+                ],
+                "title": "UserCode"
             },
             "ValidationError": {
                 "properties": {
@@ -646,64 +722,6 @@
                     "type"
                 ],
                 "title": "ValidationError"
-            },
-            "WeatherDataPoint": {
-                "properties": {
-                    "temperature_celsius": {
-                        "type": "number",
-                        "title": "Temperature Celsius",
-                        "description": "Air temperature in degrees Celsius based on the forecast.",
-                        "example": 8.5
-                    },
-                    "wind_speed_mps": {
-                        "type": "number",
-                        "title": "Wind Speed Mps",
-                        "description": "Wind speed in meters per second based on the forecast.",
-                        "example": 2.2
-                    },
-                    "closest_forecast_time": {
-                        "type": "string",
-                        "title": "Closest Forecast Time",
-                        "description": "Timestamp (in UTC, RFC 3339 format) of the closest available weather forecast.",
-                        "example": "2025-05-09T16:00:00Z"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "temperature_celsius",
-                    "wind_speed_mps",
-                    "closest_forecast_time"
-                ],
-                "title": "WeatherDataPoint"
-            },
-            "WeatherRequest": {
-                "properties": {
-                    "lat": {
-                        "type": "number",
-                        "title": "Lat",
-                        "description": "Latitude",
-                        "example": 60.1699
-                    },
-                    "lon": {
-                        "type": "number",
-                        "title": "Lon",
-                        "description": "Longitude",
-                        "example": 24.9384
-                    },
-                    "timestamp": {
-                        "type": "string",
-                        "title": "Timestamp",
-                        "description": "UTC str in RFC 3339 format, e.g. 2024-05-05T13:30:00Z",
-                        "example": "2024-05-05T13:30:00Z"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "lat",
-                    "lon",
-                    "timestamp"
-                ],
-                "title": "WeatherRequest"
             }
         }
     }
