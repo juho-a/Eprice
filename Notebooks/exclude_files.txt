@@ -6,3 +6,6 @@ lock
 pyproject.toml
 lib – Pikakuvake.lnk
 deno.lock
+.xlsx
+.csv
+requests.http

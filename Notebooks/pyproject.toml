@@ -1,8 +1,9 @@
 [project]
 name = "notebooks"
 version = "0.1.0"
-requires-python = ">=3.13"
+requires-python = "==3.11.6"
 dependencies = [
+    "faiss-cpu",
     "docarray>=0.41.0",
     "dotenv>=0.9.9",
     "gradio>=5.30.0",
