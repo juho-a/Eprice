@@ -42,13 +42,13 @@ async def login(user: User, response: Response):
         response.status_code = 401
         return {"message": "Email not verified."}
 
-    payload = {"email": db_user["email"], "id": db_user["id"]}
+    payload = {"email": db_user["email"], "role": db_user["role"]}
     token = auth_service.create_access_token(payload)
     response.set_cookie(key=COOKIE_KEY,
                         value=token,
                         httponly=True, samesite="lax",
                         domain="localhost", path="/",
-                        secure=False)
+                        secure=True)
 
     return {"message": "Welcome!"}
 
