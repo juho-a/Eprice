@@ -1,13 +1,13 @@
 <script>
     import PriceBall from "$lib/components/layout/PriceBall.svelte";
-    import ChartExample from "$lib/components/ChartExample.svelte";
+    import MainChart from "$lib/components/MainChart.svelte";
 
     import { onMount } from "svelte";
     import { usePricesState } from "$lib/states/usePricesState.svelte";
 
-    const { data: pricesState, update } = usePricesState();
+    const { data: pricesState } = usePricesState();
 
-
+    // Function to calculate the average price for the day
     const averageDayPrice = array => array.reduce((a, b) => a + b) / array.length;
 
     let currentPrice = null; // Default value for current price
@@ -58,5 +58,5 @@
        <PriceBall heading="Sähkö viikko" />
         
     </div>
-    <ChartExample />   
+    <MainChart />   
 </main>

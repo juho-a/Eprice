@@ -26,9 +26,13 @@
     filteredData.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
     // Transform data for the chart
-    const chartLabels = filteredData.map(item =>
-        new Date(item.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
-    );
+    const chartLabels = filteredData.map(item => {
+        const date = new Date(item.startDate);
+        const hour = String(date.getUTCHours()).padStart(2, '0');
+        const minute = String(date.getUTCMinutes()).padStart(2, '0');
+        return `${hour}:${minute}`;
+    });
+    // Get the price values for the chart
     const chartValues = filteredData.map(item => item.price);
 
     ctx = chartCanvas.getContext('2d');
@@ -59,16 +63,15 @@
         	tooltip: {
             callbacks: {
                 title: function(context) {
-                    // Get the index of the hovered item
                     const idx = context[0].dataIndex;
                     const item = filteredData[idx];
                     const date = new Date(item.startDate);
-                    // Format: "21.05.2025 21:00"
-                    const day = String(date.getDate()).padStart(2, '0');
-					const month = String(date.getMonth() + 1).padStart(2, '0');
-					const year = date.getFullYear();
-					const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-					return `${day}.${month}.${year} ${time}`;
+                    const day = String(date.getUTCDate()).padStart(2, '0');
+                    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                    const year = date.getUTCFullYear();
+                    const hour = String(date.getUTCHours()).padStart(2, '0');
+                    const minute = String(date.getUTCMinutes()).padStart(2, '0');
+                    return `${day}.${month}.${year} ${hour}:${minute}`;
                 }
             }
         }
