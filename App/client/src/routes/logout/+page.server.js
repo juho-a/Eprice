@@ -1,19 +1,23 @@
-import { redirect } from '@sveltejs/kit';
-import { useUserState } from "$lib/states/userState.svelte";
+import { PUBLIC_INTERNAL_API_URL } from "$env/static/public";
+import { redirect } from "@sveltejs/kit";
 import { COOKIE_KEY } from "$env/static/private";
 
-export async function load({ locals, cookies }) {
-	  cookies.set(COOKIE_KEY, "", {
-        httpOnly: true,
-        path: '/',
-        maxAge: 0
-      })
-    let userState = useUserState();
-    userState.user = null;
-    locals.user = null;
-    //console.log("logout");
+const apiRequest = async (url) => {
+  return await fetch(`${PUBLIC_INTERNAL_API_URL}${url}`, {
+    method: "GET"
+  });
+};
 
-    // redirect to home page
-    throw redirect(302, '/');
-	
-}
+export const actions = {
+
+  logout: async ({ cookies }) => {
+    const response = await apiRequest("/api/auth/logout");
+    if (response.ok) {
+      cookies.delete(COOKIE_KEY, {path: "/"});
+      throw redirect(302, "/");
+    } else {
+      return { error: "Logout failed" };
+    }
+  }
+
+};

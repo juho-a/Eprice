@@ -1,4 +1,5 @@
 <script>
+  import { page } from '$app/stores';
   let { user } = $props();
 </script>
 
@@ -24,10 +25,13 @@
         {/if}
       </ul>
     </nav>
-    {#if user}
+    {#if user && $page.url.pathname !== '/logout'}
       <div class="ml-auto">
-        <a href="/logout"  data-sveltekit-reload data-sveltekit-preload-data="false" 
-        class="btn bg-primary-300 hover:bg-primary-500 text-white">Logout</a>
+        <a href="/logout" class="underline text-white">Logout</a>
+      </div>
+    {:else if $page.url.pathname === '/logout'}
+      <div class="ml-auto">
+        <!--This is a hack to force the placement of other elements-->
       </div>
     {/if}
 </header>
