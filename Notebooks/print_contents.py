@@ -12,6 +12,7 @@ def print_directory_contents(directory_path, prefix="", recursive=True, output_f
     '''
     Recursively lists the contents of a directory in a tree-like format.
     Files are listed before directories at each level.
+    Exclusion supports both exact names and suffixes for files.
     '''
     if _acc is None:
         _acc = []
@@ -28,11 +29,13 @@ def print_directory_contents(directory_path, prefix="", recursive=True, output_f
                 f.write("\n".join(_acc) + "\n")
         return
 
+    is_excluded_file = lambda name: any(name == excl or name.endswith(excl) for excl in exclude_files)
+
     try:
         entries = sorted(os.scandir(directory_path), key=lambda e: e.name)
         files = [
             e for e in entries
-            if e.is_file() and not e.name.startswith(".") and e.name not in exclude_files
+            if e.is_file() and not e.name.startswith(".") and not is_excluded_file(e.name)
         ]
         dirs = [
             e for e in entries
