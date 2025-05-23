@@ -1,8 +1,4 @@
-# System description
-
-This document describes the basic topology of the system (as defined in the compose.yaml file). The system consists of multiple services that work together to provide functionality, including a database, backend server, client application, and additional components for migrations, testing, and a chat engine.
-
-## Application Overview
+# Application Overview
 
 Eprice is an application that show users market electricity price and additional related information, such as electricity consumption and production. For non-registered users, only the current 24 hour period is covered, and only the market price is shown. For registered users, also historical data is available for market price and for production/consumption. The data is represented with graphs and statistics.
 
@@ -11,6 +7,8 @@ For registered users there is also a chat-engine available, which has access to 
 ---
 
 ## Services Overview
+
+The system consists of multiple containerized services that work together to provide functionality for the Eprice application, including a database, backend server, client application, and additional components for migrations, testing, and a chat engine.
 
 ### 1. Database
 - **Ports**: `5432` (default PostgreSQL port)

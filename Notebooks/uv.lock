@@ -1162,6 +1162,20 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-openai"
+version = "0.3.18"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langchain-core" },
+    { name = "openai" },
+    { name = "tiktoken" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/77/09/0c3332bf1f53b6e90a06eaac7c7b94898769157bfc41f2c116136559791e/langchain_openai-0.3.18.tar.gz", hash = "sha256:8e0769e4042de099a6217bbdccf7cc06b14c462e900424cbfc340c5f46f079ba", size = 273282 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/58/3a/312c543281021fb4b22c0bc300d525b3a77696b427d87a7d484754929eae/langchain_openai-0.3.18-py3-none-any.whl", hash = "sha256:1687b972a6f6ac125cb8b23c0043278ab3bce031983ef9b32c1277155f88a03e", size = 63393 },
+]
+
+[[package]]
 name = "langchain-postgres"
 version = "0.0.13"
 source = { registry = "https://pypi.org/simple" }
@@ -1443,6 +1457,7 @@ dependencies = [
     { name = "langchain-experimental" },
     { name = "langchain-huggingface" },
     { name = "langchain-ollama" },
+    { name = "langchain-openai" },
     { name = "langchain-postgres" },
     { name = "langchain-text-splitters" },
     { name = "numpy" },
@@ -1477,6 +1492,7 @@ requires-dist = [
     { name = "langchain-experimental", specifier = ">=0.3.4" },
     { name = "langchain-huggingface", specifier = ">=0.1.2" },
     { name = "langchain-ollama", specifier = ">=0.3.2" },
+    { name = "langchain-openai", specifier = ">=0.3.18" },
     { name = "langchain-postgres", specifier = ">=0.0.13" },
     { name = "langchain-text-splitters", specifier = ">=0.3.8" },
     { name = "numpy", specifier = ">=2.2.5" },

@@ -44,9 +44,33 @@ The Eprice App is a containerized application that allows users to view the mark
 ### Prerequisites
 
 - **Docker** and **Docker Compose**: Install Docker Desktop or Docker CLI.
-- **Deno**: Required for local development of the frontend (see `client/README.md`).
+- **Deno**: Required for local development of the frontend (see `client/README.md`), and package management.
 
----
+Any libraries needed in the containers are installed automatically using requirements or other configuration files. `uv` is preferable package manager also inside containers, but pip is used as fallback in some cases.
+
+### Database Persistence
+
+To ensure your PostgreSQL database data is persisted locally (so it is not lost when containers are stopped or removed), you need to create a directory for the database files and set the correct permissions:
+
+```bash
+mkdir -p ./pgdata
+chmod 700 ./pgdata
+sudo chown -R 999:999 ./pgdata
+```
+
+- `mkdir -p ./pgdata` creates the directory if it doesn't exist.
+- `chmod 700 ./pgdata` sets secure permissions (Postgres default).
+- `sudo chown -R 999:999 ./pgdata` sets ownership to the default Postgres user inside the container (UID 999).
+
+**Note:**  
+If you change to a custom Postgres image or user, check the UID/GID with:
+
+```bash
+docker run --rm <root/image:version> id postgres
+```
+(here we have root=reinikp2 and image=pgvector-database, and version=v1)
+
+and adjust the `chown` command accordingly.
 
 ### Running the App
 

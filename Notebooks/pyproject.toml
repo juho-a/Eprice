@@ -33,4 +33,5 @@ dependencies = [
     "torch>=2.7.0",
     "transformers>=4.51.3",
     "langchain-postgres>=0.0.13",
+    "langchain-openai>=0.3.18",
 ]
