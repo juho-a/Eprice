@@ -1,7 +1,7 @@
 services:
   database:
     container_name: postgresql_database
-    image: postgres:17.0
+    image: reinikp2/pgvector-database:v1 #postgres:17.0
     restart: unless-stopped
     env_file:
       - project.env

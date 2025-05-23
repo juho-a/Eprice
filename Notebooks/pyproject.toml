@@ -31,5 +31,6 @@ dependencies = [
     "stdlib-list>=0.11.1",
     "tiktoken>=0.9.0",
     "torch>=2.7.0",
-    "transformers>=4.51.3"
+    "transformers>=4.51.3",
+    "langchain-postgres>=0.0.13",
 ]
