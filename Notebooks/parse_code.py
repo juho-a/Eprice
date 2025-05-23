@@ -129,6 +129,7 @@ def parse_file(filepath, excluded_imports=None):
 
     # Collect all blocks from AST
     for node in ast.walk(tree):
+        """
         if isinstance(node, ast.Import):
             if any(is_excluded(alias.name) for alias in node.names):
                 continue
@@ -155,7 +156,8 @@ def parse_file(filepath, excluded_imports=None):
                 "start_line": node.lineno,
                 "code": code,
             })
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            """
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             name = node.name
             start = node.lineno
             end = max([n.lineno for n in ast.walk(node) if hasattr(n, "lineno")], default=start)

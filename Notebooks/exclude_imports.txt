@@ -1,6 +1,1 @@
-rich
-ast
-jedi
-pathlib
-openai
-dotenv
+*
