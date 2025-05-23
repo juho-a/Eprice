@@ -1,21 +1,59 @@
+"""
+porssisahko_repository.py defines the PorssisahkoRepository class for price data operations in the Eprice backend.
+
+The repository provides asynchronous methods for:
+- Inserting single or multiple price entries into the porssisahko table.
+- Retrieving entries within a date range.
+- Finding missing hourly entries within a date range.
+
+All operations interact directly with a PostgreSQL database using asyncpg for asynchronous access.
+This repository is intended to be used by service and controller layers to abstract database logic
+from business and API logic.
+
+Dependencies:
+- asyncpg for asynchronous PostgreSQL operations.
+- utils.porssisahko_tools for entry conversion utilities.
+
+Intended Usage:
+- Instantiate with a database connection URL.
+- Use in services or controllers for all price data-related database actions.
+"""
+
 import asyncpg
 from utils.porssisahko_tools import convert_to_porssisahko_entry
 from datetime import datetime
 
 class PorssisahkoRepository:
+    """
+    Repository class for price data operations in the Eprice backend.
+
+    Provides asynchronous methods for inserting and retrieving price entries,
+    as well as finding missing entries. Interacts directly with the PostgreSQL
+    database using asyncpg.
+
+    Args:
+        database_url (str): The database connection URL.
+    """
     def __init__(self, database_url: str):
+        """
+        Initialize the PorssisahkoRepository with a database connection URL.
+
+        Args:
+            database_url (str): The database connection URL.
+        """
         self.database_url = database_url
 
     async def insert_entry(self, price: float, iso_date: str, predicted: bool = False):
         """
-        Inserts a single entry into the porssisahko table.
+        Insert a single entry into the porssisahko table.
 
         Args:
             price (float): The price value.
             iso_date (str): The date in ISO 8601 format.
             predicted (bool): Indicates if the price is predicted. Default is False.
-        Returns:
-            None
+
+        Raises:
+            asyncpg.PostgresError: If a database error occurs.
         """
         conn = None
         try:
@@ -44,21 +82,19 @@ class PorssisahkoRepository:
         except asyncpg.PostgresError as e:
             print(f"Database error: {e}")
             raise
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            raise
         finally:
             if conn:
                 await conn.close()
 
     async def insert_entries(self, entries: list):
         """
-        Inserts multiple entries into the porssisahko table.
+        Insert multiple entries into the porssisahko table.
 
         Args:
             entries (list[dict]): A list of dictionaries containing the data to insert.
-        Returns:
-            None
+
+        Raises:
+            asyncpg.PostgresError: If a database error occurs.
         """
         conn = None
         try:
@@ -97,23 +133,24 @@ class PorssisahkoRepository:
         except asyncpg.PostgresError as e:
             print(f"Database error: {e}")
             raise
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            raise
         finally:
             if conn:
                 await conn.close()
 
     async def get_entries(self, start_date: datetime, end_date: datetime, select_columns: str = "*"):
         """
-        Retrieves entries from the porssisahko table between two dates.
+        Retrieve entries from the porssisahko table between two dates.
 
         Args:
-            start_date (str): The start date in ISO 8601 format.
-            end_date (str): The end date in ISO 8601 format.
+            start_date (datetime): The start date as a datetime object.
+            end_date (datetime): The end date as a datetime object.
             select_columns (str): The columns to select from the table. Default is "*".
+
         Returns:
             list[dict]: A list of dictionaries containing the data for each entry.
+
+        Raises:
+            asyncpg.PostgresError: If a database error occurs.
         """
         conn = None
         try:
@@ -136,22 +173,23 @@ class PorssisahkoRepository:
         except asyncpg.PostgresError as e:
             print(f"Database error: {e}")
             raise
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            raise
         finally:
             if conn:
                 await conn.close()
 
     async def get_missing_entries(self, start_date: datetime, end_date: datetime):
         """
-        Retrieves missing entries from the porssisahko table between two dates.
+        Retrieve missing hourly entries from the porssisahko table between two dates.
 
         Args:
-            start_date (str): The start date in ISO 8601 format.
-            end_date (str): The end date in ISO 8601 format.
+            start_date (datetime): The start date as a datetime object.
+            end_date (datetime): The end date as a datetime object.
+
         Returns:
             list[tuple]: A list of tuples where each tuple contains the date (YYYY-MM-DD) and hour (0-23).
+
+        Raises:
+            asyncpg.PostgresError: If a database error occurs.
         """
         conn = None
         try:
@@ -184,9 +222,6 @@ class PorssisahkoRepository:
             ]
         except asyncpg.PostgresError as e:
             print(f"Database error: {e}")
-            raise
-        except Exception as e:
-            print(f"Unexpected error: {e}")
             raise
         finally:
             if conn:

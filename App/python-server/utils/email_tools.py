@@ -1,3 +1,20 @@
+"""
+email_tools.py provides utility functions for sending emails in the Eprice backend.
+
+Features:
+- Asynchronous email sending using FastAPI-Mail.
+- Configures SMTP connection using environment variables from the secrets configuration.
+- Sends verification emails with a code and a direct verification link for user registration and authentication flows.
+
+Dependencies:
+- fastapi_mail for asynchronous email delivery.
+- config.secrets for SMTP credentials and configuration.
+
+Intended Usage:
+- Used by authentication and user management services to send verification codes to users.
+- Can be extended for other email-related utilities as needed.
+"""
+
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from config.secrets import (
     MAIL_USERNAME,
@@ -21,7 +38,14 @@ conf = ConnectionConfig(
 )
 
 async def send_email_async(email_to: str, verification_code: str):
-    '''Send an email asynchronously'''
+    '''
+    Send an email asynchronously with a verification code and a link to verify the email address.
+
+    Args:
+        email_to (str): The recipient's email address.
+        verification_code (str): The verification code to be sent in the email.
+    '''
+
     subject = 'Verify your email address'
     body = f'''
     <html>

@@ -6,3 +6,7 @@ lock
 pyproject.toml
 lib – Pikakuvake.lnk
 deno.lock
+.xlsx
+.csv
+requests.http
+työelämässäoppimisen_ohjaus_2025.pdf

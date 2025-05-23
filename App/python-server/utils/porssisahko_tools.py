@@ -1,8 +1,34 @@
+"""
+porssisahko_tools.py provides utility functions for working with price data and database readiness in the Eprice backend.
+
+Features:
+- Asynchronous function to wait for the PostgreSQL database to become available before starting the application.
+- Conversion utility to transform price and ISO 8601 date data into a dictionary format suitable for the porssisahko table.
+
+Intended Usage:
+- Used by repository and service layers to ensure database readiness and to prepare data for insertion into the porssisahko table.
+- Can be extended with additional utilities for price data processing as needed.
+
+Dependencies:
+- asyncpg for asynchronous PostgreSQL operations.
+- Python standard library modules: datetime and time.
+"""
+
 from datetime import datetime
 import asyncpg
 import time
 
 async def wait_for_database(database_url):
+    """
+    Wait for the database to be ready by attempting to connect to it.
+
+    Args:
+        database_url: The URL of the database to connect to.
+
+    Raises:
+        Exception: If the database is not ready after multiple attempts.
+        (logs attempts and failure)
+    """
     max_retries = 10
     retry_delay = 5  # seconds
     for attempt in range(max_retries):
