@@ -53,7 +53,6 @@ class PorssisahkoServiceTools:
             List[PriceDataPoint]: Sorted list of PriceDataPoint objects (startDate in UTC).
         """
         if not data:
-            print("Function convert_to_price_data(): No data found in the database.")
             return []
         return sorted([
             PriceDataPoint(
@@ -86,7 +85,6 @@ class PorssisahkoServiceTools:
                 startDate=utc_dt,
                 price=datapoint["price"]
             ))
-
             await self.database_fetcher.insert_entry(
                 price=datapoint["price"],
                 iso_date=iso_str
@@ -111,8 +109,7 @@ class PorssisahkoServiceTools:
             end_date=end_naive,
             select_columns="datetime, price"
         )
-        if not raw_data:
-            return []
+
 
         result = self.convert_to_price_data(raw_data)
 
