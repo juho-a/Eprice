@@ -200,8 +200,9 @@ class FetchPriceData:
         result = []
         current_time_utc = start_time
         current_time_helsinki = start_time.astimezone(ZoneInfo("Europe/Helsinki"))
+        end_time_helsinki = end_time.astimezone(ZoneInfo("Europe/Helsinki"))
 
-        while current_time_helsinki <= end_time:
+        while current_time_helsinki <= end_time_helsinki:
             date_str = current_time_helsinki.strftime("%Y-%m-%d")
             hour_str = current_time_helsinki.strftime("%H")
 
