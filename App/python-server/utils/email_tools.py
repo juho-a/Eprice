@@ -1,5 +1,5 @@
 """
-This module provides utility functions for sending emails in the Eprice backend.
+email_tools.py provides utility functions for sending emails in the Eprice backend.
 
 Features:
 - Asynchronous email sending using FastAPI-Mail.
@@ -38,7 +38,14 @@ conf = ConnectionConfig(
 )
 
 async def send_email_async(email_to: str, verification_code: str):
-    '''Send an email asynchronously'''
+    '''
+    Send an email asynchronously with a verification code and a link to verify the email address.
+
+    Args:
+        email_to (str): The recipient's email address.
+        verification_code (str): The verification code to be sent in the email.
+    '''
+
     subject = 'Verify your email address'
     body = f'''
     <html>

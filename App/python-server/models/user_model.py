@@ -1,5 +1,5 @@
 """
-This module defines Pydantic models for user-related data validation in the Eprice backend.
+user_model.py defines Pydantic models for user-related data validation in the Eprice backend.
 
 Models:
 - EmailRequest: Validates and represents an email address for requests such as verification code resending.

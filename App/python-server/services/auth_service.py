@@ -1,5 +1,5 @@
 """
-AuthService provides authentication and user management logic for the Eprice backend.
+auth_service.py defines AuthService, which provides authentication and user management logic for the Eprice backend.
 
 This service handles password hashing and verification, JWT token creation, user authentication,
 registration, email verification, and verification code management. It interacts with the user

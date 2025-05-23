@@ -127,6 +127,17 @@ def parse_file(filepath, excluded_imports=None):
             name in excluded_imports or any(name.startswith(ex + ".") for ex in excluded_imports)
         )
 
+    module_docstring = ast.get_docstring(tree)
+    if module_docstring:
+        blocks.append({
+            "file": str(filepath),
+            "type": "module",
+            "name": "__module__",
+            "docstring": module_docstring,
+            "start_line": 1,
+            "code": "",
+        })
+
     # Collect all blocks from AST
     for node in ast.walk(tree):
         """

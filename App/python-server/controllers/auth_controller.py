@@ -1,4 +1,4 @@
-""" This module defines the authentication controller for the Eprice backend API using FastAPI.
+""" auth_controller.py defines the authentication controller for the Eprice backend API using FastAPI.
 It provides endpoints for user registration, login, logout, email verification, and resending verification codes.
 The controller manages authentication logic, JWT token handling, and cookie management for session persistence.
 

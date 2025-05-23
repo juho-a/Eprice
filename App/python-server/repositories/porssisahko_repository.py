@@ -1,5 +1,5 @@
 """
-This module defines the PorssisahkoRepository class for price data operations in the Eprice backend.
+porssisahko_repository.py defines the PorssisahkoRepository class for price data operations in the Eprice backend.
 
 The repository provides asynchronous methods for:
 - Inserting single or multiple price entries into the porssisahko table.

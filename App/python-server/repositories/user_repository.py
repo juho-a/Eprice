@@ -1,5 +1,5 @@
 """
-This module defines the UserRepository class for user-related database operations in the Eprice backend.
+user_repository.py defines the UserRepository class for user-related database operations in the Eprice backend.
 
 The repository provides asynchronous methods for:
 - Retrieving user records by email.
