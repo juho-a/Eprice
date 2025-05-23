@@ -1,3 +1,15 @@
+"""
+ext_apis.py
+
+This module provides service classes for fetching electricity production, consumption, and price data
+from external APIs (Fingrid and Porssisähkö). It handles API requests, rate limiting, retries, error handling,
+and conversion of API responses into application models used by the backend.
+
+Classes:
+    - FetchFingridData: Fetches production and consumption data from the Fingrid API.
+    - FetchPriceData: Fetches electricity price data from the Porssisähkö API.
+"""
+
 from datetime import datetime, timezone, timedelta
 import httpx
 from urllib.parse import urlencode
@@ -15,6 +27,13 @@ load_dotenv(dotenv_path="./.env.local")
 FINGRID_API_KEY = os.getenv("FINGRID_API_KEY")
 
 class FetchFingridData:
+    """
+    Service for fetching electricity production and consumption data from the Fingrid API.
+
+    Provides methods to fetch the latest data point or a range of data points for a given Fingrid dataset.
+    Handles API rate limiting, retries on failure, and parsing of the Fingrid API response into application models.
+    """
+
     base_url = "https://data.fingrid.fi/api/datasets/"
 
     def __init__(self):
@@ -31,6 +50,18 @@ class FetchFingridData:
             self._last_call_time = datetime.now(timezone.utc)
 
     async def fetch_fingrid_data(self, dataset_id: int) -> FingridDataPoint:
+        """
+        Fetch the latest data point for a given Fingrid dataset ID.
+
+        Args:
+            dataset_id (int): The Fingrid dataset ID.
+
+        Returns:
+            FingridDataPoint: The closest data point to the current time.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
+        """
         await self._rate_limiter() 
         url = f"{self.base_url}{dataset_id}/data"
         headers = {}
@@ -83,6 +114,20 @@ class FetchFingridData:
         
 
     async def fetch_fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint]:
+        """
+        Fetch a list of data points for a given Fingrid dataset ID and time range.
+
+        Args:
+            dataset_id (int): The Fingrid dataset ID.
+            start_time (datetime): Start time in UTC.
+            end_time (datetime): End time in UTC.
+
+        Returns:
+            List[FingridDataPoint]: List of data points for the specified range.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
+        """
         headers = {"x-api-key": FINGRID_API_KEY} if FINGRID_API_KEY is not None else {}
         # Remove any None values from headers to satisfy type checker
         headers = {k: v for k, v in headers.items() if v is not None}
@@ -129,15 +174,35 @@ class FetchFingridData:
         )
 
 class FetchPriceData:
+    """
+    Service for fetching electricity price data from the Porssisähkö API.
+
+    Provides methods to fetch price data for a specific time range, the latest prices, or today's prices.
+    Handles API requests, error handling, and conversion of API responses into application models.
+    """
+
     base_url = "https://api.porssisahko.net/v1/price.json"
 
     async def fetch_price_data_range(self, start_time: datetime, end_time: datetime):
+        """
+        Fetch hourly electricity price data for a given time range from the Porssisähkö API.
 
+        Args:
+            start_time (datetime): Start time in UTC.
+            end_time (datetime): End time in UTC.
+
+        Returns:
+            list[dict]: A list of dictionaries with 'startDate' (ISO8601 UTC string) and 'price' (float) for each hour.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
+        """
         result = []
         current_time_utc = start_time
         current_time_helsinki = start_time.astimezone(ZoneInfo("Europe/Helsinki"))
+        end_time_helsinki = end_time.astimezone(ZoneInfo("Europe/Helsinki"))
 
-        while current_time_helsinki <= end_time:
+        while current_time_helsinki <= end_time_helsinki:
             date_str = current_time_helsinki.strftime("%Y-%m-%d")
             hour_str = current_time_helsinki.strftime("%H")
 
@@ -180,13 +245,14 @@ class FetchPriceData:
 
     async def fetch_price_data_latest(self):
         """
-        Fetches the latest hourly electricity prices from the API.
-
-        Returns the prices as a list with the 'endDate' field removed from each entry.
+        Fetch the latest hourly electricity prices from the Porssisähkö API.
 
         Returns:
-            list: A list of PriceDataPoint instances containing hourly electricity price data.
-                  The 'endDate' key is removed from each dictionary.
+            List[PriceDataPoint]: A list of PriceDataPoint instances containing hourly electricity price data.
+                The 'endDate' key is removed from each dictionary.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         url = "https://api.porssisahko.net/v1/latest-prices.json"
 
@@ -216,10 +282,15 @@ class FetchPriceData:
 
     async def fetch_price_data_today(self) -> List[PriceDataPoint]:
         """
-        Fetches today's electricity price data and returns it as a list of PriceDataPoint models.
+        Fetch today's electricity price data and return it as a list of PriceDataPoint models.
+
+        The data is filtered so that only prices for the current day in Europe/Helsinki timezone are returned.
 
         Returns:
             List[PriceDataPoint]: A list of price data points for today.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         data = await self.fetch_price_data_latest()
 

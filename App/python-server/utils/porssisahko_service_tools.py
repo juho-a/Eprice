@@ -1,3 +1,12 @@
+"""
+porssisahko_service_tools.py
+
+This module provides helper services for handling electricity price data time ranges, 
+converting database results to application models, and filling missing data entries 
+from external APIs. It is used to unify and process price data from both the database 
+and external sources for the Eprice backend.
+"""
+
 from models.data_model import *
 from ext_apis.ext_apis import *
 from repositories.porssisahko_repository import *
@@ -8,12 +17,12 @@ from zoneinfo import ZoneInfo
 
 class PorssisahkoServiceTools:
     """
-    Helper service for time range calculations, data conversion, and filling missing entries.
+    PorssisahkoServiceTools has functions for time range calculations, data conversion, and filling missing entries.
     """
 
     def __init__(self, ext_api_fetcher: FetchPriceData, database_fetcher: PorssisahkoRepository):
         """
-        Initialize the HelperService with external API and database fetchers.
+        Initialize the PorssisahkoServiceTools with external API and database fetchers.
         """
         self.ext_api_fetcher = ext_api_fetcher
         self.database_fetcher = database_fetcher
@@ -23,7 +32,7 @@ class PorssisahkoServiceTools:
         Calculate the expected time range for the latest 48 hours based on Helsinki time.
 
         Returns:
-            tuple[datetime, datetime]: Start and end datetimes (naive).
+            tuple[datetime, datetime]: Start and end datetimes (naive, Europe/Helsinki time).
         """
         now_naive = datetime.now(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
         if now_naive.hour >= 14:
@@ -41,8 +50,10 @@ class PorssisahkoServiceTools:
             data (List[dict]): List of dicts with 'datetime' and 'price'.
 
         Returns:
-            List[PriceDataPoint]: Sorted list of PriceDataPoint objects.
+            List[PriceDataPoint]: Sorted list of PriceDataPoint objects (startDate in UTC).
         """
+        if not data:
+            return []
         return sorted([
             PriceDataPoint(
                 startDate=item["datetime"].astimezone(ZoneInfo("UTC")),
@@ -55,8 +66,11 @@ class PorssisahkoServiceTools:
         Fetch and insert missing price data entries from the external API.
 
         Args:
-            result (List[PriceDataPoint]): List to append new data points to.
+            result (List[PriceDataPoint]): List to append new data points to (modified in place).
             missing_entries (List[PriceDataPoint]): List of missing data points to fetch.
+
+        Side effects:
+            Updates the result list and inserts new entries into the database.
         """
         for missing in missing_entries:
             fetched = await self.ext_api_fetcher.fetch_price_data_range(missing.startDate, missing.startDate)
@@ -71,7 +85,6 @@ class PorssisahkoServiceTools:
                 startDate=utc_dt,
                 price=datapoint["price"]
             ))
-
             await self.database_fetcher.insert_entry(
                 price=datapoint["price"],
                 iso_date=iso_str
@@ -86,7 +99,7 @@ class PorssisahkoServiceTools:
             end_date (datetime): End of the time range.
 
         Returns:
-            List[PriceDataPoint]: Sorted list of price data points for the range.
+            List[PriceDataPoint]: Sorted list of price data points for the range, including filled-in values if needed.
         """
         start_naive = start_date.replace(tzinfo=None)
         end_naive = end_date.replace(tzinfo=None)
@@ -96,8 +109,7 @@ class PorssisahkoServiceTools:
             end_date=end_naive,
             select_columns="datetime, price"
         )
-        if not raw_data:
-            return []
+
 
         result = self.convert_to_price_data(raw_data)
 
@@ -121,7 +133,7 @@ class PorssisahkoServiceTools:
             data_utc (List[PriceDataPoint]): List of available data points.
 
         Returns:
-            List[StartDateModel]: List of StartDateModel objects for missing hours.
+            List[StartDateModel]: List of StartDateModel objects for missing hours (all in UTC).
         """
         result = []
         current_date_utc = start_date_utc
