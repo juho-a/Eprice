@@ -1,3 +1,12 @@
+"""
+data_service.py
+
+This module provides service classes for handling data operations in the Eprice backend.
+It includes services for fetching and processing Fingrid electricity data and price data,
+combining information from external APIs and the database, and providing unified access
+to the application's core data models.
+"""
+
 from models.data_model import *
 from ext_apis.ext_apis import *
 from repositories.porssisahko_repository import *
@@ -17,7 +26,7 @@ class FingridDataService:
         """
         self.ext_api_fetcher = FetchFingridData()
 
-    async def fingrid_data(self, dataset_id: int) -> FingridDataPoint | ErrorResponse:
+    async def fingrid_data(self, dataset_id: int) -> FingridDataPoint:
         """
         Fetch the latest Fingrid data for a given dataset ID.
 
@@ -25,21 +34,27 @@ class FingridDataService:
             dataset_id (int): The Fingrid dataset ID.
 
         Returns:
-            FingridDataPoint | ErrorResponse: The latest data point or an error response.
+            FingridDataPoint: The latest data point.
+        
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         return await self.ext_api_fetcher.fetch_fingrid_data(dataset_id)
     
-    async def fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint] | ErrorResponse:
+    async def fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint]:
         """
         Fetch Fingrid data for a given dataset ID and time range.
 
         Args:
             dataset_id (int): The Fingrid dataset ID.
-            start_time (str): Start time in ISO format.
-            end_time (str): End time in ISO format.
+            start_time (datetime): Start time in UTC.
+            end_time (datetime): End time in UTC.
 
         Returns:
-            List[FingridDataPoint] | ErrorResponse: List of data points or an error response.
+            List[FingridDataPoint]: List of data points for the given range.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         return await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, start_time, end_time)
 
@@ -63,6 +78,9 @@ class PriceDataService:
 
         Returns:
             List[PriceDataPoint]: List of price data points for the latest 48 hours.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         start_date, end_date = self.porssisahko_service_tools.expected_time_range()
         try:
@@ -81,6 +99,9 @@ class PriceDataService:
 
         Returns:
             List[PriceDataPoint]: List of price data points for the given range.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         start_date = start_date.replace(tzinfo=None)
         end_date = end_date.replace(tzinfo=None)
@@ -96,6 +117,9 @@ class PriceDataService:
 
         Returns:
             List[PriceDataPoint]: List of today's price data points.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
         """
         data = await self.price_data_latest()
         if data:
@@ -105,5 +129,5 @@ class PriceDataService:
             return sorted(filtered_data, key=lambda x: x.startDate, reverse=False)
         else:
             return await self.ext_api_fetcher.fetch_price_data_today()
-    
+
 

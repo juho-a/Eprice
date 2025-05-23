@@ -29,7 +29,7 @@ POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-20T00:00:00Z",
+  "startTime": "2025-05-01T00:00:00Z",
   "endTime": "2025-05-22T00:00:00Z"
 }
 
