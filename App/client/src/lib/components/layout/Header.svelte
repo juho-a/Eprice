@@ -3,7 +3,7 @@
   let { user } = $props();
 </script>
 
-<header class="flex items-center justify-between bg-black p-4 mb-6 border-b-1">
+<header class="flex items-center justify-between bg-black/20 drop-shadow-xl backdrop-blur-lg p-4 mb-2">
 <!--<header class="flex items-center bg-primary-300 p-4 mb-6">-->
   <h1 class="text-2xl text-white">Electricity prices</h1>
     <nav>
@@ -13,7 +13,7 @@
         </li>
         {#if user}
         <li>
-          <p>Placeholder</p>
+          <a href="/hintatiedot" class="">Hintatiedot</a>
         </li>
         {:else}
             <li>

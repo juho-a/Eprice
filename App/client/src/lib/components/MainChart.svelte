@@ -3,6 +3,9 @@
     import { onMount } from 'svelte';
     import { usePricesState } from '$lib/states/usePricesState.svelte';
 
+    let { chartType } = $props();
+    let currentChart = chartType || 'bar'; // Default to 'bar' if no chart type is provided
+
     let prices = usePricesState();
     let ctx;
     let chartCanvas;
@@ -37,14 +40,17 @@
 
     ctx = chartCanvas.getContext('2d');
     new chartjs(ctx, {
-        type: 'line',
+        type: currentChart,
         data: {
             labels: chartLabels,
             datasets: [{
-                label: 'Sähkön hinta',
+                label: 'Sähkön hinta UTC(+0)',
                 backgroundColor: 'rgb(70, 50, 255)',
                 borderColor: 'rgb(255, 255, 255)',
-                data: chartValues,
+                borderWidth: 1,
+                barThickness: 10,
+                minBarLength: 5,
+                data: chartValues,     
             }]
         },
         options: {
@@ -56,7 +62,7 @@
                         maxRotation: 60,
                         minRotation: 60
                     }
-                }
+                },
             },
 
 			plugins: {
@@ -81,12 +87,13 @@
     });
 });
 </script>
-
 <canvas bind:this={chartCanvas} id="myChart" class="
-	bottom-10
-	top-10
-	m-auto
-	rounded"
- style="width: 100%;background-color: #1e1e2f;"
+    w-full
+    bottom-10
+    top-10
+    m-auto
+    rounded"
+    style="width: 100%; background-color: #1e1e2f;"
 ></canvas>
+
 
