@@ -21,4 +21,19 @@ const readPublicData = async () => {
     return await response.json();
 };
 
-export { readData, readPublicData };
+const readPriceRange = async (startTime, endTime) => {
+    const response = await fetch(`${PUBLIC_API_URL}/api/price/range`, {
+        headers: {
+        "Content-Type": "application/json",
+        },
+        credentials: "include",
+        method: "POST",
+        body: JSON.stringify({
+            startTime,
+            endTime,
+        }),
+    });
+    return await response.json();
+}
+
+export { readData, readPublicData, readPriceRange };

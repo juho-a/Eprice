@@ -22,7 +22,7 @@
 
   {#if data.user?.email}
     <p class="">
-      Logged in as:<br/> <b>{data.user?.email}</b>
+      Logged in as: <b>{data.user?.email}</b>
     </p>
 
     <ChatBot user={data.user} />
