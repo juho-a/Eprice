@@ -53,7 +53,7 @@ CRUD stands for Create, Read, Update, Delete—the four basic operations for per
     - Service: Calls the repository to update the user's verification status.
     - Repository: Updates the `is_verified` field in the database.
 
-## Why Use This Pattern?
+## Why Use Controller-Service-Repository Pattern?
 
 - **Separation of Concerns:** Each layer has a single responsibility, making the codebase easier to understand and maintain.
 - **Testability:** Business logic can be tested independently from HTTP and database layers.

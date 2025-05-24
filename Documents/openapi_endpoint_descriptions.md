@@ -4,19 +4,24 @@ This document provides a concise technical overview of the main API endpoints ex
 The API is organized into **public data endpoints** (for electricity, etc.) and **authentication endpoints**.  
 All other endpoints require authentication via JWT.
 
+The API is designed for both public and authenticated use. Public endpoints provide enough data for basic electricity price queries and user authentication, while authenticated endpoints allow access to more detailed or user-specific data.
+
+- The use of POST for range queries (instead of GET with query parameters) allows for more complex request bodies and easier extension in the future.
+- The API is well-structured for integration with frontend applications and external systems.
+
 ---
 
 ## Public Endpoints
 
 These endpoints are accessible **without authentication** (no JWT required):
 
-### Electricity Data
+### Electricity Data endpoint
 
 - **GET `/api/public/data`**  
   Returns a list of market price data points (historical and/or current).  
   **Response:** Array of objects with `startDate` (RFC 3339 UTC string) and `price` (euro cents).
 
-### Authentication
+### Authentication endpoints
 
 - **POST `/api/auth/register`**  
   Registers a new user.  
@@ -54,7 +59,7 @@ These endpoints are accessible **without authentication** (no JWT required):
 
 The following endpoints **require authentication** (JWT):
 
-### Market Price Data
+### Market Price data endpoint
 
 - **GET `/api/data/today`**  
   Returns today's market price data points.  
@@ -65,7 +70,7 @@ The following endpoints **require authentication** (JWT):
   **Request:** JSON with `startTime` and `endTime` (RFC 3339).  
   **Response:** Array of price data points.
 
-### Wind Power
+### Wind Power data endpoint
 
 - **GET `/api/windpower`**  
   Returns the latest wind power production forecast.  
@@ -76,7 +81,7 @@ The following endpoints **require authentication** (JWT):
   **Request:** JSON with `startTime` and `endTime` (RFC 3339).  
   **Response:** Array of forecast data points.
 
-### Consumption
+### Consumption data endpoint
 
 - **GET `/api/consumption`**  
   Returns the latest electricity consumption forecast.  
@@ -87,7 +92,7 @@ The following endpoints **require authentication** (JWT):
   **Request:** JSON with `startTime` and `endTime` (RFC 3339).  
   **Response:** Array of consumption data points.
 
-### Production
+### Production data endpoint
 
 - **GET `/api/production`**  
   Returns the latest electricity production forecast.  
@@ -100,7 +105,7 @@ The following endpoints **require authentication** (JWT):
 
 ---
 
-## General Notes
+## General Notes about api endpoints
 
 - **Validation:**  
   Most endpoints validate input and return a 422 error for malformed requests.
@@ -117,8 +122,3 @@ The following endpoints **require authentication** (JWT):
 
 ---
 
-## Commentary
-
-- The API is designed for both public and authenticated use. Public endpoints provide enough data for basic electricity price queries and user authentication, while authenticated endpoints allow access to more detailed or user-specific data.
-- The use of POST for range queries (instead of GET with query parameters) allows for more complex request bodies and easier extension in the future.
-- The API is well-structured for integration with frontend applications and external systems.
