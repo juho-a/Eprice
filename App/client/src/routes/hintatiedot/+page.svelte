@@ -36,19 +36,42 @@
 </script>
 
 
-<h1>Hintateedot</h1>
-<input type="date" bind:value={dateRange.startDate} placeholder="YYYY-MM-DDTHH:mm:ssZ" />
-<input type="date" bind:value={dateRange.endDate} placeholder="YYYY-MM-DDTHH:mm:ssZ" />
-<button onclick={() => fetchPrices()}>Hae hinnat</button>
+<h1>Valitse päivät:</h1>
+
+<div class="flex gap-5 relative w-fit">
+	<input
+		type="date"
+		name="startDate"
+		bind:value={dateRange.startDate}
+		class="appearance-none w-full rounded border border-gray-300 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+	/>
+
+	<!-- Font Awesome calendar icon -->
+	<div class="pointer-events-none absolute left-34 top-2.5 text-gray-500">
+		<i class="fas fa-calendar-alt"></i>
+	</div>
+	<input
+		type="date"
+		name="endDate"
+		bind:value={dateRange.endDate}
+		class="appearance-none w-full rounded border border-gray-300 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+	/>
+
+	<!-- Font Awesome calendar icon -->
+	<div class="pointer-events-none absolute right-3 top-2.5 text-gray-500">
+		<i class="fas fa-calendar-alt"></i>
+	</div>
+</div>
+<button class="bg-blue-500 rounded-sm cursor-pointer text-black p-2 mt-2" id="submitDates" onclick={() => fetchPrices()}>Hae hinnat</button>
 
 {#if data && data.length > 0}
-	<h2 class="text-xl font-semibold mb-4">Hintatiedot</h2>
+	<h2 class="text-xl font-semibold mb-4 text-center">Hintatiedot</h2>
 	<div class="overflow-x-auto">
-		<table class="min-w-full bg-white border border-gray-200 rounded-md shadow-sm">
-			<thead class="bg-gray-100">
+		<table id="pricetable" class="min-w-full bg-white border border-gray-200 rounded-md shadow-sm mb-5">
+			<thead class="bg-gray-300">
 				<tr>
-					<th class="text-left px-4 py-2 border-b text-primary-100-900">Päivämäärä ja aika</th>
-					<th class="text-left px-4 py-2 border-b">Hinta (€/kWh)</th>
+					<th class="text-left px-4 py-2 border-b text-primary-700">Päivämäärä ja aika</th>
+					<th class="text-left px-4 py-2 border-b text-primary-700">Hinta (€/kWh)</th>
 				</tr>
 			</thead>
 			<tbody>

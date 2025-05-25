@@ -21,7 +21,7 @@ body {
 }
 
 #mainheading {
-  @apply mt-8 mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-6xl
+  @apply mt-2 mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-6xl
 }
 
 #minorheading {

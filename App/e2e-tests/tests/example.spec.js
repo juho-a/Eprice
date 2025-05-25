@@ -7,3 +7,19 @@ test('Pressing "Fetch message" shows message.', async ({ page }) => {
   const canvas = page.locator("#myChart");
   await expect(canvas).toBeVisible();
 });
+
+
+test('Date range selector changes table data', async ({ page }) => {
+  await page.goto("http://localhost:5173/hintatiedot");
+  // Adjust selectors as needed for your date inputs and chart
+  const startInput = page.locator('input[name="startDate"]');
+  const endInput = page.locator('input[name="endDate"]');
+  await startInput.fill('2025-05-20T00:00');
+  await endInput.fill('2025-05-22T00:00');
+  // Simulate submitting the form or triggering fetch
+  await page.click('#submitDates');
+  // Wait for table to update
+  await page.waitForTimeout(1000);
+  const table = page.locator("#pricetable");
+  await expect(table).toBeVisible();
+});
