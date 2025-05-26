@@ -10,3 +10,10 @@ deno.lock
 .csv
 requests.http
 työelämässäoppimisen_ohjaus_2025.pdf
+pytest.ini
+ohjeistusta.md
+uv.lock
+.lock
+serving_over_net.txt
+
+
