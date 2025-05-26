@@ -125,7 +125,6 @@ async def logout(response: Response):
     response.delete_cookie(
         key=COOKIE_KEY,
         path="/",
-        #domain="localhost",
     )
     return {"message": "User has successfully logged out"}
 
