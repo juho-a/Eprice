@@ -1,28 +1,29 @@
+// $lib/states/usePricesState.js
 import { browser } from "$app/environment";
 import * as dataApi from "$lib/apis/data-api.js";
 
-let pricesState = $state({});
-
-if (browser) {
-  pricesState = await dataApi.readPublicData();
-}
+let pricesState = $state([]); // Use empty array as default
 
 const usePricesState = () => {
   return {
     get data() {
       return pricesState;
     },
-    update: async () => {
-      pricesState = await dataApi.readPublicData();
+    load: async () => {
+      if (browser) {
+        try {
+          const result = await dataApi.readPublicData();
+          pricesState = result;
+        } catch (e) {
+          console.error("Failed to load pricesState:", e);
+          pricesState = [];
+        }
+      }
     },
-    // this is a trick for chart.js to get the data
-    // it needs to be a plain object
-    // otherwise it will not work
     state2js: () => {
-      const temp = JSON.stringify(pricesState);
-      return JSON.parse(temp);
+      return JSON.parse(JSON.stringify(pricesState));
     },
-  }
+  };
 };
 
 export { usePricesState };

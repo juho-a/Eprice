@@ -44,6 +44,10 @@
 
     // Calculate the current price and daily average
     onMount(async () => {
+        const prices = usePricesState();
+        await prices.load();
+        const pricesState = prices.data; 
+
         if (pricesState) {
             console.log("Chart Values:", pricesState);
             const now = new Date();
@@ -51,7 +55,7 @@
             const currentDate = now.toISOString().split("T")[0];
 
             // Find the current price
-            const matchingPrice = pricesState.find(price => {
+            matchingPrice = pricesState.find(price => {
                 const priceDate = new Date(price.startDate);
                 return (
                     priceDate.getUTCHours() === currentHour &&
@@ -82,17 +86,15 @@
 </script>
 
 <h1 id="mainheading" class="text-center">
-    Welcome!<br>
-    <span class="text-2xl">Market Electricity Prices<br> {new Date().toLocaleDateString()}</span>
+    <span class="text-xl">Market Electricity Prices<br> {new Date().toLocaleDateString()}</span>
     <br>
 </h1>
 <main class="flex gap-10">
-    <div class="text-center gap-5 flex flex-col">
+    <div class="text-center gap-5 flex flex-col mb-10">
        <PriceBall heading={`Sähkönhinta NYT (${currentHourLabel})`} price={currentPrice} timestamp={matchingPrice?.startDate}/>
        <PriceBall heading="Sähkö 24h" price={dailyAverage}/>
        <PriceBall heading="Sähkö viikko" price={weekAvgPrice}/>  
     </div>
     
     <MainChart />
-    <ChartTypeMenu />
 </main>

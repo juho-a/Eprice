@@ -10,9 +10,37 @@
     let ctx;
     let chartCanvas;
 
+    let cheapestPrice = $state(null);
+	let cheapestTime = $state("");
+
+    // Function to calculate the average price for the day
+    const averageDayPrice = array => array.reduce((a, b) => a + b) / array.length;
+
+    // Function to format date to UTC+0
+    function formatDateToUTC(date) {
+        return new Date(date).toISOString().split('T')[0];
+    }
+
+    // Function to format time for display
+    function formatTime(date) {
+        return new Date(date).toLocaleString('fi-FI', {
+            timeZone: 'Europe/Helsinki',
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }   
+
    
    onMount(async () => {
     // Get the raw API data (array of objects)
+    await prices.load();
+    if (!prices.data || prices.data.length === 0) {
+        console.error('No price data available');
+        return;
+    }
+    // Ensure prices.data is an array
     const priceData = prices.data;
 
     // Find the most recent startDate
@@ -27,6 +55,23 @@
 
     // Sort by startDate ascending (optional, for chart order)
     filteredData.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+
+// 🔍 Find the cheapest price
+    if (filteredData.length > 0) {
+        const minEntry = filteredData.reduce((min, item) =>
+            item.price < min.price ? item : min
+        );
+
+        cheapestPrice = minEntry.price.toFixed(3);
+        cheapestTime = new Date(minEntry.startDate).toLocaleString('fi-FI', {
+            timeZone: 'Europe/Helsinki',
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
 
     // Transform data for the chart
     const chartLabels = filteredData.map(item => {
@@ -87,13 +132,18 @@
     });
 });
 </script>
-<canvas bind:this={chartCanvas} id="myChart" class="
-    w-full
-    bottom-10
-    top-10
-    m-auto
-    rounded"
-    style="width: 100%; background-color: #1e1e2f;"
-></canvas>
-
+<div class="w-full flex flex-col justify-center mx-auto p-4">
+    {#if cheapestPrice}
+        <p class="text-md text-green-400 font-semibold mt-4 mb-2 text-center">
+            Halvin hinta kaaviossa: {cheapestPrice} €/kWh ({cheapestTime})
+        </p>
+    {/if}
+    <div class="relative w-full" style="min-height:300px; max-width: 600px;">
+        <canvas bind:this={chartCanvas} id="myChart"
+            class="m-auto rounded"
+            style="display: block; height: 500px; background-color: #1e1e2f;"
+        ></canvas>
+    </div>
+    
+</div>
 
