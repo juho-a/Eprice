@@ -52,7 +52,7 @@ async def send_email_async(email_to: str, verification_code: str):
         <body style="font-family: Arial, sans-serif; text-align: center;">
             <h1>Verify your email address</h1>
             <p>Use the code below to verify your email address:</p>
-            <div style="display: inline-block; margin: 20px auto; padding: 16px 32px; background: #f3f3f3; border-radius: 8px; font-size: 2em; letter-spacing: 0.2em; font-weight: bold; color: #333;">
+            <div style="display: inline-block; margin: 20px auto; padding: 16px 32px; background: #f3f3f3; border-radius: 8px; font-size: 2em; font-weight: bold; color: #333;">
                 {verification_code}
             </div>
             <p>Or click the link below to verify directly:</p>

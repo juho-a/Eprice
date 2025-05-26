@@ -50,6 +50,8 @@ public_routes = [
     "/api/auth/verify",
     "/api/auth/resend",
     "/api/auth/logout",
+    "/api/auth/remove",
     "/docs",
-    "/openapi.json"
+    "/openapi.json",
+    "/api/price/range"
     ]

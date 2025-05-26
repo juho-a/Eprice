@@ -170,3 +170,15 @@ class AuthService:
         # Only send email if update succeeded
         await send_email_async(email, new_code)
         
+    async def remove_user(self, email: str):
+        """
+        Remove a user from the database.
+
+        Args:
+            email (str): The user's email address.
+
+        Raises:
+            Exception: If user removal fails.
+        """
+        await self.user_repository.delete_user(email)
+        

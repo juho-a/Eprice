@@ -30,7 +30,14 @@
     {/if}
     {#if user && $page.url.pathname !== '/logout'}
       <div class="ml-auto">
-        <a href="/logout" class="underline text-white">Logout</a>
+        <ul class="ml-4 flex space-x-4 text-white">
+          <li>
+            <a href="/auth/remove" class="underline text-white">Delete account</a>
+          </li>
+          <li>
+            <a href="/logout" class="underline text-white">Logout</a>
+          </li>
+        </ul>
       </div>
     {:else if $page.url.pathname === '/logout'}
       <div class="ml-auto">

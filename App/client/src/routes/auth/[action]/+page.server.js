@@ -62,4 +62,18 @@ export const actions = {
     return await response.json();
   },
 
+  remove: async ({ request }) => {
+    const data = await request.formData();
+    const response = await apiRequest(
+      "/api/auth/remove",
+      Object.fromEntries(data),
+    );
+
+    if (response.ok) {
+      throw redirect(302, "/logout?removed=true");
+    } else {
+      throw redirect(302, "/logout?removed=false&remove_error=true");
+    }
+  }
+
 };

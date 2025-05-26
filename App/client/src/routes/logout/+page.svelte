@@ -19,6 +19,18 @@
     </div>
 {/if}
 
+{#if data?.removed}
+    <p class="text-xl">
+        Your account has been removed.
+    </p>
+{/if}
+
+{#if data?.remove_error}
+    <p class="text-xl">
+        User account could not be removed.<br/>contact site admin: eprice.varmennus@gmail.com.
+    </p>
+{/if}
+
 
 <form method="POST" action="?/logout">
     <button class="w-full btn preset-filled-primary-500" type="submit">Logout</button>

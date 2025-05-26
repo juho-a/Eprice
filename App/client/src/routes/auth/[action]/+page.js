@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit";
 
 export const load = ({ params, url }) => {
-  if (params.action !== "login" && params.action !== "register" && params.action !== "verify") {
+  if (params.action !== "login" && params.action !== "register" && params.action !== "verify" && params.action !== "remove") {
     throw error(404, "Page not found.");
   }
 

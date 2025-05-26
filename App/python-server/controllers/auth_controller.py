@@ -179,6 +179,36 @@ async def resend_verification_code(request: EmailRequest, response: Response):
         response.status_code = 400
         return {"message": "Failed to resend verification code."}
 
+@router.post("/api/auth/remove")
+async def remove_user(user: User, response: Response):
+    """
+    Removes a user record from the database.
+
+    Deletes the user account associated with the provided email address.
+    Handles errors such as non-existent users. First authenticates the user
+    to ensure they have the right to delete the account.
+
+    Args:
+        user (User): The user data containing the email address.
+        response (Response): FastAPI response object for setting status codes.
+
+    Returns:
+        dict: JSON message indicating whether the user was removed successfully.
+    """
+    db_user = await auth_service.authenticate_user(user.email.lower(), user.password)
+
+    if not db_user:
+        print(f"Authentication failed for user: {user.email.lower()}")
+        response.status_code = 401
+        return {"message": "Authentication failed. Incorrect email or password."}
+
+    try:
+        await auth_service.remove_user(user.email.lower())
+        return {"message": "User account removed successfully."}
+    except asyncpg.NoDataFoundError:
+        print(f"Unable to remove user: {user.email.lower()}")
+        response.status_code = 404
+        return {"message": "User account was not removed -- contact site admin: eprice.varmennus@gmail.com."}
 
                                    
 def create_jwt_middleware(public_routes):

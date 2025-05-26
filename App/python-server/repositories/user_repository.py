@@ -118,3 +118,19 @@ class UserRepository:
             )
         finally:
             await conn.close()
+
+    async def delete_user(self, email: str):
+        """
+        Remove a user record from the database.
+
+        Args:
+            email (str): The user's email address.
+
+        Raises:
+            Exception: If the user could not be removed.
+        """
+        conn = await asyncpg.connect(self.database_url)
+        try:
+            await conn.execute("DELETE FROM users WHERE email = $1", email)
+        finally:
+            await conn.close()

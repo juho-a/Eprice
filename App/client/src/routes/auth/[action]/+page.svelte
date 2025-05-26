@@ -11,6 +11,8 @@
             title = "Register";
         } else if (data.action === "verify") {
             title = "Verify";
+        } else if (data.action === "remove") {
+            title = "Remove";
         }
         if (data.code && data.action === "verify") {
             code = data.code;
