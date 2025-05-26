@@ -2,13 +2,19 @@
     import chartjs from 'chart.js/auto';
     import { onMount } from 'svelte';
     import { usePricesState } from '$lib/states/usePricesState.svelte';
+    import ChartTypeMenu from './ChartTypeMenu.svelte';
 
-    let { chartType } = $props();
-    let currentChart = chartType || 'bar'; // Default to 'bar' if no chart type is provided
+
+    let chartType = $state(localStorage.getItem('chartType') || 'bar');
+    let chart = null;
 
     let prices = usePricesState();
     let ctx;
     let chartCanvas;
+
+    let chartLabels = [];
+    let chartValues = [];
+    let filteredData = [];
 
     let cheapestPrice = $state(null);
 	let cheapestTime = $state("");
@@ -49,7 +55,7 @@
     , priceData[0]);
 
     // Filter data to include only entries up to the most recent hour
-    const filteredData = priceData.filter(item =>
+    filteredData = priceData.filter(item =>
         new Date(item.startDate) <= new Date(mostRecent.startDate)
     );
 
@@ -74,63 +80,78 @@
     }
 
     // Transform data for the chart
-    const chartLabels = filteredData.map(item => {
+    chartLabels = filteredData.map(item => {
         const date = new Date(item.startDate);
         const hour = String(date.getUTCHours()).padStart(2, '0');
         const minute = String(date.getUTCMinutes()).padStart(2, '0');
         return `${hour}:${minute}`;
     });
     // Get the price values for the chart
-    const chartValues = filteredData.map(item => item.price);
+    chartValues = filteredData.map(item => item.price);
 
     ctx = chartCanvas.getContext('2d');
-    new chartjs(ctx, {
-        type: currentChart,
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                label: 'Sähkön hinta UTC(+0)',
-                backgroundColor: 'rgb(70, 50, 255)',
-                borderColor: 'rgb(255, 255, 255)',
-                borderWidth: 1,
-                barThickness: 10,
-                minBarLength: 5,
-                data: chartValues,     
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            scales: {
-                x: {
-                    ticks: {
-                        maxRotation: 60,
-                        minRotation: 60
+
+    renderChart();
+    });
+    
+    function renderChart() {
+        if (!ctx || chartLabels.length === 0 || chartValues.length === 0) return;
+
+        if (chart) chart.destroy();
+
+        chart = new chartjs(ctx, {
+            type: chartType,
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Sähkön hinta UTC(+0)',
+                    backgroundColor: 'rgb(70, 50, 255)',
+                    borderColor: 'rgb(255, 255, 255)',
+                    borderWidth: 1,
+                    barThickness: 10,
+                    minBarLength: 5,
+                    data: chartValues
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 60,
+                            minRotation: 60
+                        }
                     }
                 },
-            },
-
-			plugins: {
-        	tooltip: {
-            callbacks: {
-                title: function(context) {
-                    const idx = context[0].dataIndex;
-                    const item = filteredData[idx];
-                    const date = new Date(item.startDate);
-                    const day = String(date.getUTCDate()).padStart(2, '0');
-                    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-                    const year = date.getUTCFullYear();
-                    const hour = String(date.getUTCHours()).padStart(2, '0');
-                    const minute = String(date.getUTCMinutes()).padStart(2, '0');
-                    return `${day}.${month}.${year} ${hour}:${minute}`;
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: (context) => {
+                                const idx = context[0].dataIndex;
+                                const item = filteredData[idx];
+                                const date = new Date(item.startDate);
+                                const day = String(date.getUTCDate()).padStart(2, '0');
+                                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                                const year = date.getUTCFullYear();
+                                const hour = String(date.getUTCHours()).padStart(2, '0');
+                                const minute = String(date.getUTCMinutes()).padStart(2, '0');
+                                return `${day}.${month}.${year} ${hour}:${minute}`;
+                            }
+                        }
+                    }
                 }
             }
-        }
+        });
     }
-        },
 
-    });
+    $effect(() => {
+    localStorage.setItem('chartType', chartType);
+	if (ctx && chartLabels.length > 0 && chartValues.length > 0) {
+		renderChart();
+	}
 });
+
 </script>
 <div class="w-full flex flex-col justify-center mx-auto p-4">
     {#if cheapestPrice}
@@ -138,12 +159,11 @@
             Halvin hinta kaaviossa: {cheapestPrice} €/kWh ({cheapestTime})
         </p>
     {/if}
-    <div class="relative w-full" style="min-height:300px; max-width: 600px;">
+    <div class="relative min-w-[700px] min-h-[300px]">
         <canvas bind:this={chartCanvas} id="myChart"
-            class="m-auto rounded"
-            style="display: block; height: 500px; background-color: #1e1e2f;"
+            class="w-full h-[500px] m-auto rounded bg-[#1e1e2f]"
         ></canvas>
     </div>
-    
+   <ChartTypeMenu bind:chartType /> 
 </div>
 
