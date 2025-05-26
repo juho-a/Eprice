@@ -1,4 +1,9 @@
-# Application Overview
+# Project Overview
+
+This is a software development project for Taitotalo's Python programmer course. We develop a web application using container technology, with Svelte and JavaScript frontend (using deno), FastAPI backend, Postgres database with vector extension, Flyway migrations, Playwright e2e-tests, Pytest backend tests, and a chat-engine (HuggingFace, Langchain and OpenAI). A concise description of the project is given in this document, but more technical information can be found from `./App/README.md`.
+
+
+## Application Overview
 
 Eprice is an application that show users market electricity price and additional related information, such as electricity consumption and production. For non-registered users, only the current 24 hour period is covered, and only the market price is shown. For registered users, also historical data is available for market price and for production/consumption. The data is represented with graphs and statistics.
 
@@ -35,7 +40,7 @@ The system consists of multiple containerized services that work together to pro
 
 ### 6. Chat Engine
 - **Ports**: `7860`
-- **Purpose**: Provides a chat engine for interaction with the system.
+- **Purpose**: Provides a chat engine for interaction with the project. This is meant for developers and maintainers, not the app's end-users. Chat uses retrieval augmented generation, and the retriever has access to project documentation and code.
 - **Depends On**: `Database`
 
 ---

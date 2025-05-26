@@ -1,3 +1,7 @@
-.ollama/
+__pycache__/
+*.pyc
+*.pyo
 .venv/
-
+venv/
+ENV/
+env/

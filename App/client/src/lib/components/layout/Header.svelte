@@ -21,10 +21,13 @@
             </li>
             <li>
               <a href="/auth/register" class="">Register</a>
-            </li>
+          </li>
         {/if}
       </ul>
     </nav>
+    {#if user?.role === 'admin'}
+        <a href="/chat" class="text-white ml-4">Developer Chat</a>
+    {/if}
     {#if user && $page.url.pathname !== '/logout'}
       <div class="ml-auto">
         <a href="/logout" class="underline text-white">Logout</a>

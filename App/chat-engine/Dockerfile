@@ -1,20 +1,15 @@
-FROM ollama/ollama
+FROM python:3.11.6-slim
 
-# I will clean this up later (Paavo)
-# Set working directory
 WORKDIR /app
 
-# Copy the script to the docker image
-COPY ./chat-engine/run.sh /run.sh
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libpq-dev \
+    wget curl bash ca-certificates git default-jre build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY ./chat-engine/gradio_dashboard.py /app/gradio_dashboard.py
-
-COPY ./chat-engine/.env /app/.env
-
-COPY ./chat-engine/pyproject.toml /app/pyproject.toml
-
-# Install dependencies and curl
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates python3
+# copy everything from the chat-engine directory to the /app directory
+COPY ./chat-engine /app
 
 # Download the latest uv installer
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
@@ -29,9 +24,11 @@ ENV PATH="/root/.local/bin/:$PATH"
 ENV GRADIO_SERVER_NAME="0.0.0.0"
 
 #RUN pip install --no-cache-dir -r requirements.txt
+
 RUN uv sync
 
-# Ensure the script is executable
-RUN chmod +x /run.sh
+RUN uv add torch
 
-ENTRYPOINT ["/bin/bash", "/run.sh"]
+ENV UV_LINK_MODE=copy
+
+ENTRYPOINT ["uv", "run", "app.py", "--host", "--reload", "--port", "7860"]
