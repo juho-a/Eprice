@@ -79,7 +79,7 @@ class PorssisahkoServiceTools:
 
             datapoint = fetched[0]
             utc_dt = datetime.fromisoformat(datapoint["startDate"])
-            iso_str = (utc_dt + timedelta(hours=3)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+            iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
             result.append(PriceDataPoint(
                 startDate=utc_dt,
@@ -136,6 +136,7 @@ class PorssisahkoServiceTools:
             List[StartDateModel]: List of StartDateModel objects for missing hours (all in UTC).
         """
         result = []
+        print(data_utc)
         current_date_utc = start_date_utc
         while current_date_utc <= end_date_utc:
             if not any(item.startDate == current_date_utc for item in data_utc):

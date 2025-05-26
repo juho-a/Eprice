@@ -5,6 +5,14 @@ This module provides service classes for fetching electricity production, consum
 from external APIs (Fingrid and Porssisähkö). It handles API requests, rate limiting, retries, error handling,
 and conversion of API responses into application models used by the backend.
 
+Dependencies:
+    - httpx: For making asynchronous HTTP requests to external APIs.
+    - python-dotenv: For loading environment variables (API keys) from .env files.
+    - fastapi: For raising HTTPException on API errors.
+    - models.data_model: For Pydantic data models used to structure API responses.
+    - zoneinfo: For timezone-aware datetime handling.
+    - datetime, typing, urllib.parse, os, asyncio: Standard library modules for time, typing, URL handling, environment, and async support.
+
 Classes:
     - FetchFingridData: Fetches production and consumption data from the Fingrid API.
     - FetchPriceData: Fetches electricity price data from the Porssisähkö API.

@@ -103,8 +103,15 @@ class PriceDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        start_date = start_date.replace(tzinfo=None)
-        end_date = end_date.replace(tzinfo=None)
+
+
+        # Laske Helsingin ja UTC:n aikaero tunteina
+        helsinki_offset = datetime.now(ZoneInfo("Europe/Helsinki")).utcoffset()
+        utc_offset = datetime.now(ZoneInfo("UTC")).utcoffset()
+        hours_difference = int((helsinki_offset - utc_offset).total_seconds() // 3600)
+
+        start_date = start_date.replace(tzinfo=None) + timedelta(hours=hours_difference)
+        end_date = end_date.replace(tzinfo=None) + timedelta(hours=hours_difference)
         try:
             result = await self.porssisahko_service_tools.fetch_and_process_data(start_date, end_date)
             return result if result else await self.ext_api_fetcher.fetch_price_data_range(start_date, end_date)
