@@ -15,6 +15,7 @@ Dependencies:
 """
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import asyncpg
 import time
 
@@ -57,12 +58,12 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
         ValueError: If the ISO date is not in the correct format.
     """
     try:
-        # Juho: we'll later make the formats more precise and succinct
-        # Now there's some needless formatting to make the api play nice with the database
-        dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
-
-        # Convert to offset-naive datetime (db doesn't like tz's)
-        dt_naive = dt.replace(tzinfo=None)
+        #dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
+        #dt_naive = dt.replace(tzinfo=None)
+        dt_utc = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))
+        # Convert to Helsinki time
+        dt_helsinki = dt_utc.astimezone(ZoneInfo("Europe/Helsinki"))
+        dt_naive = dt_helsinki.replace(tzinfo=None)
 
         # Extract the weekday
         weekday = dt_naive.weekday()
