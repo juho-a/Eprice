@@ -8,6 +8,16 @@ test('Pressing "Fetch message" shows message.', async ({ page }) => {
   await expect(canvas).toBeVisible();
 });
 
+test('PriceBall displays current price', async ({ page }) => {
+  await page.goto("http://localhost:5173/");
+  // Adjust selector if your PriceBall has a specific id or class
+  const priceBall = page.locator("#priceBall");
+  await expect(priceBall).toBeVisible();
+  // Optionally check that it contains a price (number)
+  const text = await priceBall.textContent();
+  expect(text).toMatch(/\d+(\.\d+)?/);
+});
+
 
 test('Date range selector changes table data', async ({ page }) => {
   await page.goto("http://localhost:5173/hintatiedot");
