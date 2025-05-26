@@ -12,13 +12,23 @@ const readData = async () => {
 };
 
 const readPublicData = async () => {
-    const response = await fetch(`${PUBLIC_API_URL}/api/public/data`, {
-        headers: {
-        "Content-Type": "application/json",
-        },
-        method: "GET",
-    });
-    return await response.json();
+    try {
+        const response = await fetch(`${PUBLIC_API_URL}/api/public/data`, {
+            headers: {
+            "Content-Type": "application/json",
+            },
+            method: "GET",
+        });
+        if (!response.ok) {
+            console.error(`API error! status: ${response.status}`);
+            return [];
+        } 
+        
+        return await response.json(); 
+    } catch (error) {
+        console.error('Failed to fetch public data:', error);
+		return [];
+    }  
 };
 
 const readPriceRange = async (startTime, endTime) => {
