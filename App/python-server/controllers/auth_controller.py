@@ -103,7 +103,7 @@ async def login(user: User, response: Response):
     response.set_cookie(key=COOKIE_KEY,
                         value=token,
                         httponly=True, samesite="lax",
-                        domain="localhost", path="/",
+                        path="/",
                         secure=False)
 
     return {"message": "Welcome!"}
@@ -125,7 +125,7 @@ async def logout(response: Response):
     response.delete_cookie(
         key=COOKIE_KEY,
         path="/",
-        domain="localhost",
+        #domain="localhost",
     )
     return {"message": "User has successfully logged out"}
 

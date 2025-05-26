@@ -31,7 +31,7 @@
 }
 
 
-    onMount(fetchPrices);
+    //onMount(fetchPrices);
     // Function to calculate the average price for the day
 </script>
 
