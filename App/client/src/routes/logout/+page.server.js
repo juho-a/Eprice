@@ -13,7 +13,7 @@ export const actions = {
   logout: async ({ cookies }) => {
     const response = await apiRequest("/api/auth/logout");
     if (response.ok) {
-      cookies.delete(COOKIE_KEY, {path: "/"});
+      cookies.delete(COOKIE_KEY, { path: "/"});//, domain: "80.221.17.169" });
       throw redirect(302, "/");
     } else {
       return { error: "Logout failed" };
