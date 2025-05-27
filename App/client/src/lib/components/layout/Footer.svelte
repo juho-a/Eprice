@@ -1,11 +1,37 @@
 <script>
     let data = $props();
+    let theme = "cerberus"; // default theme
+
+    function setTheme(newTheme) {
+        theme = newTheme;
+        document.body.setAttribute("data-theme", newTheme);
+    }
 </script>
 
 
-<footer class="p-4 bg-black border-t-1">
-<!--<footer class="bg-primary-300 p-4 border-t-1">-->
+<!-- <footer class="p-4 bg-black border-t-1">
     <p class="text-center text-white font-bold">
         Dogs seem to dislike cats, sadly... © 2025
     </p>
+</footer> -->
+<footer class="p-4 bg-black border-t-1">
+    <div class="flex items-center justify-between">
+        <button class="btn btn-sm text-white" onclick={() => setTheme("cerberus")}>Cerberus</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("mint")}>Mint</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("pine")}>Pine</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("seafoam")}>Seafoam</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("fennec")}>Fennec</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("crimson")}>Crimson</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("vintage")}>Vintage</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("legacy")}>Legacy</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("nosh")}>Nosh</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("terminus")}>Terminus</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("catppuccin")}>Catppuccin</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("wintry")}>Wintry</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("reign")}>Reign</button>
+        <button class="btn btn-sm text-white" onclick={() => setTheme("modern")}>Modern</button>
+    </div>
+    <!-- <p class="text-center text-white font-bold flex-1">
+        Dogs seem to dislike cats, sadly... © 2025
+    </p> -->
 </footer>
