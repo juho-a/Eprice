@@ -3,6 +3,8 @@
     import { enhance } from '$app/forms';
     import { onMount } from 'svelte';
 
+    // NOTE: Markus, jos haluat tehdä tällä tavoin muualla, huomioi että form viittaa
+    // aina viimeisimpään lomakkeeseen.
     let selection = $state("all");
     let { form } = $props();
     let startTime = $state("");
@@ -76,39 +78,40 @@
 
 <h1 id="minorheading">Production Data</h1>
 
-<canvas bind:this={productionCanvas} id="myChart"></canvas>
+<div class="card p-4">
+    <canvas bind:this={productionCanvas} id="myChart"></canvas>
 
-
-<form method="POST" use:enhance action="?/getProductionRange" class="mx-auto w-full max-w-md space-y-4">
-  <div class="flex items-center justify-between">
-    <label class="label">
-        <span class="label-text">Date</span>
-        <input class="input" name="startTime" id="startTime" type="date" />
-    </label>
-    <label class="label">
-        <span class="label-text">Date</span>
-        <input class="input" name="endTime" id="endTime" type="date" />
-    </label>
-    <label class="label">
-        <span class="label-text">Select Option</span>
-        <select class="select" bind:value={selection} id="selection">
-            <option value="all">All</option>
-            <option value="0">Mondays</option>
-            <option value="1">Tuesdays</option>
-            <option value="2">Wednesdays</option>
-            <option value="3">Thursdays</option>
-            <option value="4">Fridays</option>
-            <option value="5">Saturdays</option>
-            <option value="6">Sundays</option>
-            <option value="weekdays">Weekdays</option>
-            <option value="weekends">Weekends</option>
-        </select>
-    </label>
-  </div>
-    <button class="w-full btn preset-filled-primary-500" type="submit">
-        Retrieve  data
-    </button>
-</form>
+    <form method="POST" use:enhance action="?/getProductionRange" class="mx-auto w-full max-w-md space-y-4">
+    <div class="flex items-center justify-between">
+        <label class="label">
+            <span class="label-text">Date</span>
+            <input class="input" name="startTime" id="startTime" type="date" />
+        </label>
+        <label class="label">
+            <span class="label-text">Date</span>
+            <input class="input" name="endTime" id="endTime" type="date" />
+        </label>
+        <label class="label">
+            <span class="label-text">Select Option</span>
+            <select class="select" bind:value={selection} id="selection">
+                <option value="all">All</option>
+                <option value="0">Mondays</option>
+                <option value="1">Tuesdays</option>
+                <option value="2">Wednesdays</option>
+                <option value="3">Thursdays</option>
+                <option value="4">Fridays</option>
+                <option value="5">Saturdays</option>
+                <option value="6">Sundays</option>
+                <option value="weekdays">Weekdays</option>
+                <option value="weekends">Weekends</option>
+            </select>
+        </label>
+    </div>
+        <button class="w-full btn preset-filled-primary-500" type="submit">
+            Retrieve  data
+        </button>
+    </form>
+</div>
 
 {#if form?.error}
   <div class="alert alert-error">
@@ -119,40 +122,41 @@
 
 <h1 id="minorheading">Consumption Data</h1>
 
-<canvas bind:this={consumptionCanvas} id="myChart"></canvas>
+<div class="card p-4">
+    <canvas bind:this={consumptionCanvas} id="myChart"></canvas>
 
 
-<form method="POST" use:enhance action="?/getConsumptionRange" class="mx-auto w-full max-w-md space-y-4">
-  <div class="flex items-center justify-between">
-    <label class="label">
-        <span class="label-text">Date</span>
-        <input class="input" name="startTime" id="startTime" type="date" bind:value={startTime} />
-    </label>
-    <label class="label">
-        <span class="label-text">Date</span>
-        <input class="input" name="endTime" id="endTime" type="date" bind:value={endTime} />
-    </label>
-    <label class="label">
-        <span class="label-text">Select Option</span>
-        <select class="select" bind:value={selection} id="selection">
-            <option value="all">All</option>
-            <option value="0">Mondays</option>
-            <option value="1">Tuesdays</option>
-            <option value="2">Wednesdays</option>
-            <option value="3">Thursdays</option>
-            <option value="4">Fridays</option>
-            <option value="5">Saturdays</option>
-            <option value="6">Sundays</option>
-            <option value="weekdays">Weekdays</option>
-            <option value="weekends">Weekends</option>
-        </select>
-    </label>
-  </div>
-    <button class="w-full btn preset-filled-primary-500" type="submit">
-        Retrieve  data
-    </button>
-</form>
-
+    <form method="POST" use:enhance action="?/getConsumptionRange" class="mx-auto w-full max-w-md space-y-4">
+    <div class="flex items-center justify-between">
+        <label class="label">
+            <span class="label-text">Date</span>
+            <input class="input" name="startTime" id="startTime" type="date" bind:value={startTime} />
+        </label>
+        <label class="label">
+            <span class="label-text">Date</span>
+            <input class="input" name="endTime" id="endTime" type="date" bind:value={endTime} />
+        </label>
+        <label class="label">
+            <span class="label-text">Select Option</span>
+            <select class="select" bind:value={selection} id="selection">
+                <option value="all">All</option>
+                <option value="0">Mondays</option>
+                <option value="1">Tuesdays</option>
+                <option value="2">Wednesdays</option>
+                <option value="3">Thursdays</option>
+                <option value="4">Fridays</option>
+                <option value="5">Saturdays</option>
+                <option value="6">Sundays</option>
+                <option value="weekdays">Weekdays</option>
+                <option value="weekends">Weekends</option>
+            </select>
+        </label>
+    </div>
+        <button class="w-full btn preset-filled-primary-500" type="submit">
+            Retrieve  data
+        </button>
+    </form>
+</div>
 
 {#if form?.error}
   <div class="alert alert-error">
