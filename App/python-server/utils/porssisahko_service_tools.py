@@ -136,7 +136,6 @@ class PorssisahkoServiceTools:
             List[StartDateModel]: List of StartDateModel objects for missing hours (all in UTC).
         """
         result = []
-        print(data_utc)
         current_date_utc = start_date_utc
         while current_date_utc <= end_date_utc:
             if not any(item.startDate == current_date_utc for item in data_utc):

@@ -108,7 +108,10 @@ class PriceDataService:
         # Laske Helsingin ja UTC:n aikaero tunteina
         helsinki_offset = datetime.now(ZoneInfo("Europe/Helsinki")).utcoffset()
         utc_offset = datetime.now(ZoneInfo("UTC")).utcoffset()
-        hours_difference = int((helsinki_offset - utc_offset).total_seconds() // 3600)
+        if helsinki_offset is not None and utc_offset is not None:
+            hours_difference = int((helsinki_offset - utc_offset).total_seconds() // 3600)
+        else:
+            hours_difference = 0  # fallback if offsets are None
 
         start_date = start_date.replace(tzinfo=None) + timedelta(hours=hours_difference)
         end_date = end_date.replace(tzinfo=None) + timedelta(hours=hours_difference)
