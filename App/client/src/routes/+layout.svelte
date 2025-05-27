@@ -25,7 +25,7 @@
       Logged in as: <b>{data.user?.email}</b>
     </p>
 
-    <ChatBot user={data.user} />
+    <!-- <ChatBot user={data.user} /> -->
   {/if}
   
   <main class="container mx-auto max-w-2xl grow">
