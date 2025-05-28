@@ -12,7 +12,16 @@ const datesInOrder = (startTime, endTime) => {
 const getFormattedData = (data) => {
     const datetimesUTC = data.map(item => item.startTime);
     const datetimesHelsinki = datetimesUTC.map(dt =>
-            new Date(dt).toLocaleString("fi-FI", { timeZone: "Europe/Helsinki" }));
+        new Date(dt).toLocaleString("fi-FI", {
+            timeZone: "Europe/Helsinki",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+            // no 'second'
+        })
+    );
     const productionValues = data.map(item => item.value);
     
     // sort the data by startTime in ascending order

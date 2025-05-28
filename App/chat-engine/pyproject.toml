@@ -11,7 +11,6 @@ dependencies = [
     "langchain-huggingface>=0.1.2",
     "langchain-text-splitters>=0.3.8",
     "numpy>=2.2.5",
-    "ollama>=0.4.8",
     "openai>=1.76.0",
     "pandas>=2.2.3",
     "pillow>=11.2.1",

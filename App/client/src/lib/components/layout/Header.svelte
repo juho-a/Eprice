@@ -31,6 +31,9 @@
           <a href="/epc" class="">Production/Consumption</a>
         </li>
         <li>
+          <a href="/epc/combined" class="">Combined</a>
+        </li>
+        <li>
           <a href="/chat" class="text-white ml-4">Developer Chat</a>
         </li>
       </ul>
