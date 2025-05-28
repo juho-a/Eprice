@@ -143,3 +143,53 @@ class PorssisahkoServiceTools:
             current_date_utc += timedelta(hours=1)
         result.sort(key=lambda x: x.startDate, reverse=False)
         return result
+
+    def calculate_hourly_avg_price(self, data):
+        """
+        Calculate hourly average prices from a list of price data points.
+
+        Args:
+            data (List[PriceDataPoint]): List of price data points.
+
+        Returns:
+            List[PriceHourlyAvgPricePoint]: List of hourly average price points.
+        """
+        hourly_avg = {}
+        for point in data:
+            hour = point.startDate.hour
+            if hour not in hourly_avg:
+                hourly_avg[hour] = []
+            hourly_avg[hour].append(point.price)
+
+        result = []
+        for hour, prices in hourly_avg.items():
+            avg_price = sum(prices) / len(prices)
+            avg_price = round(avg_price, 3)
+            result.append(HourlyAvgPricePoint(hour=hour, avgPrice=avg_price))
+
+        return sorted(result, key=lambda x: x.hour, reverse=False)
+    
+    def calculate_avg_by_weekday(self, data: List[PriceDataPoint]) -> List[PriceAvgByWeekdayPoint]:
+        """
+        Calculate average price by weekday from a list of price data points.
+
+        Args:
+            data (List[PriceDataPoint]): List of price data points.
+
+        Returns:
+            List[PriceAvgByWeekdayPoint]: List of average prices by weekday.
+        """
+        weekday_prices = {}
+        for point in data:
+            weekday = point.startDate.weekday()
+            if weekday not in weekday_prices:
+                weekday_prices[weekday] = []
+            weekday_prices[weekday].append(point.price)
+
+        result = []
+        for weekday, prices in weekday_prices.items():
+            avg_price = sum(prices) / len(prices)
+            avg_price = round(avg_price, 3)
+            result.append(PriceAvgByWeekdayPoint(weekday=weekday, avgPrice=avg_price))
+
+        return sorted(result, key=lambda x: x.weekday, reverse=False)

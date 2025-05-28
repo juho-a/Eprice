@@ -82,14 +82,14 @@ class TimeRangeRequest(TimeRange):
 
 class FingridDataPoint(TimeRange):
     """
-    Model representing a single data point from Fingrid, including a value and time range.
+    Model representing a single data point from Fingrid, including a value (in megawatts) and time range.
 
     Attributes:
-        value (float): Value of the data point, must be non-negative.
+        value (float): Value of the data point in megawatts (MW), must be non-negative.
     """
     value: float = Field(
         examples=[7883.61],
-        description="Value of the data point"
+        description="Value of the data point in megawatts (MW)"
     )
 
     @field_validator("value")
@@ -118,6 +118,40 @@ class PriceDataPoint(StartDateModel):
     )
     price: float = Field(
         description="Floating-point number representing the price in euro cents",
+        examples=[0.61]
+    )
+
+class HourlyAvgPricePoint(BaseModel):
+    """
+    Model representing an hourly average price point.
+
+    Attributes:
+            Hour (int): Hour of the day (0-23)
+            AvgPrice (float): Average price in euro cents for that hour
+    """
+    hour: int = Field(
+        description="Hour of the day (0-23) in Zulu time",
+        examples=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    )
+    avgPrice: float = Field(
+        description="Average price in euro cents for that hour",
+        examples=[0.61]
+    )
+
+
+class PriceAvgByWeekdayPoint(BaseModel):
+    """
+    Model representing average price by weekday.
+    Attributes:
+        weekday (int): Day of the week (0=Monday, 6=Sunday).
+        avgPrice (float): Average price in euro cents for that weekday.
+    """
+    weekday: int = Field(
+        description="Day of the week (0=Monday, 6=Sunday)",
+        examples=[0, 1, 2, 3, 4, 5, 6]
+    )
+    avgPrice: float = Field(
+        description="Average price in euro cents for that weekday",
         examples=[0.61]
     )
 

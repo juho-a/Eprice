@@ -140,4 +140,40 @@ class PriceDataService:
         else:
             return await self.ext_api_fetcher.fetch_price_data_today()
 
+    async def price_data_hourly_avg(self, time_range):
+        """
+        Fetch hourly average price data for a given time range.
 
+        Args:
+            time_range (TimeRangeRequest): Start and end time as datetime objects.
+
+        Returns:
+            List[PriceHourlyAvgPricePoint]: List of hourly average price points.
+
+        Raises:
+            HTTPException: If the API call fails or no data is available.
+        """
+        data = await self.price_data_range(
+            time_range.startTime.replace(tzinfo=None),
+            time_range.endTime.replace(tzinfo=None)
+        )
+        return self.porssisahko_service_tools.calculate_hourly_avg_price(data)
+    
+
+    
+    async def price_data_avg_by_weekday(self, time_range: TimeRangeRequest) -> List[PriceAvgByWeekdayPoint]:
+        """
+        Calculate average price by weekday for a given time range.
+
+        Args:
+            time_range (TimeRangeRequest): Start and end time as datetime objects.
+
+        Returns:
+            List[PriceAvgByWeekdayPoint]: List of average prices by weekday.
+        """
+        data = await self.price_data_range(
+            time_range.startTime.replace(tzinfo=None),
+            time_range.endTime.replace(tzinfo=None)
+        )
+        
+        return self.porssisahko_service_tools.calculate_avg_by_weekday(data)

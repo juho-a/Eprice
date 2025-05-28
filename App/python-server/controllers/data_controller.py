@@ -225,3 +225,39 @@ async def get_prices_today():
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
+    
+@router.post("/api/price/hourlyavg")
+async def post_price_hourly_avg(time_range: TimeRangeRequest):
+    """
+    Get hourly average price data for a specific time range.
+
+    Args:
+        time_range (TimeRangeRequest): Start and end time as datetime objects.
+
+    Returns:
+        List[PriceDataPoint] | JSONResponse: List of hourly average price data points or an error message. Hour is in Zulu time.
+    """
+    try:
+        return await price_data_service.price_data_hourly_avg(time_range)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
+    except Exception as e:
+        return JSONResponse({"error": "InternalServerError", "message": str(e)})
+
+@router.post("/api/price/weekdayavg")
+async def post_price_weekday_avg(time_range: TimeRangeRequest):
+    """
+    Get average price data grouped by weekday for a specific time range.
+
+    Args:
+        time_range (TimeRangeRequest): Start and end time as datetime objects.
+
+    Returns:
+        List[AveragePriceByWeekday] | JSONResponse: List of average price data points by weekday or an error message.
+    """
+    try:
+        return await price_data_service.price_data_avg_by_weekday(time_range)
+    except HTTPException as e:
+        return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
+    except Exception as e:
+        return JSONResponse({"error": "InternalServerError", "message": str(e)})
