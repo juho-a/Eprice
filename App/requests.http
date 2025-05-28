@@ -29,8 +29,8 @@ POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-27T22:00:00Z",
-  "endTime": "2025-05-29T21:00:00Z"
+  "startTime": "2025-05-26T03:00:00Z",
+  "endTime": "2025-05-26T03:00:00Z"
 }
 
 
@@ -67,11 +67,11 @@ POST http://localhost:8000/api/production/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-01-08T04:00:00Z",
-  "endTime": "2025-01-08T06:00:00Z"
+  "startTime": "2025-05-26T00:00:00Z",
+  "endTime": "2025-05-26T06:00:00Z"
 }
 
-### price average data
+### price average data by hour
 POST http://localhost:8000/api/price/hourlyavg
 Content-Type: application/json
 
@@ -80,8 +80,17 @@ Content-Type: application/json
   "endTime": "2025-05-29T21:00:00Z"
 }
 
-### price average data
+### price average data by weekday
 POST http://localhost:8000/api/price/weekdayavg
+Content-Type: application/json
+
+{
+  "startTime": "2025-05-01T00:00:00Z",
+  "endTime": "2025-05-28T23:00:00Z"
+}
+
+### price average data by weekday in Helsinki time
+POST http://localhost:8000/api/price/weekdayavghki
 Content-Type: application/json
 
 {

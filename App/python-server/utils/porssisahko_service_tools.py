@@ -169,7 +169,7 @@ class PorssisahkoServiceTools:
 
         return sorted(result, key=lambda x: x.hour, reverse=False)
     
-    def calculate_avg_by_weekday(self, data: List[PriceDataPoint]) -> List[PriceAvgByWeekdayPoint]:
+    def calculate_avg_by_weekday(self, data: List[PriceDataPoint], timezone_hki=False) -> List[PriceAvgByWeekdayPoint]:
         """
         Calculate average price by weekday from a list of price data points.
 
@@ -181,7 +181,10 @@ class PorssisahkoServiceTools:
         """
         weekday_prices = {}
         for point in data:
-            weekday = point.startDate.weekday()
+            if timezone_hki == True:
+                weekday = point.startDate.astimezone(ZoneInfo("Europe/Helsinki")).weekday()
+            else:
+                weekday = point.startDate.weekday()
             if weekday not in weekday_prices:
                 weekday_prices[weekday] = []
             weekday_prices[weekday].append(point.price)
@@ -193,3 +196,4 @@ class PorssisahkoServiceTools:
             result.append(PriceAvgByWeekdayPoint(weekday=weekday, avgPrice=avg_price))
 
         return sorted(result, key=lambda x: x.weekday, reverse=False)
+    
