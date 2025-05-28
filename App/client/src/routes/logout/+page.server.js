@@ -14,6 +14,7 @@ export const actions = {
     const response = await apiRequest("/api/auth/logout");
     if (response.ok) {
       cookies.delete(COOKIE_KEY, { path: "/"});//, domain: "80.221.17.169" });
+      //TODO: clear locals
       throw redirect(302, "/");
     } else {
       return { error: "Logout failed" };

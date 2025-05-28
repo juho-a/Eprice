@@ -9,4 +9,16 @@ httpx==0.28.1
 asyncio==3.4.3
 apscheduler==3.11.0
 requests==2.32.3
-fastapi-mail==1.4.2
+fastapi-mail==1.4.2 # For sending emails
+# langchain>=0.3.24
+# langchain-community>=0.3.22
+# langchain-experimental>=0.3.4
+# langchain-huggingface>=0.1.2
+# langchain-text-splitters>=0.3.8
+# numpy>=2.2.5
+# openai>=1.76.0
+# pillow>=11.2.1
+# psycopg[binary]>=3.2.7
+# transformers>=4.51.3
+# langchain-postgres>=0.0.13
+# langchain-openai>=0.3.18

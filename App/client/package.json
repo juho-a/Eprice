@@ -24,6 +24,7 @@
 		"date-picker-svelte": "^2.16.0",
 		"svelte": "^5.0.0",
 		"tailwindcss": "^4.1.5",
-		"vite": "^6.0.0"
+		"vite": "^6.0.0",
+		"svelte-markdown": "^0.4.1"
 	}
 }
