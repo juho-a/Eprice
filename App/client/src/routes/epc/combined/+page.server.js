@@ -8,33 +8,26 @@ const datesInOrder = (startTime, endTime) => {
     return start < end;
 };
 
-const getFormattedData = (data) => {
-    const datetimesUTC = data.map(item => item.startTime);
-    const datetimesHelsinki = datetimesUTC.map(dt =>
-        new Date(dt).toLocaleString("fi-FI", {
+const getFormattedDates = (data, time_key = "startTime", value_key = "value") => {
+    // Sort by the original UTC time
+    const sorted = [...data].sort(
+        (a, b) => new Date(a[time_key]) - new Date(b[time_key])
+    );
+
+    // Map to Helsinki time and extract values
+    const labels = sorted.map(item =>
+        new Date(item[time_key]).toLocaleString("fi-FI", {
             timeZone: "Europe/Helsinki",
             year: "numeric",
             month: "numeric",
             day: "numeric",
             hour: "2-digit",
             minute: "2-digit"
-            // no 'second'
         })
     );
-    const values = data.map(item => item.value);
+    const values = sorted.map(item => item[value_key]);
 
-    // Sort by startTime just in case
-    const sorted = data
-        .map((item, index) => ({
-            startTime: datetimesHelsinki[index],
-            value: values[index]
-        }))
-        .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
-
-    return {
-        values: sorted.map(item => item.value),
-        labels: sorted.map(item => item.startTime)
-    };
+    return { values, labels };
 };
 
 export const actions = {
@@ -50,7 +43,7 @@ export const actions = {
 
         try {
             // Fetch both datasets in parallel
-            const [prodRes, consRes] = await Promise.all([
+            const [prodRes, consRes, priceRes] = await Promise.all([
                 fetch(`${PUBLIC_INTERNAL_API_URL}/api/production/range`, {
                     method: "POST",
                     headers: {
@@ -66,19 +59,32 @@ export const actions = {
                         cookie: `${COOKIE_KEY}=${cookies.get(COOKIE_KEY)}`
                     },
                     body: JSON.stringify(data)
+                }),
+                fetch(`${PUBLIC_INTERNAL_API_URL}/api/price/range`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        cookie: `${COOKIE_KEY}=${cookies.get(COOKIE_KEY)}`
+                    },
+                    body: JSON.stringify({
+                        startTime: data.startTime,
+                        endTime: data.endTime
+                    })
                 })
             ]);
 
-            if (!prodRes.ok || !consRes.ok) {
+            if (!prodRes.ok || !consRes.ok || !priceRes.ok) {
+                console.error(`API error! Production: ${prodRes.status}, Consumption: ${consRes.status}, Price: ${priceRes.status}`);
                 return fail(500, { error: "API refusing to serve data..." });
             }
 
             const productionData = await prodRes.json();
             const consumptionData = await consRes.json();
+            const priceData = await priceRes.json();
 
-            // Format both datasets
-            const prodFormatted = getFormattedData(productionData);
-            const consFormatted = getFormattedData(consumptionData);
+            const prodFormatted = getFormattedDates(productionData);
+            const consFormatted = getFormattedDates(consumptionData);
+            const priceFormatted = getFormattedDates(priceData, "startDate", "price");
 
             // Use the longer label array for the x-axis
             const labels =
@@ -96,6 +102,8 @@ export const actions = {
 
             differenceValues = productionValues.map((val, i) => val - (consumptionValues[i] ?? 0));
             return {
+                priceLabels: priceFormatted.labels,
+                priceValues: priceFormatted.values,
                 labels,
                 productionValues: data.selection === "production" || data.selection === "both" ? productionValues : [],
                 consumptionValues: data.selection === "consumption" || data.selection === "both" ? consumptionValues : [],

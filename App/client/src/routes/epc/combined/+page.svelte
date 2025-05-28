@@ -12,9 +12,11 @@
     let productionValues = form?.productionValues || [];
     let consumptionValues = form?.consumptionValues || [];
     let differenceValues = form?.differenceValues || [];
+    let priceLabels = form?.priceLabels || [];
+    let prices = form?.prices || [];
 
-    let bothCanvas, diffCanvas;
-    let bothChart, diffChart;
+    let bothCanvas, diffCanvas, priceCanvas;
+    let bothChart, diffChart, priceChart;
     let chartType = $state("line");
 
     let isLoading = $state(false);
@@ -23,41 +25,48 @@
         chartType = chartType === "line" ? "bar" : "line";
         bothChart.config.type = chartType;
         diffChart.config.type = chartType;
+        priceChart.config.type = chartType;
         bothChart.update();
         diffChart.update();
+        priceChart.update();
     };
 
+    const getBothDatasets = () => [
+        {
+            label: 'Production',
+            backgroundColor: 'rgba(245, 39, 157, 0.2)',
+            borderColor: 'rgb(245, 39, 157)',
+            data: productionValues,
+            yAxisID: 'y',
+        },
+        {
+            label: 'Consumption',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgb(54, 162, 235)',
+            data: consumptionValues,
+            yAxisID: 'y',
+        }
+    ];
 
-    const getBothDatasets = () => {
-        return [
-            {
-                label: 'Production',
-                backgroundColor: 'rgba(245, 39, 157, 0.2)',
-                borderColor: 'rgb(245, 39, 157)',
-                data: productionValues,
-                yAxisID: 'y',
-            },
-            {
-                label: 'Consumption',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgb(54, 162, 235)',
-                data: consumptionValues,
-                yAxisID: 'y',
-            }
-        ];
-    }
+    const getDiffDatasets = () => [
+        {
+            label: 'Production - Consumption',
+            backgroundColor: 'rgba(157,39, 245, 1)',
+            borderColor: 'rgb(157,39, 245)',
+            data: differenceValues,
+            yAxisID: 'y',
+        }
+    ];
 
-    const getDiffDatasets = () => {
-        return [
-            {
-                label: 'Production - Consumption',
-                backgroundColor: 'rgba(157,39, 245, 1)',
-                borderColor: 'rgb(157,39, 245)',
-                data: differenceValues,
-                yAxisID: 'y',
-            }
-        ];
-    }
+    const getPriceDatasets = () => [
+        {
+            label: 'Price',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgb(75, 192, 192)',
+            data: prices,
+            yAxisID: 'y',
+        }
+    ];
 
     onMount(() => {
         // Both chart
@@ -98,15 +107,36 @@
                 }
             }
         });
+        // Price chart
+        priceChart = new chartjs(priceCanvas.getContext('2d'), {
+            type: chartType,
+            data: {
+                labels: priceLabels,
+                datasets: getPriceDatasets()
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                stacked: false,
+                plugins: {
+                    title: { display: false }
+                },
+                scales: {
+                    y: { type: 'linear', display: true, position: 'left' }
+                }
+            }
+        });
     });
 
     // Update charts after form submit
     $effect(() => {
-        if (form?.labels && bothChart && diffChart) {
+        if (form?.labels && bothChart && diffChart && priceChart) {
             labels = form.labels;
             productionValues = form.productionValues || [];
             consumptionValues = form.consumptionValues || [];
             differenceValues = form.differenceValues || [];
+            priceLabels = form.priceLabels || [];
+            prices = form.priceValues || [];
             startTime = form.startTime || "";
             endTime = form.endTime || "";
 
@@ -117,59 +147,72 @@
             diffChart.data.labels = labels;
             diffChart.data.datasets = getDiffDatasets();
             diffChart.update();
+
+            priceChart.data.labels = priceLabels;
+            priceChart.data.datasets = getPriceDatasets();
+            priceChart.update();
         }
     });
 </script>
 
-<h1 id="minorheading" class="text-center">Production vs. Consumption</h1>
-<div class="card">
-    <!-- Only one canvas is visible at a time -->
-    <canvas bind:this={bothCanvas} id="bothChart" style="display: {selection === 'both' ? 'block' : 'none'}"></canvas>
-    <canvas bind:this={diffCanvas} id="diffChart" style="display: {selection === 'difference' ? 'block' : 'none'}"></canvas>
-</div>
-<br/>
-<div class="card">
-    <form method="POST" use:enhance={() => {
-                                isLoading = true;
-                                return async ({update}) => {
-                                    await update();
-                                    isLoading = false;
-                                }
-                            }}
-          action="?/getCombinedRange" class="mx-auto w-full max-w-md space-y-4">
-        <div class="flex items-center justify-between">
-            <label class="label">
-                <span class="label-text">Start date</span>
-                <input class="input" name="startTime" id="startTime" type="date" required />
-            </label>
-            <label class="label">
-                <span class="label-text">End date</span>
-                <input class="input" name="endTime" id="endTime" type="date" required />
-            </label>
-            <label class="label">
-                <span class="label-text">Select Option</span>
-                <select class="select" id="selection" name="selection" bind:value={selection}>
-                    <option value="both">Both</option>
-                    <option value="difference">Difference</option>
-                </select>
-            </label>
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+    <div style="margin-top: 4rem; width: 100%; max-width: 1200px;">
+        <h1 id="" class="text-center text-2xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
+            Production vs. Consumption vs. Price
+        </h1>
+        <div class="card">
+            <!-- Only one canvas is visible at a time -->
+            <canvas bind:this={bothCanvas} id="bothChart" style="display: {selection === 'both' ? 'block' : 'none'}"></canvas>
+            <canvas bind:this={diffCanvas} id="diffChart" style="display: {selection === 'difference' ? 'block' : 'none'}"></canvas>
+            <canvas bind:this={priceCanvas} id="priceChart" style="display: {selection === 'price' ? 'block' : 'none'}"></canvas>
         </div>
-        <div class="flex items-center justify-between">
-            <button class="w-full btn preset-filled-primary-500"
-                    type="submit"
-                    disabled={isLoading}>
-                {#if isLoading}
-                    Loading...
-                {:else}
-                    Retrieve data
-                {/if}
-            </button>
-            <button class="btn preset-filled-secondary-500"
-                    type="button"
-                    onclick={toggleChartType}>
-                Toggle Chart Type
+        <br/>
+        <div class="card">
+            <form method="POST" use:enhance={() => {
+                                        isLoading = true;
+                                        return async ({update}) => {
+                                            await update();
+                                            isLoading = false;
+                                        }
+                                    }}
+                action="?/getCombinedRange" class="mx-auto w-full max-w-md space-y-4">
+                <div class="flex items-center justify-between">
+                    <label class="label">
+                        <span class="label-text">Start date</span>
+                        <input class="input" name="startTime" id="startTime" type="date" required />
+                    </label>
+                    <label class="label">
+                        <span class="label-text">End date</span>
+                        <input class="input" name="endTime" id="endTime" type="date" required />
+                    </label>
+                    <label class="label">
+                        <span class="label-text">Select Option</span>
+                        <select class="select" id="selection" name="selection" bind:value={selection}>
+                            <option value="both">Prod./Cons.</option>
+                            <option value="difference">Difference</option>
+                            <option value="price">Price</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="w-full btn preset-filled-primary-500"
+                            type="submit"
+                            disabled={isLoading}>
+                        {#if isLoading}
+                            Loading...
+                        {:else}
+                            Retrieve data
+                        {/if}
+                    </button>
+                    <button class="btn preset-filled-secondary-500"
+                            type="button"
+                            onclick={toggleChartType}>
+                        Toggle Chart Type
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 
 {#if form?.error}
