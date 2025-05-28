@@ -42,7 +42,7 @@ export const actions = {
         }
 
         try {
-            // Fetch both datasets in parallel
+            // Fetch datasets in parallel
             const [prodRes, consRes, priceRes] = await Promise.all([
                 fetch(`${PUBLIC_INTERNAL_API_URL}/api/production/range`, {
                     method: "POST",
