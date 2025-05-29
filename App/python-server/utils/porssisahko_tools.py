@@ -44,7 +44,7 @@ async def wait_for_database(database_url):
     raise Exception("Database is not ready after multiple attempts.")
 
 
-def convert_to_porssisahko_entry(price, iso_date, predicted=False):
+def convert_to_porssisahko_entry(price, iso_date, predicted=False, convert_to_helsinki_time=True):
     """
     Converts a price and ISO 8601 date into a dictionary for the porssisahko table.
 
@@ -58,13 +58,15 @@ def convert_to_porssisahko_entry(price, iso_date, predicted=False):
         ValueError: If the ISO date is not in the correct format.
     """
     try:
-        #dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))  # Handle the "Z" for UTC
-        #dt_naive = dt.replace(tzinfo=None)
-        dt_utc = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))
-        # Convert to Helsinki time
-        dt_helsinki = dt_utc.astimezone(ZoneInfo("Europe/Helsinki"))
-        dt_naive = dt_helsinki.replace(tzinfo=None)
-
+        if convert_to_helsinki_time:
+            # Parse the ISO date string to a UTC datetime
+            dt_utc = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))
+            # Convert to Helsinki time
+            dt_helsinki = dt_utc.astimezone(ZoneInfo("Europe/Helsinki"))
+            dt_naive = dt_helsinki.replace(tzinfo=None)
+        else:
+            # Parse the ISO date string to a naive datetime (UTC)
+            dt_naive = datetime.fromisoformat(iso_date.replace("Z", "+00:00")).replace(tzinfo=None)
         # Extract the weekday
         weekday = dt_naive.weekday()
 

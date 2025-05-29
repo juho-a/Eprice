@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
 
     # Startup code
     print("Server is starting... Checking for missing data.")
-    start_datetime = "2025-05-13T23:00:00"
+    start_datetime = "2025-05-12T23:00:00"
     await fetch_and_insert_missing_porssisahko_data(start_datetime)
     print("Server started and missing data checked.")
     yield
