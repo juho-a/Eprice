@@ -6,7 +6,6 @@
 @import "@skeletonlabs/skeleton/themes/cerberus";
 @import "@skeletonlabs/skeleton/themes/mint";
 @import "@skeletonlabs/skeleton/themes/pine";
-@import "@skeletonlabs/skeleton/themes/seafoam";
 @import "@skeletonlabs/skeleton/themes/rocket";
 @import "@skeletonlabs/skeleton/themes/crimson";
 @import "@skeletonlabs/skeleton/themes/fennec";
@@ -17,7 +16,6 @@
 @import "@skeletonlabs/skeleton/themes/catppuccin";
 @import "@skeletonlabs/skeleton/themes/wintry";
 @import "@skeletonlabs/skeleton/themes/reign";
-@import "@skeletonlabs/skeleton/themes/modern";
 
 @source "../node_modules/@skeletonlabs/skeleton-svelte/dist";
 /*@tailwind base;
@@ -56,7 +54,7 @@ body {
   bottom: 3.5rem; /* Position at the bottom of the screen */
 }
 
-[data-theme='cerberus'] body {
+/* [data-theme='cerberus'] body {
   background-image:
     radial-gradient(at 24% 25%, color-mix(in oklab, var(--color-primary-500) 30%, transparent) 0px, transparent 30%),
     radial-gradient(at 35% 13%, color-mix(in oklab, var(--color-success-500) 18%, transparent) 0px, transparent 30%),
@@ -65,4 +63,4 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
+} */

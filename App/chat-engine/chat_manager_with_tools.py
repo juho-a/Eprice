@@ -26,28 +26,28 @@ from utils.tools import (
 )
 
 class LLMRerankerBatched(BaseDocumentCompressor):
-            llm_chain: object = Field(LLMChain, description="LLM chain to rerank documents")
-            document_variable_name: str = "documents"
-            top_k: int = 10
+    llm_chain: object = Field(LLMChain, description="LLM chain to rerank documents")
+    document_variable_name: str = "documents"
+    top_k: int = 10
 
-            def compress_documents(
-                self,
-                documents: Sequence,
-                query: str,
-                callbacks: Optional[list] = None,
-            ) -> List:
-                inputs = {
-                    "query": query,
-                    self.document_variable_name: [doc.page_content for doc in documents],
-                }
-                output = self.llm_chain.invoke(inputs)
-                try:
-                    scores = [int(score.strip()) for score in output.split(",")]
-                except Exception:
-                    scores = [0] * len(documents)
-                scored_docs = list(zip(documents, scores))
-                scored_docs.sort(key=lambda x: x[1], reverse=True)
-                return [doc for doc, score in scored_docs[: self.top_k]]
+    def compress_documents(
+        self,
+        documents: Sequence,
+        query: str,
+        callbacks: Optional[list] = None,
+    ) -> List:
+        inputs = {
+            "query": query,
+            self.document_variable_name: [doc.page_content for doc in documents],
+        }
+        output = self.llm_chain.invoke(inputs)
+        try:
+            scores = [int(score.strip()) for score in output.split(",")]
+        except Exception:
+            scores = [0] * len(documents)
+        scored_docs = list(zip(documents, scores))
+        scored_docs.sort(key=lambda x: x[1], reverse=True)
+        return [doc for doc, score in scored_docs[: self.top_k]]
 
 class ChatManagerWithTools:
     def __init__(self, config=None):

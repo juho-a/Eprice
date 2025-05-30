@@ -1,4 +1,5 @@
 <script>
+    import PriceCards from '$lib/components/PriceCards.svelte';
     import chartjs from 'chart.js/auto';
     import { getTomorrow } from '$lib/utils/date-helpers.js';
     import { enhance } from '$app/forms';
@@ -17,7 +18,8 @@
     let weekdayPriceValues = form?.weekdayPriceValues || [];
     let hourlyPriceLabels = form?.hourlyPriceLabels || [];
     let hourlyPriceValues = form?.hourlyPriceValues || [];
-
+    let selectedValues = $state([]);
+    
     let priceCanvas;
     let priceChart;
     let chartType = $state("line");
@@ -78,6 +80,13 @@
             priceChart.data.labels = getSelectedLabels();
             priceChart.data.datasets[0].data = getSelectedValues();
             priceChart.update();
+        }
+        if (selection === "none") {
+            selectedValues = plainPriceValues;
+        } else if (selection === "weekdays") {
+            selectedValues = weekdayPriceValues;
+        } else if (selection === "hourly") {
+            selectedValues = hourlyPriceValues;
         }
     });
 
@@ -150,8 +159,12 @@
                 </div>
             </form>
         </div>
+            <div class="py-8">
+                <PriceCards values={selectedValues} />
+            </div>
     </div>
 </div>
+
 
 {#if form?.error}
   <div class="alert alert-error">
