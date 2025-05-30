@@ -74,13 +74,25 @@ test.describe('User Creation and Deletion', () => {
         await expect(page.locator('text=Your email has been verified. You can now login.')).toBeVisible();
         await expect(page).toHaveURL(/\/auth\/login\?is_verified=true/);
 
-        // 8. Login with the verified user
+    });
+
+    test('Login user', async ({ page }) => {
+        await page.goto('http://localhost:5173/auth/login');
         await page.fill('input[name="email"]', email);
         await page.fill('input[name="password"]', password);
         await page.click('button[type="submit"]');
-        // Assert login success (adjust selector/message as needed)
         await expect(page.locator(`Logged in as: ${email}`)).toBeVisible();
-        });
+        
+    });
+
+    test('Remove user', async ({ page }) => {
+        await page.goto('http://localhost:5173/auth/remove');
+        await page.fill('input[name="email"]', email);
+        await page.fill('input[name="password"]', password);
+        await page.click('button[type="submit"]');
+        await expect(page.locator('text=Your account has been removed.')).toBeVisible();
+        await page.click('button[type="submit"]');
+    });
 
 });
 
