@@ -11,7 +11,7 @@
 
 <!-- Styles like chat-toggle are in app.css (mix with tailwind) -->
 <button
-    class="text-white font-bold py-2 px-8 rounded chat-toggle {chatOnState ? '' : 'hidden'}"
+    class="text-primary-500 hover:preset-filled-primary-500 font-bold  px-4 rounded chat-toggle {chatOnState ? '' : 'hidden'}"
     onclick={toggleChat}>
     {chatOnState ? 'Hide Chat' : 'Open Chat'}
 </button>

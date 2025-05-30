@@ -4,6 +4,8 @@
     import { useUserState } from "$lib/states/userState.svelte.js";
     import Header from "$lib/components/layout/Header.svelte";
     import Footer from "$lib/components/layout/Footer.svelte";
+    import Clock from "$lib/components/layout/Clock.svelte";
+    import User from "$lib/components/layout/User.svelte";
     import ChatBot from "$lib/components/ChatBot.svelte";
 
     
@@ -19,16 +21,20 @@
   
   
   <Header user={data.user} />
+  <div class="flex row">
+    <Clock />
+    <User user={data.user} />
+  </div>
 
   {#if data.user?.email}
-    <p class="">
+    <!-- <p class="text-right text-gray-500 dark:text-gray-400">
       Logged in as: <b>{data.user?.email}</b>
-    </p>
+    </p> -->
 
-    <!-- <ChatBot user={data.user} /> -->
+    <ChatBot user={data.user} />
   {/if}
   
-  <main class="container mx-auto max-w-2xl grow">
+  <main class="container mx-auto max-w-3xl grow">
     {@render children()}
   </main>
 
