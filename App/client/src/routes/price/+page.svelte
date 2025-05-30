@@ -1,5 +1,6 @@
 <script>
     import chartjs from 'chart.js/auto';
+    import { getTomorrow } from '$lib/utils/date-helpers.js';
     import { enhance } from '$app/forms';
     import { onMount } from 'svelte';
 
@@ -7,6 +8,7 @@
     let { form } = $props();
     let startTime = $state(form?.startTime || "");
     let endTime = $state(form?.endTime || "");
+    const maxDate = getTomorrow();
 
     // All datasets
     let plainPriceLabels = form?.plainPriceLabels || [];
@@ -102,11 +104,25 @@
                 <div class="flex items-center justify-between gap-1">
                     <label class="label">
                         <span class="label-text">Start date</span>
-                        <input class="input preset-outlined-primary-500" name="startTime" id="startTime" type="date" bind:value={startTime} />
+                        <input  class="input preset-outlined-primary-500"
+                                name="startTime"
+                                id="startTime"
+                                type="date"
+                                required
+                                bind:value={startTime}
+                                max={maxDate}
+                            />
                     </label>
                     <label class="label">
                         <span class="label-text">End date</span>
-                        <input class="input preset-outlined-primary-500" name="endTime" id="endTime" type="date" bind:value={endTime} />
+                        <input  class="input preset-outlined-primary-500"
+                                name="endTime"
+                                id="endTime"
+                                type="date"
+                                required
+                                bind:value={endTime}
+                                max={maxDate}
+                        />
                     </label>
                     <label class="label">
                         <span class="label-text">Averaging</span>

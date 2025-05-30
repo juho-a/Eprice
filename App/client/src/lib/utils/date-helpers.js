@@ -27,3 +27,8 @@ export const getFormattedDates = (data, time_key = "startTime", value_key = "val
     return { values, labels };
 };
 
+export const getTomorrow = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+}
