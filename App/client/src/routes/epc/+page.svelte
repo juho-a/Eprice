@@ -1,4 +1,5 @@
 <script>
+    import PriceCards from '$lib/components/PriceCards.svelte';
     import chartjs from 'chart.js/auto';
     import { getTomorrow } from '$lib/utils/date-helpers.js';
     import { enhance } from '$app/forms';
@@ -22,6 +23,10 @@
     let chartType = $state("line");
 
     let isLoading = $state(false);
+    let selectedValues1 = $state([]);
+    let selectedValues2 = $state([]);
+    let kind1 = $state("");
+    let kind2 = $state("");
 
     const toggleChartType = () => {
         chartType = chartType === "line" ? "bar" : "line";
@@ -154,6 +159,22 @@
             priceChart.data.datasets = getPriceDatasets();
             priceChart.update();
         }
+        if (selection === "both") {
+            selectedValues1 = productionValues;
+            selectedValues2 = consumptionValues;
+            kind1 = "prod.";
+            kind2 = "cons.";
+        } else if (selection === "difference") {
+            selectedValues1 = differenceValues;
+            selectedValues2 = [];
+            kind1 = "difference";
+            kind2 = "";
+        } else if (selection === "price") {
+            selectedValues1 = prices;
+            selectedValues2 = [];
+            kind1 = "price";
+            kind2 = "";
+        }
     });
 </script>
 
@@ -163,14 +184,14 @@
         <h1 id="" class="text-center text-3xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
             Production vs. Consumption vs. Price
         </h1>
-        <div class="card">
+        <div class="shadow-lg p-4 mb-4">
             <!-- Only one canvas is visible at a time -->
             <canvas bind:this={bothCanvas} id="bothChart" style="display: {selection === 'both' ? 'block' : 'none'}"></canvas>
             <canvas bind:this={diffCanvas} id="diffChart" style="display: {selection === 'difference' ? 'block' : 'none'}"></canvas>
             <canvas bind:this={priceCanvas} id="priceChart" style="display: {selection === 'price' ? 'block' : 'none'}"></canvas>
         </div>
         <br/>
-        <div class="card">
+        <div class="">
             <form method="POST" use:enhance={() => {
                                         isLoading = true;
                                         return async ({update}) => {
@@ -227,6 +248,12 @@
                         Toggle Chart Type
                 </div>
             </form>
+            <div class="py-2">
+                <PriceCards values={selectedValues1} kind={kind1}/>
+            </div>
+            <div class="">
+                <PriceCards values={selectedValues2} kind={kind2}/>
+            </div>
         </div>
     </div>
 </div>

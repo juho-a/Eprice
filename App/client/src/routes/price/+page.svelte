@@ -97,11 +97,11 @@
         <h1 id="" class="text-center text-3xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
             Electricity Market Price
         </h1>
-        <div class="card">
+        <div class="shadow-lg p-4 mb-4">
             <canvas bind:this={priceCanvas} id="priceChart"></canvas>
         </div>
         <br />
-        <div class="card">
+        <div class="">
             <form method="POST" use:enhance={() => {
                                         isLoading = true;
                                         return async ({update}) => {
@@ -160,7 +160,7 @@
             </form>
         </div>
             <div class="py-8">
-                <PriceCards values={selectedValues} />
+                <PriceCards values={selectedValues} kind="price" unit="c/kWh"/>
             </div>
     </div>
 </div>
