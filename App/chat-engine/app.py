@@ -19,14 +19,13 @@ async def chat_stream(messages, _):
         response += chunk
         yield response
 
-
 app = gr.ChatInterface(
         fn=chat_stream,
         type="messages",
-        title="Ask questions about the project.",
+        title="Eprice project knowledge base.",
         autoscroll=True,
+        theme="soft",
     )
 
-
 if __name__ == "__main__":
-    app.queue().launch()
+    app.queue().launch(pwa=True)

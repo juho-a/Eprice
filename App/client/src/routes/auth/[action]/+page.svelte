@@ -23,7 +23,8 @@
     });
 
 </script>
-  
+
+<div class="max-w-xl mx-auto mt-20" >
   <h1 id="minorheading" class="text-center"><!--class="text-xl pb-4"> h2-->
     {title} Form<!--{data.action === "login" ? "Login" : "Register"} form-->
   </h1>
@@ -111,3 +112,4 @@
   </div>
   <br/>
 {/if}
+</div>

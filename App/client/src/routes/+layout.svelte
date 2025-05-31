@@ -34,7 +34,7 @@
     <ChatBot user={data.user} />
   {/if}
   
-  <main class="container mx-auto max-w-3xl grow">
+  <main class="container grow mx-auto"> <!-- mx-auto grow max-w-4xl-->
     {@render children()}
   </main>
 

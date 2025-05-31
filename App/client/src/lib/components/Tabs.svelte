@@ -6,9 +6,20 @@
   const dispatch = createEventDispatcher();
 
   const handleClick = tabValue => () => dispatch('change', tabValue);
+  let size=$state("");
+
+  $effect(() => {
+    //This is really hacky, but it works for now
+    const activeItem = items.find(item => item.value === activeTabValue);
+    if (activeItem && activeItem.label === "Wide") {
+      size = "max-w-5xl";
+    } else {
+      size = "max-w-3xl";
+    }
+  });
 </script>
 
-<div class="p-8">
+<div class="p-8 mx-auto {size}">
     <ul>
     {#each items as item}
         <li class={activeTabValue === item.value ? 'active' : ''}>
@@ -18,7 +29,7 @@
     </ul>
     {#each items as item}
         {#if activeTabValue == item.value}
-        <div class="box">
+        <div class="box bg-primary-50">
             <item.component />
         </div>
         {/if}
@@ -33,6 +44,10 @@
 		border: 1px solid #dee2e6;
     border-radius: 0 0 .5rem .5rem;
     border-top: 0;
+    background-image: url('$lib/assets/image13.jpeg'); /* <-- Add this line */
+    background-size: cover;               /* Optional: cover the box */
+    background-repeat: no-repeat;         /* Optional: no repeat */
+    background-position: center;
 	}
   ul {
     display: flex;

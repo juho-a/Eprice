@@ -2,7 +2,7 @@
     let { data, form } = $props();
 </script>
 
-
+<div class="max-w-xl mx-auto mt-20">
 <h1 id="minorheading" class="text-center"><!--class="text-xl pb-4"> h2-->
     Confirm your logout
 </h1>
@@ -20,7 +20,7 @@
 {/if}
 
 {#if data?.removed}
-    <p class="text-xl">
+    <p class="text-xl text-center">
         Your account has been removed.
     </p>
 {/if}
@@ -32,7 +32,7 @@
 {/if}
 
 
-<form method="POST" action="?/logout" class="p-8">
-    <button class="w-full btn preset-filled-primary-500" type="submit">Logout</button>
-</form>
-
+    <form method="POST" action="?/logout" class="p-8">
+        <button class="w-full btn preset-filled-primary-500" type="submit">Logout</button>
+    </form>
+</div>

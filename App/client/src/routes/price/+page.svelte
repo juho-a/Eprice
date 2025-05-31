@@ -92,7 +92,7 @@
 
 </script>
 
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+<div class="max-w-4xl mx-auto" >
     <div style="margin-top: 4rem; width: 100%; max-width: 1200px;">
         <h1 id="" class="text-center text-3xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
             Electricity Market Price

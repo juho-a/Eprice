@@ -1,3 +1,4 @@
+import os
 import torch
 from transformers import AutoModel, AutoTokenizer
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
@@ -13,6 +14,8 @@ from langchain.chains import LLMChain
 from langchain_openai import ChatOpenAI
 from langchain.retrievers.document_compressors.base import BaseDocumentCompressor
 from langchain.tools.retriever import create_retriever_tool
+from langchain_core.documents import Document
+
 
 from pydantic import Field
 from typing import List, Optional, Sequence, Dict, Any
@@ -20,22 +23,87 @@ import json
 
 from utils.tools import (
     get_file_by_name_tool,
-    generate_plantuml_diagram_from_file_tool,
-    generate_plantuml_diagram_from_code_tool,
     get_project_directory_structure_tool,
 )
 
-class LLMRerankerBatched(BaseDocumentCompressor):
+retriever_prompt_template = """Given the query:\n{query}\n\n
+Rate the relevance of the following document to the query on a scale from 1 to 10:\n{document}\n\n
+Only output the score as an integer.
+"""
+
+batch_retriever_prompt_template = """Given the query:\n{query}\n\n
+Rate the relevance of the following documents to the query on a scale from 1 to 10:\n{documents}\n\n
+Only output the scores as a list of integers.
+"""
+
+system_message = (
+            "You are an expert assistant for answering questions about a software project named 'Eprice'.\n"
+            "You have access to the following tools:\n"
+            "- project_search: args: {\"query\": <string>}\n"
+            "- get_file_by_name: args: {\"file_name\": <string>}\n"
+            "- get_project_directory_structure: args: {}\n"
+            "Always first use the project_search tool to retrieve relevant information from the project documents.\n"
+            "If project_search does not provide sufficient information, then try looking up individual files using get_file_by_name.\n"
+            "You can use get_project_directory_structure to understand the project structure and see what files are available.\n"
+            "If you get name conflicts when you use get_file_by_name tool, try using the full file name with path.\n"
+            "If the answer is in the documents or files, provide it and reference the document(s) or file(s) used.\n"
+            "If the answer is not in the documents or files, state that the documents do not contain the answer.\n"
+            "To use a tool, respond ONLY with a JSON block in this format:\n"
+            '{"tool": "tool_name", "args": {"arg1": "value1", ...}}.\n'
+            "Do not include any explanation or extra text outside the JSON block when calling a tool.\n"
+            "Otherwise, answer the user's question directly and clearly."
+        )
+
+class LLMReranker(BaseDocumentCompressor):
+    """LLM Reranker that uses LLMChain to rerank documents.
+    It passes each document to the LLM and expects the LLM to return a score for each document.
+    The documents are then sorted by score and the top_k documents are returned.
+    """
     llm_chain: object = Field(LLMChain, description="LLM chain to rerank documents")
-    document_variable_name: str = "documents"
-    top_k: int = 10
+    document_variable_name: str = "document"
+    top_k: int = 5  # Number of top documents to return
 
     def compress_documents(
         self,
-        documents: Sequence,
+        documents: Sequence[Document],
         query: str,
+        *,
         callbacks: Optional[list] = None,
-    ) -> List:
+    ) -> List[Document]:
+        
+        scored_docs = []
+        for doc in documents:
+            inputs = {
+                "query": query,
+                self.document_variable_name: doc.page_content,
+            }
+            output = self.llm_chain.invoke(inputs)
+            try:
+                score = int(output.strip())
+            except Exception:
+                score = 0
+            scored_docs.append((doc, score))
+        scored_docs.sort(key=lambda x: x[[1]], reverse=True)
+        return [doc for doc, score in scored_docs[:self.top_k]]  # Return only top_k documents    
+
+class LLMRerankerBatched(BaseDocumentCompressor):
+    """ LLM Reranker that uses LLMChain to rerank documents in batches.
+    It passes the documents to the LLM in a single call and expects the LLM to return a list of scores.
+    """
+    llm_chain: object = Field(LLMChain, description="LLM chain to rerank documents in batches")
+    document_variable_name: str = "documents"
+    top_k: int = 5  # Number of top documents to return
+
+    def compress_documents(
+        self,
+        documents: Sequence[Document],
+        query: str,
+        *,
+        callbacks: Optional[list] = None,
+    ) -> List[Document]:
+        
+        scored_docs = []
+        
         inputs = {
             "query": query,
             self.document_variable_name: [doc.page_content for doc in documents],
@@ -47,7 +115,100 @@ class LLMRerankerBatched(BaseDocumentCompressor):
             scores = [0] * len(documents)
         scored_docs = list(zip(documents, scores))
         scored_docs.sort(key=lambda x: x[1], reverse=True)
-        return [doc for doc, score in scored_docs[: self.top_k]]
+        return [doc for doc, _ in scored_docs[:self.top_k]]
+    
+class RerankingRetriever:
+    """
+    Encapsulates a retriever with LLM-based reranking using ContextualCompressionRetriever.
+    """
+    def __init__(
+        self,
+        vector_store,
+        reranker_model_name: str = "gpt-4o-mini",
+        rerank_top_k: int = 10,
+        retriever_k: int = 20,
+    ):
+        # Set up the base retriever
+        self.base_retriever = vector_store.as_retriever(search_kwargs={"k": retriever_k})
+
+        self.rerank_prompt = PromptTemplate(
+            input_variables=["query", "documents"],
+            template=batch_retriever_prompt_template,
+        )
+
+        # Set up the reranker LLM
+        self.llm_reranker = ChatOpenAI(
+            model_name=reranker_model_name,
+            temperature=0.0
+        )
+
+        # Set up the reranker compressor
+        self.reranker_batched = LLMRerankerBatched(
+            llm_chain=self.rerank_prompt | self.llm_reranker,
+            top_k=rerank_top_k
+        )
+
+        # Compose the contextual compression retriever
+        self.retriever = ContextualCompressionRetriever(
+            base_retriever=self.base_retriever,
+            base_compressor=self.reranker_batched,
+        )
+
+    def as_tool(self, name="project_search", description="Searches the project documents for relevant information."):
+        """
+        Returns a retriever tool for use in tool-augmented chat.
+        """
+        return create_retriever_tool(
+            self.retriever,
+            name=name,
+            description=description
+        )
+
+
+class Embedder:
+    def __init__(self, model_name: str = "BAAI/bge-small-en"):
+        self.model_name = model_name
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModel.from_pretrained(model_name).to(self.device)
+
+    def embed_query(self, text: str) -> List[float]:
+        """Embed the input text using the Hugging Face model."""
+        inputs = self.tokenizer(text, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            embeddings = self.model(**inputs).last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
+        return embeddings.tolist()
+    
+    def count_tokens(self, text: str) -> int:
+        """Count the number of tokens in the input text."""
+        return len(self.tokenizer.encode(text, add_special_tokens=False))
+    
+class WrappedEmbedder:
+    def __init__(self, model_name: str = "BAAI/bge-small-en"):
+        self.embedding_model = HuggingFaceEmbeddings(
+            model_name=model_name,
+            model_kwargs={"device": "cuda" if torch.cuda.is_available() else "cpu"},
+            encode_kwargs={"normalize_embeddings": True},
+        )
+    
+    def embed_query(self, text: str) -> List[float]:
+        return self.embedding_model.embed_query(text)
+
+    
+class VectorStore:
+    def __init__(self, collection_name: str, connection_string: str, embeddings: Embedder, async_mode: bool = False):
+        self.vector_store = PGVector(
+            embeddings=embeddings,
+            collection_name=collection_name,
+            connection= connection_string,
+            async_mode= async_mode,
+        )
+
+    def as_retriever(self, search_kwargs: dict = None):
+        if search_kwargs is None:
+            search_kwargs = {"k": 20}
+        return self.vector_store.as_retriever(search_kwargs=search_kwargs)
+    
 
 class ChatManagerWithTools:
     def __init__(self, config=None):
@@ -62,7 +223,6 @@ class ChatManagerWithTools:
         self._setup_prompt()
 
     def _setup_env(self):
-        import os
         self.PGHOST = os.getenv("PGHOST", "localhost")
         self.PGPORT = os.getenv("PGPORT")
         self.PGUSER = os.getenv("PGUSER")
@@ -72,51 +232,27 @@ class ChatManagerWithTools:
         self.collection_name = "project_documents"
 
     def _setup_embeddings(self):
-        embedding_model_name = "BAAI/bge-small-en"
-        self.model = AutoModel.from_pretrained(embedding_model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(embedding_model_name)
-        self.embedding_model = HuggingFaceEmbeddings(
-            model_name=embedding_model_name,
-            model_kwargs={"device": "cuda" if torch.cuda.is_available() else "cpu"},
-            encode_kwargs={"normalize_embeddings": True},
-        )
+        self.embedding_model = Embedder(model_name="BAAI/bge-small-en")
 
     def _setup_vector_store(self):
-        self.vector_store = PGVector(
-            embeddings=self.embedding_model,
+        self.vector_store = VectorStore(
             collection_name=self.collection_name,
-            connection=self.connection_string,
-            async_mode=False,
+            connection_string=self.connection_string,
+            embeddings=self.embedding_model,
         )
 
     def _setup_retriever(self):
-        
-        retriever = self.vector_store.as_retriever(search_kwargs={"k": 20})
-        rerank_batch_prompt = PromptTemplate(
-            input_variables=["query", "documents"],
-            template=(
-                "Given the query:\n{query}\n\n"
-                "Rate the relevance of the following documents to the query on a scale from 1 to 10:\n"
-                "{documents}\n\n"
-                "Only output the scores as a list of integers."
-            ),
-        )
-
-        reranker_model_name = "gpt-4o-mini"
-        llm_reranker = ChatOpenAI(
-            model_name=reranker_model_name,
-            temperature=0.0
-        )
-        reranker_batched = LLMRerankerBatched(llm_chain=rerank_batch_prompt | llm_reranker, top_k=10)
-        self.reranking_retriever = ContextualCompressionRetriever(
-            base_retriever=retriever,
-            base_compressor=reranker_batched,
-        )
+        self.reranking_retriever = RerankingRetriever(
+            vector_store=self.vector_store,
+            reranker_model_name="gpt-4o-mini",
+            rerank_top_k=10,
+            retriever_k=20
+        ).retriever
 
     def _setup_llm(self):
         self.llm = ChatOpenAI(
             model="gpt-4o-mini",
-            temperature=0.5,
+            temperature=0.2,
             streaming=True,
         )
 
@@ -124,8 +260,7 @@ class ChatManagerWithTools:
         self.message_history = InMemoryChatMessageHistory()
 
     def _setup_tools(self):
-        retriever_tool = create_retriever_tool(
-            self.reranking_retriever,
+        retriever_tool = self.reranking_retriever.as_tool(
             name="project_search",
             description="Searches the project documents for relevant information."
         )
@@ -136,24 +271,18 @@ class ChatManagerWithTools:
         }
 
     def _setup_prompt(self):
-        self.system_message = (
-            "You are an expert assistant for answering questions about a software project named 'Eprice'.\n"
-            "You have access to the following tools:\n"
-            "- project_search: args: {\"query\": <string>}\n"
-            "- get_file_by_name: args: {\"file_name\": <string>}\n"
-            "- get_project_directory_structure: args: {}\n"
-            "Always first use the project_search tool to retrieve relevant information from the project documents.\n"
-            "If project_search does not provide sufficient information, then try looking up individual files using get_file_by_name.\n"
-            "You can use get_project_directory_structure to understand the project structure and see what files are available.\n"
-            "If the answer is in the documents or files, provide it and reference the document(s) or file(s) used.\n"
-            "If the answer is not in the documents or files, state that the documents do not contain the answer.\n"
-            "To use a tool, respond ONLY with a JSON block in this format:\n"
-            '{"tool": "tool_name", "args": {"arg1": "value1", ...}}.\n'
-            "Do not include any explanation or extra text outside the JSON block when calling a tool.\n"
-            "Otherwise, answer the user's question directly and clearly."
-        )
+        self.system_message = system_message
 
+    def _count_memory_tokens(self) -> int:
+        return sum(self.embedding_model.count_tokens(msg.content) for msg in self.message_history.messages)
 
+    def _enforce_memory_limit(self, max_tokens=8000):
+        messages = self.message_history.messages
+        while self._count_memory_tokens() > max_tokens and messages:
+            # Remove the oldest message (after system message)
+            messages.pop(0)
+
+    # All the milk and honey is here
     async def stream_response(self, user_message: str):
         # Build chat history
         history_msgs = self.message_history.messages
@@ -166,8 +295,7 @@ class ChatManagerWithTools:
         async for chunk in self.llm.astream(messages):
             if hasattr(chunk, "content") and chunk.content:
                 assistant_reply += chunk.content
-        # Do NOT yield here yet
-
+ 
         # Check if LLM wants to use a tool (by outputting a JSON block)
         tool_call = self._extract_tool_call(assistant_reply)
         if tool_call:
@@ -175,15 +303,7 @@ class ChatManagerWithTools:
             args = tool_call.get("args", {})
             tool_func = self.tools.get(tool_name)
             if tool_func:
-                # Handle tool input type
-                # if isinstance(args, dict) and len(args) == 1:
-                #     tool_input = next(iter(args.values()))
-                # else:
-                #     tool_input = args
-                # tool_result = tool_func.invoke(tool_input)
-                # Feed tool result back as context and get final answer
                 tool_result = tool_func.invoke(args)
-                #tool_context_msg = HumanMessage(content=f"Tool `{tool_name}` result:\n{tool_result}")
                 tool_context_msg = HumanMessage(
                     content=f"The result of your tool call `{tool_name}` is:\n{tool_result}\n"
                             "Please use this information to answer the user's question."
@@ -203,6 +323,7 @@ class ChatManagerWithTools:
         # Update memory
         self.message_history.add_user_message(user_message)
         self.message_history.add_ai_message(assistant_reply)
+        self._enforce_memory_limit(max_tokens=4000)
 
     def _extract_tool_call(self, text: str) -> Dict[str, Any] | None:
         # Look for a JSON block in the LLM output

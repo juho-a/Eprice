@@ -1,6 +1,15 @@
 <script>
+  import { onMount } from 'svelte';
   import { page } from '$app/stores';
   let { user } = $props();
+
+  let devChatAvailable = $state(false);
+
+  onMount(async () => {
+    const res = await fetch('/api/devchat');
+    const data = await res.json();
+    devChatAvailable = data.available;
+  });
 </script>
 
 <header class="flex items-center justify-between bg-black drop-shadow-xl backdrop-blur-lg p-4 mb-2">
@@ -15,6 +24,12 @@
         <li>
           <a href="/hintatiedot" class="">Hintatiedot</a>
         </li>
+        <li>
+          <a href="/epc" class="">Production/Consumption</a>
+        </li>
+        <li>
+          <a href="/price" class="">Price</a>
+        </li>
         {:else}
             <li>
               <a href="/auth/login" class="">Login</a>
@@ -25,14 +40,8 @@
         {/if}
       </ul>
     </nav>
-    {#if user?.role === 'admin'}
+    {#if user?.role === 'admin' && devChatAvailable}
       <ul class="ml-4 flex space-x-4 text-white">
-        <li>
-          <a href="/epc" class="">Production/Consumption</a>
-        </li>
-        <li>
-          <a href="/price" class="">Price</a>
-        </li>
         <li>
           <a href="/chat" class="text-white ml-4">Developer Chat</a>
         </li>

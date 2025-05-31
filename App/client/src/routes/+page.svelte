@@ -89,7 +89,7 @@
     <span class="text-xl">Market Electricity Prices<br> {new Date().toLocaleDateString()}</span>
     <br>
 </h1>
-<main class="flex gap-10">
+<main class="flex gap-10 max-w-4xl mx-auto">
     <div class="text-center gap-5 flex flex-col mb-10">
        <PriceBall heading={`Sähkönhinta NYT (${currentHourLabel})`} price={currentPrice} timestamp={matchingPrice?.startDate}/>
        <PriceBall heading="Sähkö 24h" price={dailyAverage}/>
