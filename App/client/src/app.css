@@ -5,7 +5,7 @@
 @import "@skeletonlabs/skeleton/optional/presets";
 @import "@skeletonlabs/skeleton/themes/cerberus";
 @import "@skeletonlabs/skeleton/themes/rocket";
-@import "@skeletonlabs/skeleton/themes/crimson";;
+@import "@skeletonlabs/skeleton/themes/crimson";
 @import "@skeletonlabs/skeleton/themes/legacy";
 @import "@skeletonlabs/skeleton/themes/nosh";
 @import "@skeletonlabs/skeleton/themes/terminus";
@@ -74,7 +74,7 @@ body {
     color: #0f172a;
 }
 
-[data-theme='cerberus'] body {
+/* [data-theme='cerberus'] body {
   background-image:
     radial-gradient(at 24% 25%, color-mix(in oklab, var(--color-primary-500) 30%, transparent) 0px, transparent 30%),
     radial-gradient(at 35% 13%, color-mix(in oklab, var(--color-success-500) 18%, transparent) 0px, transparent 30%),
@@ -83,4 +83,4 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
+} */

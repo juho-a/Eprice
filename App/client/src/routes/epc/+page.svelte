@@ -27,6 +27,8 @@
     let selectedValues2 = $state([]);
     let kind1 = $state("");
     let kind2 = $state("");
+    let units1 = $state("");
+    let units2 = $state("");
 
     const toggleChartType = () => {
         chartType = chartType === "line" ? "bar" : "line";
@@ -164,16 +166,22 @@
             selectedValues2 = consumptionValues;
             kind1 = "prod.";
             kind2 = "cons.";
+            units1 = "kWh";
+            units2 = "kWh";
         } else if (selection === "difference") {
             selectedValues1 = differenceValues;
             selectedValues2 = [];
             kind1 = "difference";
             kind2 = "";
+            units1 = "kWh";
+            units2 = "";
         } else if (selection === "price") {
             selectedValues1 = prices;
             selectedValues2 = [];
             kind1 = "price";
             kind2 = "";
+            units1 = "c/kWh";
+            units2 = "";
         }
     });
 </script>
@@ -249,10 +257,10 @@
                 </div>
             </form>
             <div class="py-2">
-                <PriceCards values={selectedValues1} kind={kind1}/>
+                <PriceCards values={selectedValues1} kind={kind1} unit={units1}/>
             </div>
             <div class="">
-                <PriceCards values={selectedValues2} kind={kind2}/>
+                <PriceCards values={selectedValues2} kind={kind2} unit={units2}/>
             </div>
         </div>
     </div>
