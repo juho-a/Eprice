@@ -232,7 +232,7 @@
                         />
                     </label>
                     <label class="label">
-                        <span class="label-text">Select Option</span>
+                        <span class="label-text">Filter</span>
                         <select class="select preset-outlined-primary-500" id="selection" name="selection" bind:value={selection}>
                             <option value="both">Prod./Cons.</option>
                             <option value="difference">Difference</option>
