@@ -1,5 +1,7 @@
 ## User chat for Eprice app
 
+**The user chat is a place-holder chat, and only has a very small llm powering it (one of the smallest llama models)**. The purpose is to simply show how easy the integration can be. 
+
 This folder has the dockerfile for ollama llm engine, and a minimal gradio dashboard implementation. In order to run the engine, docker needs to load the *llama3.2* model first. It will be downloaded into `user-chat/.ollama/` folder, which you need to create. However, do not include it in git. 
 
 The chat-engine uses uv as the default package manager, and it's included in the container also. The dependencies are in `pyproject.toml`, and if you prefer pip, you can always you that. However, remember to include you local virtualenvironment into .gitignore and .dockerignore.
