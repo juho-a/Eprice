@@ -95,8 +95,10 @@ async def fetch_and_insert_missing_porssisahko_data(start_datetime_str: str):
             response.raise_for_status()  # Raise an exception for HTTP errors
             data = response.json()  # Parse the JSON response
 
+            # NOTE: Since there is inconsistency in the API response format, we need to handle both cases:
+            # latest prices (utc) and hourly prices (helsinki time)
             # Insert the data into the database -- datetime format:  "2022-11-14THH:00:00.000Z"
-            await porssisahko_repository.insert_entry(data["price"], f"{date}T{hour:02d}:00.000Z")
+            await porssisahko_repository.insert_entry(data["price"], f"{date}T{(hour):02d}:00.000Z", convert_to_helsinki_time=False)
 
         print(f"Missing data successfully inserted into the database.")
     except requests.RequestException as e:

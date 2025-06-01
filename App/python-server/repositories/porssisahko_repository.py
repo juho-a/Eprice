@@ -43,7 +43,7 @@ class PorssisahkoRepository:
         """
         self.database_url = database_url
 
-    async def insert_entry(self, price: float, iso_date: str, predicted: bool = False):
+    async def insert_entry(self, price: float, iso_date: str, predicted: bool = False, convert_to_helsinki_time: bool = True):
         """
         Insert a single entry into the porssisahko table.
 
@@ -58,7 +58,7 @@ class PorssisahkoRepository:
         conn = None
         try:
             # Convert the entry to the correct format
-            entry = convert_to_porssisahko_entry(price, iso_date, predicted)
+            entry = convert_to_porssisahko_entry(price, iso_date, predicted, convert_to_helsinki_time)
 
             # Connect to the database
             conn = await asyncpg.connect(self.database_url)
@@ -86,7 +86,7 @@ class PorssisahkoRepository:
             if conn:
                 await conn.close()
 
-    async def insert_entries(self, entries: list):
+    async def insert_entries(self, entries: list, convert_to_helsinki_time: bool = True):
         """
         Insert multiple entries into the porssisahko table.
 
@@ -100,7 +100,7 @@ class PorssisahkoRepository:
         try:
             # Convert entries to the correct format
             formatted_entries = [
-                convert_to_porssisahko_entry(entry["price"], entry["startDate"], predicted=entry.get("predicted", False))
+                convert_to_porssisahko_entry(entry["price"], entry["startDate"], predicted=entry.get("predicted", False), convert_to_helsinki_time=convert_to_helsinki_time)
                 for entry in entries
             ]
 

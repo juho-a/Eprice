@@ -1,5 +1,7 @@
 ### Endpoint tests
 
+Tests for the phase of development when the frontend is incomplete. Helps in picking up on errors, exceptions and warnings. Relies on Pydantic and proper exception ahndling in the backend to be fully informative. Becomes somewhat obsolete after e2e-tests have been written.
+
 You need to have the Eprice -app running if you want to run the tests. So call `docker compose up` to run the server (or with `-d server` flag, since front is not needed for these tests). If you run `docker compose up --build`, the backend tests **will not be started** as they are defined as a "profile" in compose file.
 
 To run the tests, first build the container with `docker compose build` inside the backend-tests, or just by adding the `--build` and `-d` flags:

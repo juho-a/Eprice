@@ -1,27 +1,21 @@
 <script>
-    import { PUBLIC_CHAT_URL } from "$env/static/public";
+    import ChatView1 from "$lib/components/ChatView1.svelte";
+    import ChatView2 from "$lib/components/ChatView2.svelte";
+    import Tabs from "$lib/components/Tabs.svelte";
+
+    let activeTabValue = $state(1);
+
+    let items = [
+        { label: "Streaming",
+            value: 1,
+            component: ChatView1
+            },
+        { label: "Agent",
+            value: 2,
+            component: ChatView2
+            },
+    ];
 </script>
 
-<style>
-    .gradio-embed {
-        width: 100%;
-        height: 70vh; /* Adjust as needed, or use 100% if your layout is flex */
-        margin: 0;
-        padding: 0;
-    }
-    .gradio-embed iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        display: block;
-    }
-</style>
 
-<div class="gradio-embed" data-gradio-embed="false">
-    <iframe title="Gradio App"
-        src={PUBLIC_CHAT_URL}
-        allowfullscreen
-        name="gradio-iframe"
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-    ></iframe>
-</div>
+<Tabs items={items} activeTabValue={activeTabValue} on:change={e => activeTabValue = e.detail} />

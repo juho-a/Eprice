@@ -80,11 +80,12 @@ def _save_plantuml_code(code: str) -> str:
         f.write(code)
     return diagram_path
 
+
 @tool
 def generate_plantuml_diagram_from_file_tool(file_name: str) -> str:
     """
     Loads PlantUML code from a file in the database and saves it to ./diagrams/diagram.puml for rendering.
-    Returns a message indicating the file was saved.
+    Returns a message indicating the diagram was generated.
     """
     # Ensure file_name starts with ./
     if not file_name.startswith("./"):
@@ -96,7 +97,7 @@ def generate_plantuml_diagram_from_file_tool(file_name: str) -> str:
     if not code.startswith("@startuml"):
         code = f"@startuml\n{code}\n@enduml"
     diagram_path = _save_plantuml_code(code)
-    return f"PlantUML code from {file_name} saved to {diagram_path}. The diagram will be rendered automatically."
+    return f"The diagram should be rendered automatically -- refresh the image is it's not showing up."
 
 @tool
 def generate_plantuml_diagram_from_code_tool(plantuml_code: str) -> str:
@@ -108,4 +109,4 @@ def generate_plantuml_diagram_from_code_tool(plantuml_code: str) -> str:
     if not code.startswith("@startuml"):
         code = f"@startuml\n{code}\n@enduml"
     diagram_path = _save_plantuml_code(code)
-    return f"PlantUML code saved to {diagram_path}. The diagram will be rendered automatically."
+    return f"The diagram should be rendered automatically -- refresh the image is it's not showing up."

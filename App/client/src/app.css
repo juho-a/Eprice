@@ -4,20 +4,12 @@
 @import "@skeletonlabs/skeleton";
 @import "@skeletonlabs/skeleton/optional/presets";
 @import "@skeletonlabs/skeleton/themes/cerberus";
-@import "@skeletonlabs/skeleton/themes/mint";
-@import "@skeletonlabs/skeleton/themes/pine";
-@import "@skeletonlabs/skeleton/themes/seafoam";
 @import "@skeletonlabs/skeleton/themes/rocket";
 @import "@skeletonlabs/skeleton/themes/crimson";
-@import "@skeletonlabs/skeleton/themes/fennec";
-@import "@skeletonlabs/skeleton/themes/vintage";
 @import "@skeletonlabs/skeleton/themes/legacy";
 @import "@skeletonlabs/skeleton/themes/nosh";
 @import "@skeletonlabs/skeleton/themes/terminus";
 @import "@skeletonlabs/skeleton/themes/catppuccin";
-@import "@skeletonlabs/skeleton/themes/wintry";
-@import "@skeletonlabs/skeleton/themes/reign";
-@import "@skeletonlabs/skeleton/themes/modern";
 
 @source "../node_modules/@skeletonlabs/skeleton-svelte/dist";
 /*@tailwind base;
@@ -44,18 +36,45 @@ body {
   display: flex;
   z-index: 10000; /* Ensure it appears above the chat window */
   right: 0;
-  bottom: 750px; /* Default position when the chat is visible */
-  padding: 3.5rem 2rem; /* Increase padding for a larger button */
+  bottom: 800px; /* Default position when the chat is visible */
+  /* padding: 3.5rem 2rem; Increase padding for a larger button */
   font-size: 1.25rem; /* Increase font size */
 }
 
 .chat-toggle.hidden {
   right: fixed; /* Reset right alignment */
   right: 0; /* Move to the left lower corner */
-  bottom: 0; /* Position at the bottom of the screen */
+  /* lift the button up slightly */
+  bottom: 3.5rem; /* Position at the bottom of the screen */
 }
 
-[data-theme='cerberus'] body {
+.stats-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    justify-content: center;
+}
+.stat-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem 2rem;
+    min-width: 120px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.stat-label {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #0f172a;
+}
+
+/* [data-theme='cerberus'] body {
   background-image:
     radial-gradient(at 24% 25%, color-mix(in oklab, var(--color-primary-500) 30%, transparent) 0px, transparent 30%),
     radial-gradient(at 35% 13%, color-mix(in oklab, var(--color-success-500) 18%, transparent) 0px, transparent 30%),
@@ -64,4 +83,4 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
+} */
