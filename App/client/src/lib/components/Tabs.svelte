@@ -11,8 +11,8 @@
   $effect(() => {
     //This is really hacky, but it works for now
     const activeItem = items.find(item => item.value === activeTabValue);
-    if (activeItem && activeItem.label === "Wide") {
-      size = "max-w-5xl";
+    if (activeItem && activeItem.label === "Agent") {
+      size = "max-auto";
     } else {
       size = "max-w-3xl";
     }

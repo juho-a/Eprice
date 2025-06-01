@@ -6,11 +6,11 @@
     let activeTabValue = $state(1);
 
     let items = [
-        { label: "Normal",
+        { label: "Streaming",
             value: 1,
             component: ChatView1
             },
-        { label: "Wide",
+        { label: "Agent",
             value: 2,
             component: ChatView2
             },
