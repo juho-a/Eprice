@@ -38,8 +38,11 @@ The system consists of multiple containerized services that work together to pro
 - **Purpose**: Runs end-to-end tests for the system.
 - **Depends On**: `Client`
 
-### 6. Chat Engine
-- **Ports**: `7860`
+### 6. User Chat
+- **Ports**: `7862`
+
+### (Extra) Chat Engine
+- **Ports**: `7860-7861`
 - **Purpose**: Provides a chat engine for interaction with the project. This is meant for developers and maintainers, not the app's end-users. Chat uses retrieval augmented generation, and the retriever has access to project documentation and code.
 - **Depends On**: `Database`
 
@@ -68,7 +71,7 @@ package "Database Layer" {
 
 package "Backend Layer" {
     [Server] <<container>> 
-    [Chat Engine] <<container>> 
+    [User Chat] <<container>> 
 }
 
 package "Frontend Layer" {
@@ -81,8 +84,7 @@ cloud "External APIs" as ExternalAPIs
 [Database Migrations] --> [Database] : Applies migrations
 [Server] --> [Database] : Reads/Writes data
 [Client] --> [Server] : API calls (port 8000)
-[Client] --> [Chat Engine] : LLM service (port 7860)
-[Chat Engine] --> [Database] : Reads/Writes embeddings\nand retrieves texts
+[Client] --> [User Chat] : LLM service (port 7862)
 [E2E Tests] --> [Client] : Tests frontend
 [Server] --> ExternalAPIs : Makes external API calls
 
