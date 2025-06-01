@@ -6,23 +6,31 @@ It includes models for time ranges, Fingrid and price data points, error respons
 and utility base classes for datetime validation.
 """
 
-from pydantic import BaseModel, Field
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator, field_serializer
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
+
+HELSINKI_TZ = ZoneInfo("Europe/Helsinki")
+
+def assume_helsinki_if_naive(dt: datetime) -> datetime:
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=HELSINKI_TZ)
+    return dt.astimezone(ZoneInfo("UTC"))
 
 class DateTimeValidatedModel(BaseModel):
     """
-    Base model that validates datetime fields to ensure they are in ISO 8601 format.
-    Fields validated: 'startTime', 'endTime', 'timestamp', 'startDate'.
+    Base model that normalizes datetime fields after initialization.
     """
-    @classmethod
-    @field_validator('startTime', 'endTime', 'timestamp', 'startDate', mode='before')
-    def validate_datetime(cls, v):
-        """
-        Validates that the provided value is a valid ISO 8601 datetime string.
-        """
-        datetime.fromisoformat(v.replace("Z", "+00:00"))
-        return v
+
+    _datetime_fields = ('startTime', 'endTime', 'timestamp', 'startDate')
+
+    def model_post_init(self, __context):
+        for field_name in self._datetime_fields:
+            if hasattr(self, field_name):
+                value = getattr(self, field_name)
+                if isinstance(value, datetime):
+                    setattr(self, field_name, assume_helsinki_if_naive(value))
 
 class StartDateModel(BaseModel):
     """
@@ -31,54 +39,26 @@ class StartDateModel(BaseModel):
     startDate: datetime
 
 class TimeRange(DateTimeValidatedModel):
-    """
-    Model representing a time range with start and end times.
-
-    Attributes:
-        startTime (datetime): Start time in RFC 3339 format.
-        endTime (datetime): End time in RFC 3339 format.
-    """
     startTime: datetime = Field(
         description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)",
         examples=["2024-05-01T00:00:00Z"]
     )
     endTime: datetime = Field(
-        examples=["2024-05-02T00:00:00Z"],
-        description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)"
+        description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)",
+        examples=["2024-05-02T00:00:00Z"]
     )
 
 class TimeRangeRequest(TimeRange):
     """
     Request model for endpoints requiring a time range.
-    Provides helper methods to ensure start and end times are returned as datetime objects.
+    startTime ja endTime ovat jo UTC-aikaan aware-tyyppisiä validate_datetime:n ansiosta.
     """
-    def start_datetime(self) -> datetime:
-        """
-        Returns the start time as a datetime object, parsing from string if necessary.
 
-        Returns:
-            datetime: The start time as a datetime object.
-        """
-        if isinstance(self.startTime, str):
-            return datetime.fromisoformat(str(self.startTime).replace("Z", "+00:00"))
-        elif isinstance(self.startTime, datetime):
-            return self.startTime
-        else:
-            raise TypeError("startTime must be a string or datetime object")
+    def start_datetime(self) -> datetime:
+        return self.startTime
 
     def end_datetime(self) -> datetime:
-        """
-        Returns the end time as a datetime object, parsing from string if necessary.
-
-        Returns:
-            datetime: The end time as a datetime object.
-        """
-        if isinstance(self.endTime, str):
-            return datetime.fromisoformat(str(self.endTime).replace("Z", "+00:00"))
-        elif isinstance(self.endTime, datetime):
-            return self.endTime
-        else:
-            raise TypeError("endTime must be a string or datetime object")
+        return self.endTime
 
 class FingridDataPoint(TimeRange):
     """
@@ -104,22 +84,28 @@ class FingridDataPoint(TimeRange):
             raise ValueError("value must be non-negative")
         return v
 
-class PriceDataPoint(StartDateModel):
+class PriceDataPoint(BaseModel):
     """
     Model representing a single electricity price data point.
 
     Attributes:
-        startDate (datetime): Start time of the price data point in UTC.
+        startDate (datetime): Start time of the price data point in UTC (aware datetime).
         price (float): Price in euro cents.
     """
     startDate: datetime = Field(
-        description="UTC str in RFC 3339 format",
-        examples=["2025-05-08T04:00:00.000Z"]
+        description="UTC datetime, returned as naive datetime string in Helsinki time",
+        examples=["2025-06-02 03:00"]
     )
     price: float = Field(
         description="Floating-point number representing the price in euro cents",
         examples=[0.61]
     )
+
+    @field_serializer('startDate')
+    def serialize_start_date(self, dt: datetime, _info):
+        dt_helsinki = dt.astimezone(HELSINKI_TZ)
+        naive_helsinki = dt_helsinki.replace(tzinfo=None)
+        return naive_helsinki.strftime('%Y-%m-%d %H:%M')
 
 class HourlyAvgPricePoint(BaseModel):
     """
@@ -166,4 +152,3 @@ class ErrorResponse(BaseModel):
         description="Error message describing the issue.",
         examples=["An error occurred"]
     )
-

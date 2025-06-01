@@ -29,9 +29,19 @@ POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-26T03:00:00Z",
-  "endTime": "2025-05-26T03:00:00Z"
+  "startTime": "2025-06-02T00:00:00Z",
+  "endTime": "2025-06-02T10:00:00Z"
 }
+
+### Price data with range in Helsinki time
+POST http://localhost:8000/api/price/range
+Content-Type: application/json
+
+{
+  "startTime": "2025-06-02 03:00",
+  "endTime": "2025-06-02 13:00"
+}
+
 
 
 ### Fingrid data endpoints

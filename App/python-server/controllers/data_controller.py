@@ -166,7 +166,8 @@ async def post_production_range(time_range: TimeRangeRequest):
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
 
-@router.post("/api/price/range")
+@router.post("/api/price/range",
+             response_model=List[PriceDataPoint])
 async def post_price_range(time_range: TimeRangeRequest):
     """
     Get price data for a specific time range from the Porssisahko API.
@@ -177,10 +178,9 @@ async def post_price_range(time_range: TimeRangeRequest):
     Returns:
         List[PriceDataPoint] | JSONResponse: List of price data points or an error message.
     """
+
     try:
-        return await price_data_service.price_data_range(
-            time_range.startTime, time_range.endTime
-        )
+        return await price_data_service.price_data_range(time_range)
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:

@@ -90,7 +90,7 @@ class PorssisahkoServiceTools:
                 iso_date=iso_str
             )
 
-    async def fetch_and_process_data(self, start_date: datetime, end_date: datetime) -> List[PriceDataPoint]:
+    async def fetch_and_process_data(self, startTime, endTime) -> List[PriceDataPoint]:
         """
         Fetch and process price data from the database, fill missing entries from the external API if needed.
 
@@ -101,12 +101,15 @@ class PorssisahkoServiceTools:
         Returns:
             List[PriceDataPoint]: Sorted list of price data points for the range, including filled-in values if needed.
         """
-        start_naive = start_date.replace(tzinfo=None)
-        end_naive = end_date.replace(tzinfo=None)
+
+
+        start_naive_hki = startTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
+        end_naive_hki = endTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
+
 
         raw_data = await self.database_fetcher.get_entries(
-            start_date=start_naive,
-            end_date=end_naive,
+            start_date=start_naive_hki,
+            end_date=end_naive_hki,
             select_columns="datetime, price"
         )
 
@@ -114,8 +117,8 @@ class PorssisahkoServiceTools:
         result = self.convert_to_price_data(raw_data)
 
         missing_entries = self.find_missing_entries_utc(
-            start_date.astimezone(ZoneInfo("UTC")),
-            end_date.astimezone(ZoneInfo("UTC")),
+            startTime.astimezone(ZoneInfo("UTC")),
+            endTime.astimezone(ZoneInfo("UTC")),
             result
         )
         if missing_entries:
