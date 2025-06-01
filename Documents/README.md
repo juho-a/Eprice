@@ -1,13 +1,12 @@
-## Documents and materials for demo session at Taitotalo
+## Documents and materials for Eprice project
 
-Put everything we need for the first session at Taitotalo.
+Documents and diagrams in this folder describe different aspects of Eprice app. The files have also been parsed and saved in the database in machine readable format. The project/developer chat uses them as context information.
 
 ### Sequence diagrams
 
 Install vscode sequance diagram -extension (see it's documentation, and https://bramp.github.io/js-sequence-diagrams/ for examples).
 
 You can open preview in vscode, and export as png/svg.
-
 
 ### class diagrams
 
