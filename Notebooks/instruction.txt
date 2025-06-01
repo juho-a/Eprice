@@ -1,4 +1,0 @@
-To get plantuml graphs, install following dependencies.
-
-sudo apt-get install default-jre
-wget -O ~/plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
