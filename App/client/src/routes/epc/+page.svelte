@@ -192,7 +192,7 @@
         <h1 id="" class="text-center text-3xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
             Production vs. Consumption vs. Price
         </h1>
-        <div class="shadow-lg p-4 mb-4">
+        <div class="shadow-lg p-4 mb-4 shadow-lg p-4 mb-4 border-1 border-primary-100 rounded-xl bg-white dark:bg-gray-800 transition-all duration-300">
             <!-- Only one canvas is visible at a time -->
             <canvas bind:this={bothCanvas} id="bothChart" style="display: {selection === 'both' ? 'block' : 'none'}"></canvas>
             <canvas bind:this={diffCanvas} id="diffChart" style="display: {selection === 'difference' ? 'block' : 'none'}"></canvas>

@@ -58,7 +58,7 @@
             options: {
                 responsive: true,
                 interaction: { mode: 'index', intersect: false },
-                plugins: { title: { display: false } }
+                plugins: { title: { display: false } },
             }
         });
     });
@@ -97,8 +97,11 @@
         <h1 id="" class="text-center text-3xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
             Electricity Market Price
         </h1>
-        <div class="shadow-lg p-4 mb-4">
-            <canvas bind:this={priceCanvas} id="priceChart"></canvas>
+        <div class="shadow-lg p-4 mb-4 border-1 border-primary-100 rounded-xl bg-white dark:bg-gray-800 transition-all duration-300">
+            <canvas bind:this={priceCanvas}
+                    id="priceChart"
+                    class=""
+                    ></canvas>
         </div>
         <br />
         <div class="">
