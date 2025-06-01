@@ -1,6 +1,5 @@
 <script>
     import "../app.css";
-    import bg from "$lib/assets/image.png";
     import { useUserState } from "$lib/states/userState.svelte.js";
     import Header from "$lib/components/layout/Header.svelte";
     import Footer from "$lib/components/layout/Footer.svelte";

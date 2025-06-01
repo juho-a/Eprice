@@ -1,5 +1,5 @@
 <script>
-    import { PUBLIC_CHAT_URL } from "$env/static/public";
+    import { PUBLIC_USER_CHAT_URL } from "$env/static/public";
     
     let chatOnState = $state(false);
     const toggleChat = () => {
@@ -19,7 +19,7 @@
 {#if chatOnState}
     <div class="gradio-embed" style="position: fixed; bottom: 0; right: 0; width: 400px; height: 800px; z-index: 9999;">
         <iframe title="Gradio App"
-            src="{PUBLIC_CHAT_URL}"
+            src="{PUBLIC_USER_CHAT_URL}"
             width="100%"
             height="100%"
             frameborder="20"
