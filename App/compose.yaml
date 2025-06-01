@@ -121,6 +121,6 @@ services:
     ports:
       - 7862:7860
     restart: always
-    # profiles:
-    #   - user-chat
+    profiles:
+      - user-chat
   
