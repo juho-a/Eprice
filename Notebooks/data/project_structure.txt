@@ -12,7 +12,6 @@
 │   │       └── test_data_controller.py
 │   ├── chat-engine
 │   │   ├── Dockerfile
-│   │   ├── OLDapp.py
 │   │   ├── README.md
 │   │   ├── _compose.yaml
 │   │   ├── agent_app.py
@@ -21,6 +20,7 @@
 │   │   ├── autoloading_uml.py
 │   │   ├── chat_app.py
 │   │   ├── chat_manager_with_tools.py
+│   │   ├── file_app.py
 │   │   ├── diagrams
 │   │   └── utils
 │   │       ├── __init__.py
@@ -42,19 +42,17 @@
 │   │   │   │   │   ├── image12.jpg
 │   │   │   │   │   └── image3.png
 │   │   │   │   ├── components
-│   │   │   │   │   ├── ChartTypeMenu.svelte
 │   │   │   │   │   ├── ChatBot.svelte
 │   │   │   │   │   ├── ChatView1.svelte
 │   │   │   │   │   ├── ChatView2.svelte
-│   │   │   │   │   ├── MainChart.svelte
+│   │   │   │   │   ├── ChatView3.svelte
+│   │   │   │   │   ├── ChatView4.svelte
 │   │   │   │   │   ├── PriceCards.svelte
-│   │   │   │   │   ├── RangeChart.svelte
 │   │   │   │   │   ├── Tabs.svelte
 │   │   │   │   │   └── layout
 │   │   │   │   │       ├── Clock.svelte
 │   │   │   │   │       ├── Footer.svelte
 │   │   │   │   │       ├── Header.svelte
-│   │   │   │   │       ├── PriceBall.svelte
 │   │   │   │   │       └── User.svelte
 │   │   │   │   ├── states
 │   │   │   │   │   ├── usePricesState.svelte.js
@@ -79,9 +77,6 @@
 │   │   │       ├── chat
 │   │   │       │   └── +page.svelte
 │   │   │       ├── epc
-│   │   │       │   ├── +page.server.js
-│   │   │       │   └── +page.svelte
-│   │   │       ├── hintatiedot
 │   │   │       │   ├── +page.server.js
 │   │   │       │   └── +page.svelte
 │   │   │       ├── logout
