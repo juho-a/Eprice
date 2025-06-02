@@ -16,7 +16,6 @@ curl -X POST http://localhost:8000/api/auth/login \
 curl -X GET http://localhost:8000/api/auth/logout -v
 
 
-
 ### Price data endpoints
 ### Price data 48h
 curl -X GET http://localhost:8000/api/public/data -v
@@ -89,7 +88,6 @@ Content-Type: application/json
   "startTime": "2025-05-01T00:00",
   "endTime": "2025-05-31T23:00"
 }
-
 
 
 ### price average data by weekday in Helsinki time

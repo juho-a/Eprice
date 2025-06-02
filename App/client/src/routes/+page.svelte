@@ -31,10 +31,10 @@
 
     onMount(async () => {
         await fetchPrices();
-        prices.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-        // todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
+        // prices.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+        todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
         // keep the first 24 hours of prices (Fix for Juho's issue)
-        todayPrices = prices.slice(0, 24);
+        // todayPrices = prices.slice(0, 24);
         todayValues = todayPrices.map(p => p.price);
         labels = todayPrices.map(p =>
             new Date(p.startDate).toLocaleTimeString('fi-FI', {
