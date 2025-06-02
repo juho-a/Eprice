@@ -2,30 +2,20 @@
     import chartjs from 'chart.js/auto';
     import { onMount } from "svelte";
     import { usePricesState } from "$lib/states/usePricesState.svelte";
+    import { isTodayHelsinki } from '$lib/utils/date-helpers';
     import PriceCards from '$lib/components/PriceCards.svelte';
 
+    // TODO: switch to stateful variables
     let priceCanvas;
     let priceChart;
-
-    // Local reactive prices array
     let prices = [];
 
-    // Helper: get today's date in Helsinki
-    function isTodayHelsinki(dateStr) {
-        const d = new Date(dateStr);
-        const today = new Date().toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' });
-        const dDate = d.toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' });
-        return dDate === today;
-    }
-
     // Fetch prices on mount and after login/redirect
-    async function fetchPrices() {
+    const fetchPrices = async () => {
         const { data, update } = usePricesState();
         await update(); // Always fetch fresh data
         prices = data;
     }
-
-    onMount(fetchPrices);
 
     // Also fetch prices if the page becomes visible again (e.g. after login)
     if (typeof window !== "undefined") {
@@ -34,12 +24,13 @@
         });
     }
 
-    // Reactive: today's prices and chart
+    // TODO: switch to stateful variables
     let todayPrices = [];
     let todayValues = [];
     let labels = [];
 
-    $: {
+    onMount(async () => {
+        await fetchPrices();
         todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
         todayValues = todayPrices.map(p => p.price);
         labels = todayPrices.map(p =>
@@ -71,7 +62,7 @@
                 }
             });
         }
-    }
+    });
 </script>
 
 <div class="max-w-3xl mx-auto mt-16">
