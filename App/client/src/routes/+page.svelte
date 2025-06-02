@@ -50,8 +50,8 @@
                     labels,
                     datasets: [{
                         label: 'Price (c/kWh)',
-                        backgroundColor: 'rgba(0, 200, 255, 0.6)',
-                        borderColor: 'rgb(0, 200, 255)',
+                        backgroundColor: 'rgba(10, 200, 245, 0.6)',
+                        borderColor: 'rgb(10, 200, 245)',
                         data: todayValues
                     }]
                 },
