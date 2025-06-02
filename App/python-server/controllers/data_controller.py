@@ -250,7 +250,7 @@ async def post_price_hourly_avg(time_range: TimeRangeRequest):
     except Exception as e:
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
-@router.post("/api/price/weekdayavghki")
+@router.post("/api/price/weekdayavg")
 async def post_price_weekday_avg_hki(time_range: TimeRangeRequest):
     """
     Get average price data grouped by weekday for a specific time range.
