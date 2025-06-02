@@ -89,7 +89,7 @@ class PriceDataService:
         except Exception:
             return await self.ext_api_fetcher.fetch_price_data_latest()
 
-    async def price_data_range(self, start_date: datetime, end_date: datetime) -> List[PriceDataPoint]:
+    async def price_data_range(self, time_range : TimeRangeRequest) -> List[PriceDataPoint]:
         """
         Fetch price data for a given time range, preferring the database but falling back to the external API if needed.
 
@@ -104,22 +104,11 @@ class PriceDataService:
             HTTPException: If the API call fails or no data is available.
         """
 
-
-        # Laske Helsingin ja UTC:n aikaero tunteina
-        helsinki_offset = datetime.now(ZoneInfo("Europe/Helsinki")).utcoffset()
-        utc_offset = datetime.now(ZoneInfo("UTC")).utcoffset()
-        if helsinki_offset is not None and utc_offset is not None:
-            hours_difference = int((helsinki_offset - utc_offset).total_seconds() // 3600)
-        else:
-            hours_difference = 0  # fallback if offsets are None
-
-        start_date = start_date.replace(tzinfo=None) + timedelta(hours=hours_difference)
-        end_date = end_date.replace(tzinfo=None) + timedelta(hours=hours_difference)
         try:
-            result = await self.porssisahko_service_tools.fetch_and_process_data(start_date, end_date)
-            return result if result else await self.ext_api_fetcher.fetch_price_data_range(start_date, end_date)
+            result = await self.porssisahko_service_tools.fetch_and_process_data(time_range.startTime, time_range.endTime)
+            return result if result else await self.ext_api_fetcher.fetch_price_data_range(time_range.startTime, time_range.endTime)
         except Exception:
-            return await self.ext_api_fetcher.fetch_price_data_range(start_date, end_date)
+            return await self.ext_api_fetcher.fetch_price_data_range(time_range.startTime, time_range.endTime)
 
     async def price_data_today(self) -> List[PriceDataPoint]:
         """
@@ -153,10 +142,7 @@ class PriceDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        data = await self.price_data_range(
-            time_range.startTime.replace(tzinfo=None),
-            time_range.endTime.replace(tzinfo=None)
-        )
+        data = await self.price_data_range(time_range)
         return self.porssisahko_service_tools.calculate_hourly_avg_price(data)
     
 
@@ -171,10 +157,7 @@ class PriceDataService:
         Returns:
             List[PriceAvgByWeekdayPoint]: List of average prices by weekday.
         """
-        data = await self.price_data_range(
-            time_range.startTime.replace(tzinfo=None),
-            time_range.endTime.replace(tzinfo=None)
-        )
+        data = await self.price_data_range(time_range)
         
         return self.porssisahko_service_tools.calculate_avg_by_weekday(data, timezone_hki=timezone_hki)
     
