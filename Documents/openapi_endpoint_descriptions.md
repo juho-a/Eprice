@@ -47,12 +47,6 @@ These endpoints are accessible **without authentication** (no JWT required):
   Logs out the user by clearing the JWT cookie.  
   **Response:** Confirmation.
 
-- **GET `/docs`**  
-  API documentation (Swagger UI).
-
-- **GET `/openapi.json`**  
-  OpenAPI specification in JSON format.
-
 ---
 
 ## Protected Data Endpoints
@@ -121,4 +115,12 @@ The following endpoints **require authentication** (JWT):
   All timestamps are in RFC 3339 UTC format. Numeric values are typically floats (e.g., price, temperature).
 
 ---
+
+## API Docs
+
+- **GET `/docs`**  
+  API documentation (Swagger UI).
+
+- **GET `/openapi.json`**  
+  OpenAPI specification in JSON format.
 

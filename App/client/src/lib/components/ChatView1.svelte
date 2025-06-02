@@ -1,5 +1,5 @@
 <script>
-    import { PUBLIC_CHAT_URL } from "$env/static/public";
+    import { PUBLIC_CHAT_URL2 } from "$env/static/public";
 </script>
 
 <style>
@@ -12,14 +12,12 @@
     .gradio-embed iframe {
         width: 100%;
         height: 100%;
-        border: none;
-        display: block;
     }
 </style>
 
-<div class="gradio-embed" data-gradio-embed="false">
+<div class="gradio-embed" style="flex; 1 1 auto" data-gradio-embed="false">
     <iframe title="Gradio App"
-        src={PUBLIC_CHAT_URL}
+        src={PUBLIC_CHAT_URL2}
         allowfullscreen
         name="gradio-iframe"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"

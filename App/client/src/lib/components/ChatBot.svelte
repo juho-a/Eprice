@@ -1,4 +1,5 @@
 <script>
+    // import { PUBLIC_CHAT_URL2 } from "$env/static/public";
     import { PUBLIC_USER_CHAT_URL } from "$env/static/public";
     
     let chatOnState = $state(false);
