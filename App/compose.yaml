@@ -119,8 +119,24 @@ services:
         source: ./user-chat/.ollama
         target: /root/.ollama
     ports:
-      - 7862:7860
+      - 7863:7860
     restart: always
-    profiles:
-      - user-chat
+    # profiles:
+    #   - user-chat
   
+  # chat-engine:
+  #   container_name: chat-engine
+  #   build:
+  #     context: .
+  #     dockerfile: chat-engine/Dockerfile
+  #   env_file:
+  #     - project.env
+  #   ports:
+  #     - 7860:7860
+  #     - 7861:7861
+  #     - 7862:7862
+  #   restart: always
+  #   # profiles:
+  #   #   - chat-engine
+  #   volumes:
+  #     - ./chat-engine:/app

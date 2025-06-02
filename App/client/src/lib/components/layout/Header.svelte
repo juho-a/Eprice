@@ -40,16 +40,21 @@
         {/if}
       </ul>
     </nav>
-    {#if user?.role === 'admin' && devChatAvailable}
+    <!-- {#if user?.role === 'admin' && devChatAvailable}
       <ul class="ml-4 flex space-x-4 text-white">
         <li>
           <a href="/chat" class="text-white ml-4">Developer Chat</a>
         </li>
       </ul>
-    {/if}
+    {/if} -->
     {#if user && $page.url.pathname !== '/logout'}
       <div class="ml-auto">
         <ul class="ml-4 flex space-x-4 text-white">
+          {#if user.role === 'admin' && devChatAvailable}
+            <li>
+              <a href="/chat" class="underline text-white font-bold">Developer Chat</a>
+            </li>
+          {/if}
           <li>
             <a href="/auth/remove" class="underline text-white">Delete account</a>
           </li>

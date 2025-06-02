@@ -19,17 +19,20 @@
   });
 </script>
 
-<div class="p-8 mx-auto {size}">
+<div class="mx-auto {size} mt-12">
     <ul>
     {#each items as item}
         <li class={activeTabValue === item.value ? 'active' : ''}>
-            <button type="button" onclick={handleClick(item.value)} class="tab-btn">{item.label}</button>
+            <button type="button" onclick={handleClick(item.value)}
+                    class="tab-btn"
+            >{item.label}
+            </button>
         </li>
     {/each}
     </ul>
     {#each items as item}
         {#if activeTabValue == item.value}
-        <div class="box bg-primary-50">
+        <div class="box">
             <item.component />
         </div>
         {/if}
@@ -39,12 +42,13 @@
 
 <style>
 	.box {
-		margin-bottom: 10px;
-		padding: 40px;
-		border: 1px solid #dee2e6;
-    border-radius: 0 0 .5rem .5rem;
+		margin-bottom: 0px;
+		padding: 0px;
+		/* border: 1px solid #dee2e6; */
+    border-radius: 0.5rem; /* Rounded all corners */
+    border: 0px solid var(--color-border, rgb(8, 40, 73)); /* Use preset or fallback */
     border-top: 0;
-    background-image: url('$lib/assets/image3.png'); /* <-- Add this line */
+    /*background-image: url('$lib/assets/image3.png'); /* <-- Add this line */
     background-size: cover;               /* Optional: cover the box */
     background-repeat: no-repeat;         /* Optional: no repeat */
     background-position: center;
