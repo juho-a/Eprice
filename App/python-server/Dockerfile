@@ -17,8 +17,8 @@ RUN pip install bcrypt==3.2.0
 # Copy the rest of the application code into the container
 COPY . .
 
-# Expose the port the app runs on if you want access from host
-#EXPOSE 8000
+# Install curl for debugging
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Command to run the application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

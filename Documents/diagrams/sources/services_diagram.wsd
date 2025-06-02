@@ -1,4 +1,3 @@
-
 @startuml
 title Main services and their interactions
 skinparam rectangle {
@@ -19,7 +18,7 @@ package "Database Layer" {
 
 package "Backend Layer" {
     [Server] <<container>> 
-    [Chat Engine] <<container>> 
+    [User Chat] <<container>> 
 }
 
 package "Frontend Layer" {
@@ -32,8 +31,7 @@ cloud "External APIs" as ExternalAPIs
 [Database Migrations] --> [Database] : Applies migrations
 [Server] --> [Database] : Reads/Writes data
 [Client] --> [Server] : API calls (port 8000)
-[Client] --> [Chat Engine] : LLM service (port 7860)
-[Chat Engine] --> [Database] : Reads/Writes embeddings\nand retrieves texts
+[Client] --> [User Chat] : LLM service (port 7862)
 [E2E Tests] --> [Client] : Tests frontend
 [Server] --> ExternalAPIs : Makes external API calls
 

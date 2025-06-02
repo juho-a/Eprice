@@ -10,7 +10,7 @@ The Eprice App is a containerized application that allows users to view the mark
 - **PostgreSQL Database**: A robust database for storing electricity price data.
 - **Flyway Migrations**: Manage database schema changes with ease.
 - **Testing**: End-to-end tests with Playwright and backend API tests with Pytest.
-- **Chat Engine**: A chat-based interface for interacting with the app.
+- **User chat**: A chat-based interface to help with the functionalities of the app.
 - **Data Loading**: Load and update electricity price data into the database using scripts in a dedicated container.
 
 ---
@@ -22,7 +22,7 @@ The Eprice App is a containerized application that allows users to view the mark
 
  ├── compose.yaml # Docker Compose configuration 
  
- ├── chat-engine/ # Chat engine service 
+ ├── user-chat/ # Chat engine service 
  
  ├── client/ # Svelte frontend service
  
@@ -136,9 +136,9 @@ See python-server/README.md for more details.
 PostgreSQL database for storing electricity price data.
 Flyway is used for managing schema migrations (database-migrations/).
 
-4. Chat Engine
+4. User Chat
 A chat-based interface for interacting with the app.
-Located in the chat-engine/ directory.
+Located in the user-chat/ directory.
 
 5. Data Preparation
 Scripts for loading and updating electricity price data.

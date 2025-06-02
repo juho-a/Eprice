@@ -44,7 +44,7 @@
 		border: 1px solid #dee2e6;
     border-radius: 0 0 .5rem .5rem;
     border-top: 0;
-    background-image: url('$lib/assets/image13.jpeg'); /* <-- Add this line */
+    background-image: url('$lib/assets/image3.png'); /* <-- Add this line */
     background-size: cover;               /* Optional: cover the box */
     background-repeat: no-repeat;         /* Optional: no repeat */
     background-position: center;

@@ -39,6 +39,10 @@ services:
       - 5173:5173
     depends_on:
       - server
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
   e2e-tests:
     entrypoint: "/bin/true"
@@ -66,21 +70,6 @@ services:
       #- database
     environment:
       - TZ=Europe/Helsinki  # Set the timezone
-
-  chat-engine:
-    container_name: chat-engine
-    build:
-      context: .
-      dockerfile: chat-engine/Dockerfile
-    env_file:
-      - project.env
-    ports:
-      - 7860:7860
-    restart: always
-    profiles:
-      - chat-engine
-    volumes:
-      - ./chat-engine:/app
 
   # This service is for updating the database with data from external sources
   # It will be run manually when needed. Any known and constant data should be
@@ -119,3 +108,19 @@ services:
       - PYTHONPATH=/app/python-server
     profiles:
       - backend-tests
+
+  user-chat:
+    container_name: user-chat
+    build:
+      context: .
+      dockerfile: user-chat/Dockerfile
+    volumes:
+      - type: bind
+        source: ./user-chat/.ollama
+        target: /root/.ollama
+    ports:
+      - 7862:7860
+    restart: always
+    profiles:
+      - user-chat
+  
