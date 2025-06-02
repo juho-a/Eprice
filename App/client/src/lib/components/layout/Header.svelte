@@ -22,9 +22,6 @@
         </li>
         {#if user}
         <li>
-          <a href="/hintatiedot" class="">Hintatiedot</a>
-        </li>
-        <li>
           <a href="/epc" class="">Production/Consumption</a>
         </li>
         <li>

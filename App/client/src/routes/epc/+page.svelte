@@ -20,7 +20,7 @@
 
     let bothCanvas, diffCanvas, priceCanvas;
     let bothChart, diffChart, priceChart;
-    let chartType = $state("line");
+    let chartType = $state("bar");
 
     let isLoading = $state(false);
     let selectedValues1 = $state([]);

@@ -22,7 +22,7 @@
     
     let priceCanvas;
     let priceChart;
-    let chartType = $state("line");
+    let chartType = $state("bar");
     let isLoading = $state(false);
 
     //TODO: Weekday avg. not active if less than week of data
