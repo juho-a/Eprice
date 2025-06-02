@@ -31,6 +31,7 @@
 
     onMount(async () => {
         await fetchPrices();
+        prices.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
         todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
         todayValues = todayPrices.map(p => p.price);
         labels = todayPrices.map(p =>
