@@ -25,6 +25,8 @@
     let chartType = $state("line");
     let isLoading = $state(false);
 
+    //TODO: Weekday avg. not active if less than week of data
+
     const toggleChartType = () => {
         chartType = chartType === "line" ? "bar" : "line";
         priceChart.config.type = chartType;

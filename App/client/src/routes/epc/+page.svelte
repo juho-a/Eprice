@@ -256,11 +256,13 @@
                         Toggle Chart Type
                 </div>
             </form>
-            <div class="py-2">
-                <PriceCards values={selectedValues1} kind={kind1} unit={units1}/>
-            </div>
-            <div class="">
-                <PriceCards values={selectedValues2} kind={kind2} unit={units2}/>
+            <div class="mt-10">
+                <div class="">
+                    <PriceCards values={selectedValues1} kind={kind1} unit={units1}/>
+                </div>
+                <div class="">
+                    <PriceCards values={selectedValues2} kind={kind2} unit={units2}/>
+                </div>
             </div>
         </div>
     </div>
