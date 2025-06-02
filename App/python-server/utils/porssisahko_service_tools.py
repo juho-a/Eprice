@@ -34,16 +34,13 @@ class PorssisahkoServiceTools:
         Returns:
             tuple[datetime, datetime]: Start and end datetimes (naive, Europe/Helsinki time).
         """
-        now_hki = datetime.now(ZoneInfo("Europe/Helsinki"))
-        # Päivän vaihde (klo 00:00) seuraavalle tai sitä seuraavalle päivälle
-        if now_hki.hour >= 14:
-            end_time = (now_hki + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0)
+        now_naive = datetime.now(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
+        if now_naive.hour >= 14:
+            end_time = (now_naive + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0)
         else:
-            end_time = (now_hki + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        # Muutetaan molemmat naiveiksi (ilman tzinfoa)
-        end_time_naive = end_time.replace(tzinfo=None)
-        start_time_naive = (end_time - timedelta(hours=48)).replace(tzinfo=None)
-        return start_time_naive, end_time_naive
+            end_time = (now_naive + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_time = (end_time - timedelta(hours=48)).replace(tzinfo=None)
+        return start_time, end_time
 
     def convert_to_price_data(self, data: List[dict]) -> List[PriceDataPoint]:
         """
@@ -102,10 +99,7 @@ class PorssisahkoServiceTools:
             end_date (datetime): End of the time range.
 
         Returns:
-            List[PriceDataPoint]: 
-                Sorted list of price data points for the range (in UTC), 
-                including any missing values filled from the external API. 
-                Each PriceDataPoint contains startDate (UTC) and price.
+            List[PriceDataPoint]: Sorted list of price data points for the range, including filled-in values if needed.
         """
 
 

@@ -13,14 +13,16 @@ from zoneinfo import ZoneInfo
 
 HELSINKI_TZ = ZoneInfo("Europe/Helsinki")
 
-def assume_helsinki_if_naive(dt: datetime) -> datetime:
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=HELSINKI_TZ)
-    return dt.astimezone(ZoneInfo("UTC"))
-
 class DateTimeValidatedModel(BaseModel):
     """
     Base model that normalizes datetime fields after initialization.
+
+    This model ensures that all datetime fields listed in _datetime_fields are timezone-aware and converted to UTC.
+    If a datetime field is naive (lacks tzinfo), it is assumed to be in Europe/Helsinki time and converted to UTC.
+    This normalization happens automatically after model initialization, so all downstream code can safely assume
+    that these fields are always UTC-aware datetimes.
+
+    Intended for use as a base class for models that include datetime fields which may be provided in various formats.
     """
 
     _datetime_fields = ('startTime', 'endTime', 'timestamp', 'startDate')
@@ -30,7 +32,13 @@ class DateTimeValidatedModel(BaseModel):
             if hasattr(self, field_name):
                 value = getattr(self, field_name)
                 if isinstance(value, datetime):
-                    setattr(self, field_name, assume_helsinki_if_naive(value))
+                    setattr(self, field_name, self.assume_helsinki_if_naive(value))
+
+    @staticmethod
+    def assume_helsinki_if_naive(dt: datetime) -> datetime:
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=HELSINKI_TZ)
+        return dt.astimezone(ZoneInfo("UTC"))
 
 class StartDateModel(BaseModel):
     """
@@ -93,11 +101,11 @@ class PriceDataPoint(BaseModel):
     Model representing a single electricity price data point.
 
     Attributes:
-        startDate (datetime): Start time of the price data point in UTC (aware datetime).
+        startDate (datetime): Start time of the price data point, returned as naive datetime in Helsinki time (YYYY-MM-DD HH:MM).
         price (float): Price in euro cents.
     """
     startDate: datetime = Field(
-        description="UTC datetime, returned as naive datetime string in Helsinki time.",
+        description="Datetime, returned as naive datetime string in Helsinki time.",
         examples=["2025-06-02 03:00"]
     )
     price: float = Field(

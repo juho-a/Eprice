@@ -103,10 +103,11 @@ async def post_consumption_range(time_range: TimeRangeRequest):
     Fetches consumption data from Fingrid dataset ID 165.
 
     Args:
-        time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
+        time_range (TimeRangeRequest): Start and end time in RFC 3339 format (UTC).
 
     Returns:
         List[FingridDataPoint] | JSONResponse: List of consumption data points or an error message.
+            Each FingridDataPoint's startTime and endTime are returned as UTC datetimes (RFC 3339).
     """
     try:
         return await fingrid_data_service.fingrid_data_range(
@@ -149,10 +150,11 @@ async def post_production_range(time_range: TimeRangeRequest):
     Fetches production data from Fingrid dataset ID 241.
 
     Args:
-        time_range (TimeRangeRequest): Start and end time in RFC 3339 format.
+        time_range (TimeRangeRequest): Start and end time in RFC 3339 format (UTC).
 
     Returns:
         List[FingridDataPoint] | JSONResponse: List of production data points or an error message.
+            Each FingridDataPoint's startTime and endTime are returned as UTC datetimes (RFC 3339).
     """
     try:
         return await fingrid_data_service.fingrid_data_range(
@@ -173,10 +175,11 @@ async def post_price_range(time_range: TimeRangeRequest):
     Get price data for a specific time range from the Porssisahko API.
 
     Args:
-        time_range (TimeRangeRequest): Start and end time as datetime objects.
+        time_range (TimeRangeRequest): Start and end time as UTC datetime objects (RFC 3339).
 
     Returns:
         List[PriceDataPoint] | JSONResponse: List of price data points or an error message.
+            Each PriceDataPoint's startDate is returned as naive datetime in Helsinki time (YYYY-MM-DD HH:MM).
     """
 
     try:
@@ -199,6 +202,7 @@ async def get_prices():
 
     Returns:
         List[PriceDataPoint] | JSONResponse: List of the latest price data points or an error message.
+            Each PriceDataPoint's startDate is returned as naive datetime in Helsinki time (YYYY-MM-DD HH:MM).
     """
     try:
         return await price_data_service.price_data_latest()
@@ -218,6 +222,7 @@ async def get_prices_today():
 
     Returns:
         List[PriceDataPoint] | JSONResponse: List of today's price data points or an error message.
+            Each PriceDataPoint's startDate is returned as naive datetime in Helsinki time (YYYY-MM-DD HH:MM).
     """
     try:
         return await price_data_service.price_data_today()
@@ -225,17 +230,18 @@ async def get_prices_today():
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
-    
+
 @router.post("/api/price/hourlyavg")
 async def post_price_hourly_avg(time_range: TimeRangeRequest):
     """
     Get hourly average price data for a specific time range.
 
     Args:
-        time_range (TimeRangeRequest): Start and end time as datetime objects.
+        time_range (TimeRangeRequest): Start and end time as UTC datetime objects (RFC 3339).
 
     Returns:
-        List[PriceDataPoint] | JSONResponse: List of hourly average price data points or an error message. Hour is in Zulu time.
+        List[HourlyAvgPricePoint] | JSONResponse: List of hourly average price data points or an error message.
+            The 'hour' field is in Helsinki time (0-23).
     """
     try:
         return await price_data_service.price_data_hourly_avg(time_range)
@@ -244,17 +250,17 @@ async def post_price_hourly_avg(time_range: TimeRangeRequest):
     except Exception as e:
         return JSONResponse({"error": "InternalServerError", "message": str(e)})
 
-
 @router.post("/api/price/weekdayavghki")
 async def post_price_weekday_avg_hki(time_range: TimeRangeRequest):
     """
     Get average price data grouped by weekday for a specific time range.
 
     Args:
-        time_range (TimeRangeRequest): Start and end time as datetime objects.
+        time_range (TimeRangeRequest): Start and end time as either UTC-aware datetimes (RFC 3339) or naive datetimes in Helsinki time.
 
     Returns:
-        List[AveragePriceByWeekday] | JSONResponse: List of average price data points by weekday or an error message.
+        List[PriceAvgByWeekdayPoint] | JSONResponse: List of average price data points by weekday or an error message.
+            The 'weekday' field is in Helsinki time (0=Monday, 6=Sunday).
     """
     try:
         return await price_data_service.price_data_avg_by_weekday(time_range, timezone_hki=True)
