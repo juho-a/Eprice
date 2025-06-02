@@ -63,11 +63,8 @@ async def post_windpower_range(time_range: TimeRangeRequest):
         List[FingridDataPoint] | JSONResponse: List of wind power data points or an error message.
     """
     try:
-        return await fingrid_data_service.fingrid_data_range(
-            dataset_id=245,
-            start_time=time_range.startTime,
-            end_time=time_range.endTime,
-)
+        return await fingrid_data_service.fingrid_data_range(dataset_id=245, time_range=time_range)
+
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:
@@ -111,10 +108,7 @@ async def post_consumption_range(time_range: TimeRangeRequest):
     """
     try:
         return await fingrid_data_service.fingrid_data_range(
-            dataset_id=165,
-            start_time=time_range.startTime,
-            end_time=time_range.endTime
-        )
+            dataset_id=165,time_range=time_range)
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:
@@ -158,10 +152,7 @@ async def post_production_range(time_range: TimeRangeRequest):
     """
     try:
         return await fingrid_data_service.fingrid_data_range(
-            dataset_id=241,
-            start_time=time_range.startTime,
-            end_time=time_range.endTime
-        )
+            dataset_id=241, time_range=time_range)
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:

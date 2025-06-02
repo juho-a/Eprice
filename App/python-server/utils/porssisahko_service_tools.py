@@ -73,24 +73,25 @@ class PorssisahkoServiceTools:
             Updates the result list and inserts new entries into the database.
         """
         for missing in missing_entries:
-            fetched = await self.ext_api_fetcher.fetch_price_data_range(missing.startDate, missing.startDate)
+            time_range = TimeRange(startTime=missing.startDate, endTime=missing.startDate)
+            fetched = await self.ext_api_fetcher.fetch_price_data_range(time_range)
             if not fetched:
                 continue
 
             datapoint = fetched[0]
-            utc_dt = datetime.fromisoformat(datapoint["startDate"])
+            utc_dt = datapoint.startDate
             iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
             result.append(PriceDataPoint(
                 startDate=utc_dt,
-                price=datapoint["price"]
+                price=datapoint.price
             ))
             await self.database_fetcher.insert_entry(
-                price=datapoint["price"],
+                price=datapoint.price,
                 iso_date=iso_str
             )
 
-    async def fetch_and_process_data(self, startTime, endTime) -> List[PriceDataPoint]:
+    async def fetch_and_process_data(self, time_range:TimeRange) -> List[PriceDataPoint]:
         """
         Fetch and process price data from the database, fill missing entries from the external API if needed.
 
@@ -103,8 +104,8 @@ class PorssisahkoServiceTools:
         """
 
 
-        start_naive_hki = startTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
-        end_naive_hki = endTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
+        start_naive_hki = time_range.startTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
+        end_naive_hki = time_range.endTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
 
 
         raw_data = await self.database_fetcher.get_entries(
@@ -117,8 +118,8 @@ class PorssisahkoServiceTools:
         result = self.convert_to_price_data(raw_data)
 
         missing_entries = self.find_missing_entries_utc(
-            startTime.astimezone(ZoneInfo("UTC")),
-            endTime.astimezone(ZoneInfo("UTC")),
+            time_range.startTime.astimezone(ZoneInfo("UTC")),
+            time_range.endTime.astimezone(ZoneInfo("UTC")),
             result
         )
         if missing_entries:

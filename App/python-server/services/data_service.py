@@ -41,7 +41,7 @@ class FingridDataService:
         """
         return await self.ext_api_fetcher.fetch_fingrid_data(dataset_id)
     
-    async def fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint]:
+    async def fingrid_data_range(self, dataset_id: int, time_range: TimeRange) -> List[FingridDataPoint]:
         """
         Fetch Fingrid data for a given dataset ID and time range.
 
@@ -56,7 +56,7 @@ class FingridDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        return await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, start_time, end_time)
+        return await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
 
 
 class PriceDataService:
@@ -82,9 +82,10 @@ class PriceDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        start_date, end_date = self.porssisahko_service_tools.expected_time_range()
+        startTime, endTime = self.porssisahko_service_tools.expected_time_range()
+        time_range = TimeRange(startTime=startTime, endTime=endTime)
         try:
-            result = await self.porssisahko_service_tools.fetch_and_process_data(start_date, end_date)
+            result = await self.porssisahko_service_tools.fetch_and_process_data(time_range)
             return result if result else await self.ext_api_fetcher.fetch_price_data_latest()
         except Exception:
             return await self.ext_api_fetcher.fetch_price_data_latest()
@@ -105,10 +106,10 @@ class PriceDataService:
         """
 
         try:
-            result = await self.porssisahko_service_tools.fetch_and_process_data(time_range.startTime, time_range.endTime)
-            return result if result else await self.ext_api_fetcher.fetch_price_data_range(time_range.startTime, time_range.endTime)
+            result = await self.porssisahko_service_tools.fetch_and_process_data(time_range)
+            return result if result else await self.ext_api_fetcher.fetch_price_data_range(time_range)
         except Exception:
-            return await self.ext_api_fetcher.fetch_price_data_range(time_range.startTime, time_range.endTime)
+            return await self.ext_api_fetcher.fetch_price_data_range(time_range)
 
     async def price_data_today(self) -> List[PriceDataPoint]:
         """

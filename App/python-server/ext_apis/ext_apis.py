@@ -121,7 +121,7 @@ class FetchFingridData:
         )
         
 
-    async def fetch_fingrid_data_range(self, dataset_id: int, start_time: datetime, end_time: datetime) -> List[FingridDataPoint]:
+    async def fetch_fingrid_data_range(self, dataset_id: int, time_range:TimeRange) -> List[FingridDataPoint]:
         """
         Fetch a list of data points for a given Fingrid dataset ID and time range.
 
@@ -145,8 +145,8 @@ class FetchFingridData:
 
             
         query_params = {
-            "startTime": start_time.isoformat().replace("+00:00", "Z"),
-            "endTime": end_time.isoformat().replace("+00:00", "Z"),
+            "startTime": time_range.startTime.isoformat().replace("+00:00", "Z"),
+            "endTime": time_range.endTime.isoformat().replace("+00:00", "Z"),
             "sortBy": "startTime",
             "sortOrder": "asc",
             "pageSize": "20000"
@@ -191,7 +191,7 @@ class FetchPriceData:
 
     base_url = "https://api.porssisahko.net/v1/price.json"
 
-    async def fetch_price_data_range(self, start_time: datetime, end_time: datetime):
+    async def fetch_price_data_range(self, time_range: TimeRange) -> List[PriceDataPoint]:
         """
         Fetch hourly electricity price data for a given time range from the Porssisähkö API.
 
@@ -200,14 +200,15 @@ class FetchPriceData:
             end_time (datetime): End time in UTC.
 
         Returns:
-            List[dict]: A list of dictionaries with 'startDate' (ISO8601 UTC string) and 'price' (float) for each hour.
+            List[PriceDataPoint]: A list of PriceDataPoint objects with 'startDate' (UTC RFC3339 string) and 'price' (float) for each hour.
 
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
         result = []
-        current_time = start_time
-
+        current_time = time_range.startTime
+        end_time = time_range.endTime
+        
         while current_time <= end_time:
             # Queries to the Pörssisähko API are in Europe/Helsinki timezone
             hki_time = current_time.astimezone(ZoneInfo("Europe/Helsinki"))
@@ -222,10 +223,13 @@ class FetchPriceData:
                     data = response.json()
                     if not data:
                         raise ValueError(f"No price data returned for {date_str} {hour_str}")
-                    result.append({
-                        "startDate": current_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                        "price": data["price"]
-                    })
+                    # Convert to PriceDataPoint
+                    result.append(
+                        PriceDataPoint(
+                            startDate=datetime.strptime(current_time.strftime("%Y-%m-%dT%H:%M:%SZ"), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc),
+                            price=data["price"]
+                        )
+                    )
             except httpx.HTTPStatusError as exc:
                 raise HTTPException(
                     status_code=exc.response.status_code,
@@ -239,7 +243,7 @@ class FetchPriceData:
 
             current_time += timedelta(hours=1)
 
-        return sorted(result, key=lambda x: x["startDate"])
+        return sorted(result, key=lambda x: x.startDate)
 
 
     async def fetch_price_data_latest(self) -> List[PriceDataPoint]:
