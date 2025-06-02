@@ -39,19 +39,23 @@ class StartDateModel(BaseModel):
     startDate: datetime
 
 class TimeRange(DateTimeValidatedModel):
+    """
+    Model representing a time range with start and end times in UTC.
+    """
     startTime: datetime = Field(
-        description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z)",
+        description="Start time in RFC 3339 format (e.g., 2024-05-01T00:00:00Z).",
         examples=["2024-05-01T00:00:00Z"]
     )
     endTime: datetime = Field(
-        description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z)",
+        description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z).",
         examples=["2024-05-02T00:00:00Z"]
     )
 
 class TimeRangeRequest(TimeRange):
     """
     Request model for endpoints requiring a time range.
-    startTime ja endTime ovat jo UTC-aikaan aware-tyyppisiä validate_datetime:n ansiosta.
+
+    startTime and endTime are UTC-aware datetimes, validated by DateTimeValidatedModel.
     """
 
     def start_datetime(self) -> datetime:
@@ -69,7 +73,7 @@ class FingridDataPoint(TimeRange):
     """
     value: float = Field(
         examples=[7883.61],
-        description="Value of the data point in megawatts (MW)"
+        description="Value of the data point in megawatts (MW)."
     )
 
     @field_validator("value")
@@ -93,11 +97,11 @@ class PriceDataPoint(BaseModel):
         price (float): Price in euro cents.
     """
     startDate: datetime = Field(
-        description="UTC datetime, returned as naive datetime string in Helsinki time",
+        description="UTC datetime, returned as naive datetime string in Helsinki time.",
         examples=["2025-06-02 03:00"]
     )
     price: float = Field(
-        description="Floating-point number representing the price in euro cents",
+        description="Floating-point number representing the price in euro cents.",
         examples=[0.61]
     )
 
@@ -112,32 +116,32 @@ class HourlyAvgPricePoint(BaseModel):
     Model representing an hourly average price point.
 
     Attributes:
-            Hour (int): Hour of the day (0-23)
-            AvgPrice (float): Average price in euro cents for that hour
+        hour (int): Hour of the day (0-23) in Helsinki time.
+        avgPrice (float): Average price in euro cents for that hour.
     """
     hour: int = Field(
-        description="Hour of the day (0-23) in Zulu time",
+        description="Hour of the day (0-23) in Helsinki time.",
         examples=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
     )
     avgPrice: float = Field(
-        description="Average price in euro cents for that hour",
+        description="Average price in euro cents for that hour.",
         examples=[0.61]
     )
-
 
 class PriceAvgByWeekdayPoint(BaseModel):
     """
     Model representing average price by weekday.
+
     Attributes:
         weekday (int): Day of the week (0=Monday, 6=Sunday).
         avgPrice (float): Average price in euro cents for that weekday.
     """
     weekday: int = Field(
-        description="Day of the week (0=Monday, 6=Sunday)",
+        description="Day of the week (0=Monday, 6=Sunday).",
         examples=[0, 1, 2, 3, 4, 5, 6]
     )
     avgPrice: float = Field(
-        description="Average price in euro cents for that weekday",
+        description="Average price in euro cents for that weekday.",
         examples=[0.61]
     )
 

@@ -24,22 +24,22 @@ curl -X GET http://localhost:8000/api/public/data -v
 ### Price data today
 curl -X GET http://localhost:8000/api/data/today -v
 
-### Price data with range
+### Price data with range UTC request
 POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-06-02T00:00:00Z",
-  "endTime": "2025-06-02T10:00:00Z"
+  "startTime": "2025-06-01T00:00:00Z",
+  "endTime": "2025-06-02T21:00:00Z"
 }
 
-### Price data with range in Helsinki time
+### Price data with range naive Helsinki time request
 POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-06-02 03:00",
-  "endTime": "2025-06-02 13:00"
+  "startTime": "2025-06-01 03:00",
+  "endTime": "2025-06-01 23:00"
 }
 
 
@@ -86,24 +86,17 @@ POST http://localhost:8000/api/price/hourlyavg
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-01T22:00:00Z",
-  "endTime": "2025-05-29T21:00:00Z"
+  "startTime": "2025-06-01T00:00",
+  "endTime": "2025-06-01T23:00"
 }
 
-### price average data by weekday
-POST http://localhost:8000/api/price/weekdayavg
-Content-Type: application/json
 
-{
-  "startTime": "2025-05-01T00:00:00Z",
-  "endTime": "2025-05-28T23:00:00Z"
-}
 
 ### price average data by weekday in Helsinki time
 POST http://localhost:8000/api/price/weekdayavghki
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-01T00:00:00Z",
-  "endTime": "2025-05-28T23:00:00Z"
+  "startTime": "2025-06-01T00:00:00",
+  "endTime": "2025-06-01T23:00:00"
 }

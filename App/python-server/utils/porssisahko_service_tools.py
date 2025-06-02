@@ -34,13 +34,16 @@ class PorssisahkoServiceTools:
         Returns:
             tuple[datetime, datetime]: Start and end datetimes (naive, Europe/Helsinki time).
         """
-        now_naive = datetime.now(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
-        if now_naive.hour >= 14:
-            end_time = (now_naive + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0)
+        now_hki = datetime.now(ZoneInfo("Europe/Helsinki"))
+        # Päivän vaihde (klo 00:00) seuraavalle tai sitä seuraavalle päivälle
+        if now_hki.hour >= 14:
+            end_time = (now_hki + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0)
         else:
-            end_time = (now_naive + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        start_time = (end_time - timedelta(hours=48)).replace(tzinfo=None)
-        return start_time, end_time
+            end_time = (now_hki + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        # Muutetaan molemmat naiveiksi (ilman tzinfoa)
+        end_time_naive = end_time.replace(tzinfo=None)
+        start_time_naive = (end_time - timedelta(hours=48)).replace(tzinfo=None)
+        return start_time_naive, end_time_naive
 
     def convert_to_price_data(self, data: List[dict]) -> List[PriceDataPoint]:
         """
@@ -99,7 +102,10 @@ class PorssisahkoServiceTools:
             end_date (datetime): End of the time range.
 
         Returns:
-            List[PriceDataPoint]: Sorted list of price data points for the range, including filled-in values if needed.
+            List[PriceDataPoint]: 
+                Sorted list of price data points for the range (in UTC), 
+                including any missing values filled from the external API. 
+                Each PriceDataPoint contains startDate (UTC) and price.
         """
 
 
@@ -155,22 +161,21 @@ class PorssisahkoServiceTools:
             data (List[PriceDataPoint]): List of price data points.
 
         Returns:
-            List[PriceHourlyAvgPricePoint]: List of hourly average price points.
+            List[PriceHourlyAvgPricePoint]: List of hourly average price points. Hours are in Helsinki time.
         """
         hourly_avg = {}
         for point in data:
-            hour = point.startDate.hour
-            if hour not in hourly_avg:
-                hourly_avg[hour] = []
-            hourly_avg[hour].append(point.price)
+            hour = point.startDate.astimezone(ZoneInfo("Europe/Helsinki")).hour
+            hourly_avg.setdefault(hour, []).append(point.price)
 
-        result = []
-        for hour, prices in hourly_avg.items():
-            avg_price = sum(prices) / len(prices)
-            avg_price = round(avg_price, 3)
-            result.append(HourlyAvgPricePoint(hour=hour, avgPrice=avg_price))
-
-        return sorted(result, key=lambda x: x.hour, reverse=False)
+        result = [
+            HourlyAvgPricePoint(
+                hour=hour,
+                avgPrice=round(sum(prices) / len(prices), 3)
+            )
+            for hour, prices in hourly_avg.items()
+        ]
+        return sorted(result, key=lambda x: x.hour)
     
     def calculate_avg_by_weekday(self, data: List[PriceDataPoint], timezone_hki=False) -> List[PriceAvgByWeekdayPoint]:
         """
@@ -182,21 +187,19 @@ class PorssisahkoServiceTools:
         Returns:
             List[PriceAvgByWeekdayPoint]: List of average prices by weekday.
         """
+        tz = ZoneInfo("Europe/Helsinki") if timezone_hki else None
         weekday_prices = {}
         for point in data:
-            if timezone_hki == True:
-                weekday = point.startDate.astimezone(ZoneInfo("Europe/Helsinki")).weekday()
-            else:
-                weekday = point.startDate.weekday()
-            if weekday not in weekday_prices:
-                weekday_prices[weekday] = []
-            weekday_prices[weekday].append(point.price)
+            dt = point.startDate.astimezone(tz) if tz else point.startDate
+            weekday = dt.weekday()
+            weekday_prices.setdefault(weekday, []).append(point.price)
 
-        result = []
-        for weekday, prices in weekday_prices.items():
-            avg_price = sum(prices) / len(prices)
-            avg_price = round(avg_price, 3)
-            result.append(PriceAvgByWeekdayPoint(weekday=weekday, avgPrice=avg_price))
+        result = [
+            PriceAvgByWeekdayPoint(
+                weekday=weekday,
+                avgPrice=round(sum(prices) / len(prices), 3)
+            )
+            for weekday, prices in weekday_prices.items()
+        ]
+        return sorted(result, key=lambda x: x.weekday)
 
-        return sorted(result, key=lambda x: x.weekday, reverse=False)
-    

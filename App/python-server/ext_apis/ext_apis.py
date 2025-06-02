@@ -200,38 +200,30 @@ class FetchPriceData:
             end_time (datetime): End time in UTC.
 
         Returns:
-            list[dict]: A list of dictionaries with 'startDate' (ISO8601 UTC string) and 'price' (float) for each hour.
+            List[dict]: A list of dictionaries with 'startDate' (ISO8601 UTC string) and 'price' (float) for each hour.
 
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
         result = []
-        current_time_utc = start_time
-        current_time_helsinki = start_time.astimezone(ZoneInfo("Europe/Helsinki"))
-        end_time_helsinki = end_time.astimezone(ZoneInfo("Europe/Helsinki"))
+        current_time = start_time
 
-        while current_time_helsinki <= end_time_helsinki:
-            date_str = current_time_helsinki.strftime("%Y-%m-%d")
-            hour_str = current_time_helsinki.strftime("%H")
+        while current_time <= end_time:
+            # Queries to the Pörssisähko API are in Europe/Helsinki timezone
+            hki_time = current_time.astimezone(ZoneInfo("Europe/Helsinki"))
+            date_str = hki_time.strftime("%Y-%m-%d")
+            hour_str = hki_time.strftime("%H")
+            url = f"{self.base_url}?{urlencode({'date': date_str, 'hour': hour_str})}"
 
-            query_params = {
-                "date": date_str,
-                "hour": hour_str
-            }
-
-            url = f"{self.base_url}?{urlencode(query_params)}"
             try:
                 async with httpx.AsyncClient() as client:
                     response = await client.get(url)
                     response.raise_for_status()
-
                     data = response.json()
                     if not data:
                         raise ValueError(f"No price data returned for {date_str} {hour_str}")
-
-
                     result.append({
-                        "startDate": current_time_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "startDate": current_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "price": data["price"]
                     })
             except httpx.HTTPStatusError as exc:
@@ -245,13 +237,12 @@ class FetchPriceData:
                     detail=f"Unexpected error occurred while fetching data from Porssisahko: {str(e)}"
                 ) from e
 
-            current_time_helsinki += timedelta(hours=1)
-            current_time_utc += timedelta(hours=1)
+            current_time += timedelta(hours=1)
 
-        return result
+        return sorted(result, key=lambda x: x["startDate"])
 
 
-    async def fetch_price_data_latest(self):
+    async def fetch_price_data_latest(self) -> List[PriceDataPoint]:
         """
         Fetch the latest hourly electricity prices from the Porssisähkö API.
 
@@ -273,7 +264,7 @@ class FetchPriceData:
                 for item in data:
                     item.pop("endDate", None)
 
-                return [PriceDataPoint(**item) for item in data]
+                return [PriceDataPoint(**item) for item in sorted(data, key=lambda x: x["startDate"])]
 
         except httpx.HTTPStatusError as exc:
             raise HTTPException(
@@ -311,4 +302,4 @@ class FetchPriceData:
         filtered_data = [item for item in data if item.startDate.astimezone(ZoneInfo("Europe/Helsinki")).date() == today_fi]
 
         # Convert filtered data to PriceDataPoint models
-        return [PriceDataPoint(**item.dict()) for item in filtered_data]
+        return [PriceDataPoint(**item.dict()) for item in sorted(filtered_data, key=lambda x: x.startDate)]
