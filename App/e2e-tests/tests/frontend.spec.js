@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const fetch = require('node-fetch');
 
 test('Pressing "Fetch message" shows message.', async ({ page }) => {
   await page.goto("http://localhost:5173/");
