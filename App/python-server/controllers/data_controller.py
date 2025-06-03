@@ -5,6 +5,10 @@ This module defines the FastAPI routes for the Eprice backend service. It provid
 and querying electricity production, consumption, wind power, and price data. The endpoints fetch data from
 Fingrid and Porssisähkö APIs, and return results as Pydantic models or error responses.
 
+All datetime fields in API requests and responses use the RFC 3339 format. Unless otherwise specified:
+- Input datetimes (startTime, endTime) should be provided as UTC-aware datetimes (e.g., "2025-06-01T20:00:00Z").
+- Returned datetimes (such as startDate, startTime, endTime) are serialized as UTC datetime strings in RFC 3339 format (e.g., "2025-06-01T20:00:00Z").
+
 Routes:
     - /api/windpower
     - /api/windpower/range
@@ -15,6 +19,8 @@ Routes:
     - /api/price/range
     - /api/public/data
     - /api/data/today
+    - /api/price/hourlyavg
+    - /api/price/weekdayavg
 """
 
 from fastapi import APIRouter
@@ -252,7 +258,7 @@ async def post_price_weekday_avg_hki(time_range: TimeRangeRequest):
             The 'weekday' field is in Helsinki time (0=Monday, 6=Sunday).
     """
     try:
-        return await price_data_service.price_data_avg_by_weekday(time_range, timezone_hki=True)
+        return await price_data_service.price_data_avg_by_weekday(time_range)
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"error": "HTTPError", "message": e.detail})
     except Exception as e:

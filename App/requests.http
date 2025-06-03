@@ -28,7 +28,7 @@ POST http://localhost:8000/api/price/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-06-01T00:00:00Z",
+  "startTime": "2023-06-01T00:00:00Z",
   "endTime": "2025-06-02T21:00:00Z"
 }
 
@@ -40,7 +40,6 @@ Content-Type: application/json
   "startTime": "2025-06-02 00:00",
   "endTime": "2025-06-02 23:00"
 }
-
 
 
 ### Fingrid data endpoints
@@ -64,8 +63,8 @@ POST http://localhost:8000/api/consumption/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-08T04:00:00Z",
-  "endTime": "2025-05-08T06:00:00Z"
+  "startTime": "2025-05-01T00:00:00",
+  "endTime": "2025-05-31T00:00:00"
 }
 
 ### fingrid total production data
@@ -76,8 +75,8 @@ POST http://localhost:8000/api/production/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-26T00:00:00Z",
-  "endTime": "2025-05-26T06:00:00Z"
+  "startTime": "2025-05-01T00:00:00",
+  "endTime": "2025-05-31T06:00:00"
 }
 
 ### price average data by hour
@@ -91,10 +90,10 @@ Content-Type: application/json
 
 
 ### price average data by weekday in Helsinki time
-POST http://localhost:8000/api/price/weekdayavghki
+POST http://localhost:8000/api/price/weekdayavg
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-01T00:00:00",
-  "endTime": "2025-06-01T23:00:00"
+  "startTime": "2025-05-01 00:00:00",
+  "endTime": "2025-05-31 23:00:00"
 }
