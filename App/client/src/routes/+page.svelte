@@ -2,6 +2,7 @@
     import chartjs from 'chart.js/auto';
     import { onMount } from "svelte";
     import { usePricesState } from "$lib/states/usePricesState.svelte";
+    import { useUserState } from "$lib/states/userState.svelte.js";
     import { isTodayHelsinki } from '$lib/utils/date-helpers';
     import PriceCards from '$lib/components/PriceCards.svelte';
 
@@ -9,6 +10,11 @@
     let priceCanvas;
     let priceChart;
     let prices = [];
+    let { data } = $props();
+    const userState = useUserState();
+    if (data.user) {
+      userState.user = data.user;
+    }
 
     // Fetch prices on mount and after login/redirect
     const fetchPrices = async () => {
@@ -68,6 +74,7 @@
     });
 </script>
 
+<title>Home - Market Electricity Prices Today</title>
 <div class="max-w-3xl mx-auto mt-16">
     <h1 class="text-center text-3xl font-extrabold mb-8">
         Market Electricity Prices Today<br>
@@ -79,6 +86,13 @@
     <div class="py-8">
         <PriceCards values={todayValues} kind="price" unit="c/kWh"/>
     </div>
+    {#if data.user?.email}
+    <div class="text-center">
+        <p class="text-xl font-bold mb-4">
+            Welcome back!<br />
+        </p>
+    </div>
+    {:else}
     <div class="text-center">
         <p class="text-lg">
             Want to see more features and get the full functionality of the app?
@@ -88,4 +102,6 @@
             </a>
         </p>
     </div>
+    {/if}
 </div>
+

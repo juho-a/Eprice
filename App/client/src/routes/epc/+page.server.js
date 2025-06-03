@@ -12,7 +12,7 @@ export const actions = {
         if (!data.startTime || !data.endTime) {
             return fail(400, { error: "Start and end dates are required." });
         } else if (!datesInOrder(data.startTime, data.endTime)) {
-            return fail(400, { error: "Start date must be before end date." });
+            return fail(400, { error: "Start date must come before end date." });
         }
 
         try {
