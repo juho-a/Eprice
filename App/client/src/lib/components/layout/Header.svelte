@@ -22,7 +22,7 @@
         </li>
         {#if user}
         <li>
-          <a href="/hintatiedot" class="">Hintatiedot</a>
+          <a href="/pricetable" class="">Price Table</a>
         </li>
         <li>
           <a href="/epc" class="">Production/Consumption</a>

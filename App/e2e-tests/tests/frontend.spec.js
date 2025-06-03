@@ -21,7 +21,7 @@ test('PriceBall displays current price', async ({ page }) => {
 
 
 test('Date range selector changes table data', async ({ page }) => {
-  await page.goto("http://localhost:5173/hintatiedot");
+  await page.goto("http://localhost:5173/pricetable");
   // Adjust selectors as needed for your date inputs and chart
   const startInput = page.locator('input[name="startDate"]');
   const endInput = page.locator('input[name="endDate"]');
