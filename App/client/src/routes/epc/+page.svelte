@@ -30,6 +30,8 @@
     let units1 = $state("");
     let units2 = $state("");
 
+    let dataLoader = $state(false);
+
     const getChartData = () => {
         if (selection === "both") {
             return {
@@ -37,14 +39,14 @@
                 datasets: [
                     {
                         label: 'Production',
-                        backgroundColor: 'rgba(245, 39, 157, 0.2)',
+                        backgroundColor: 'rgba(245, 39, 157, 0.5)',
                         borderColor: 'rgb(245, 39, 157)',
                         data: productionValues,
                         yAxisID: 'y',
                     },
                     {
                         label: 'Consumption',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
                         borderColor: 'rgb(54, 162, 235)',
                         data: consumptionValues,
                         yAxisID: 'y',
@@ -145,6 +147,7 @@
             units1 = "c/kWh";
             units2 = "";
         }
+        dataLoader = (labels.length > 0 || priceLabels.length > 0)
     });
 </script>
 
@@ -190,7 +193,11 @@
                 </label>
                 <label class="label">
                     <span class="label-text">Filter</span>
-                    <select class="select preset-outlined-primary-500" id="selection" name="selection" bind:value={selection}>
+                    <select class="select preset-outlined-primary-500"
+                            id="selection"
+                            name="selection"
+                            bind:value={selection}
+                            disabled={!dataLoader}>
                         <option value="both">Prod./Cons.</option>
                         <option value="difference">Difference</option>
                         <option value="price">Price</option>
@@ -209,11 +216,17 @@
                 </button>
                 <button class="btn preset-outlined-primary-500 hover:preset-filled-primary-500"
                         type="button"
-                        onclick={toggleChartType}>
+                        onclick={toggleChartType}
+                        disabled={!dataLoader}>
                     Toggle Chart Type
             </div>
         </form>
         <div class="mt-10">
+            {#if form?.error}
+                <div class="mt-10 text-center">
+                    {form.error}
+                </div>
+            {/if}
             <div>
                 <PriceCards values={selectedValues1} kind={kind1} unit={units1}/>
             </div>
@@ -224,8 +237,3 @@
     </div>
 </div>
 
-{#if form?.error}
-  <div class="alert alert-error">
-    {form.error}
-  </div>
-{/if}
