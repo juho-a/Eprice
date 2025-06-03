@@ -1,5 +1,4 @@
 const { test, expect } = require('@playwright/test');
-const fetch = require('node-fetch');
 
 test.describe('User Creation and Deletion', () => {
     let email;
@@ -9,15 +8,18 @@ test.describe('User Creation and Deletion', () => {
     test.beforeAll(async () => {
         // Create temp account
         const domainRes = await fetch('https://api.mail.tm/domains');
+        if (!domainRes.ok) throw new Error('Failed to fetch mail.tm domains');
         const domainData = await domainRes.json();
         const domain = domainData['hydra:member'][0].domain;
-        username = `test${Date.now()}@${domain}`;
+        email = `test${Date.now()}@${domain}`;
+        password = `TestPassword${Date.now()}`;
 
-        await fetch('https://api.mail.tm/accounts', {
+        const accountRes = await fetch('https://api.mail.tm/accounts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ address: email, password }),
         });
+        if (!accountRes.ok) throw new Error('Failed to create mail.tm account');
 
         // Get mail.tm token for fetching emails
         const tokenRes = await fetch('https://api.mail.tm/token', {
@@ -25,21 +27,30 @@ test.describe('User Creation and Deletion', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ address: email, password }),
         });
+        if (!tokenRes.ok) throw new Error('Failed to retrieve mail.tm token');
         const tokenData = await tokenRes.json();
         mailToken = tokenData.token;
         });
 
+    // Register user and fill in the email and password
     test('Register user', async ({ page }) => {
-        await page.goto('http://localhost:5173/auth/register');
-        await page.fill('input[name="email"]', email);
-        await page.fill('input[name="password"]', password);
-        await page.click('button[type="submit"]');
-        await expect(page.locator('text=Verification has been sent to your email. Please verify your account to continue.')).toBeVisible();
+        await test.step('Go to the register page', async () => {
+            await page.goto('http://localhost:5173/auth/register');
+        });
+        await test.step('Fill in the registration form', async () => {
+            await page.fill('input[name="email"]', email);
+            await page.fill('input[name="password"]', password);
+            await page.click('button[type="submit"]');
+        });
+        await test.step('Check the verification message', async () => {
+            await expect(page.locator('text=Verification has been sent to your email. Please verify your account to continue.')).toBeVisible();
+        });
     });
 
     test('Verify user', async ({ page }) => {
-        // 4. Poll for verification email and extract link
+        // Poll for verification email and extract link
         let verificationLink;
+        await test.step('Wait for verification email', async () => {
         for (let i = 0; i < 10; i++) {
             await new Promise(r => setTimeout(r, 2000));
             const messagesRes = await fetch('https://api.mail.tm/messages', {
@@ -61,37 +72,59 @@ test.describe('User Creation and Deletion', () => {
             }
         }
         expect(verificationLink).toBeTruthy();
+    });
 
 
-        // 5. Visit the verification link
-        await page.goto(verificationLink);
-
-        // 6. Click the verify button
-        const verifyButton = page.locator('button[type="submit"]');
-        await verifyButton.click();
-
-         // 7. Check verification success message and the URL
-        await expect(page.locator('text=Your email has been verified. You can now login.')).toBeVisible();
-        await expect(page).toHaveURL(/\/auth\/login\?is_verified=true/);
+        // Visit the verification link
+        await test.step('Visit the verification link', async () => {
+            await page.goto(verificationLink);
+        });
+        
+        // Click the verify button
+        await test.step('Click the verify button', async () => {
+            const verifyButton = page.locator('button[type="submit"]');
+            await verifyButton.click();
+        });
+        
+         // Check verification success message and the URL
+        await test.step('Check verification success message', async () => {
+            await expect(page.locator('text=Your email has been verified. You can now login.')).toBeVisible();
+            await expect(page).toHaveURL(/\/auth\/login\?is_verified=true/);
+        });
 
     });
 
     test('Login user', async ({ page }) => {
-        await page.goto('http://localhost:5173/auth/login');
-        await page.fill('input[name="email"]', email);
-        await page.fill('input[name="password"]', password);
-        await page.click('button[type="submit"]');
-        await expect(page.locator(`Logged in as: ${email}`)).toBeVisible();
+        await test.step('Go to the login page', async () => {
+            await page.goto('http://localhost:5173/auth/login');
+        });
+        await test.step('Fill in the login form', async () => {
+            await page.fill('input[name="email"]', email);
+            await page.fill('input[name="password"]', password);
+            await page.click('button[type="submit"]');
+        });
+        await test.step('Check logged in message on page', async () => {
+            await expect(page.locator(`Logged in as: ${email}`)).toBeVisible();
+        });
+        
         
     });
 
     test('Remove user', async ({ page }) => {
-        await page.goto('http://localhost:5173/auth/remove');
-        await page.fill('input[name="email"]', email);
-        await page.fill('input[name="password"]', password);
-        await page.click('button[type="submit"]');
-        await expect(page.locator('text=Your account has been removed.')).toBeVisible();
-        await page.click('button[type="submit"]');
+        await test.step('Go to the remove account page', async () => {
+            await page.goto('http://localhost:5173/auth/remove');
+        });
+        await test.step('Fill in the remove account form', async () => {
+            await page.fill('input[name="email"]', email);
+            await page.fill('input[name="password"]', password);
+            await page.click('button[type="submit"]');
+        });
+        await test.step('Check account removal message', async () => {
+            await expect(page.locator('text=Your account has been removed.')).toBeVisible();
+        });
+        await test.step('Click the confirm removal button', async () => {
+            await page.click('button[type="submit"]');
+        });
     });
 
 });
