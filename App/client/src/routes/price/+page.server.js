@@ -48,16 +48,11 @@ export const actions = {
       const plainLabels = plainSorted.labels;
       const plainValues = plainSorted.values;
 
-      // Format weekday avg (sort by weekday 0-6, label as weekday name)
       const weekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
       const weekdaySorted = [...weekdayData].sort((a, b) => a.weekday - b.weekday);
       const weekdayLabels = weekdaySorted.map(item => weekdayNames[item.weekday % 7]);
       const weekdayValues = weekdaySorted.map(item => item.avgPrice);
-      // flip sunday to be the last day
-      // weekdayLabels.push(weekdayLabels.shift());
-      // weekdayValues.push(weekdayValues.shift());
 
-      // Format hourly avg (sort by hour 0-23, label as "00:00", "01:00", ...)
       const hourlySorted = [...hourlyData].sort((a, b) => a.hour - b.hour);
       const hourlyLabels = hourlySorted.map(item => `${item.hour.toString().padStart(2, "0")}:00`);
       const hourlyValues = hourlySorted.map(item => item.avgPrice);
