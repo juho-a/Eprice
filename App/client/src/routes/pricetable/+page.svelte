@@ -46,9 +46,7 @@
             console.error('Error fetching prices:', error);
         }
 	}
-
-    //onMount(fetchPrices);
-    // Function to calculate the average price for the day
+	
 </script>
 
 <div class="flex flex-col justify-center items-center m-2">
