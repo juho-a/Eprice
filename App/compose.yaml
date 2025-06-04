@@ -72,28 +72,6 @@ services:
     environment:
       - TZ=Europe/Helsinki  # Set the timezone
 
-<<<<<<< Updated upstream
-=======
-  chat-engine:
-    container_name: chat-engine
-    build:
-      context: .
-      dockerfile: chat-engine/Dockerfile
-    env_file:
-      - project.env
-    ports:
-      - 7860:7860
-    restart: always
-    profiles:
-      - chat-engine
-    volumes:
-      - ./chat-engine:/app
-
-  # This service is for updating the database with data from external sources
-  # It will be run manually when needed. Any known and constant data should be
-  # added to the database using migrations. Only fresh data that is not
-  # available in the database should be added using this service.
->>>>>>> Stashed changes
   data-preparation:
     build:
       context: ./data-preparation/scripts  # Here be Dockerfile
