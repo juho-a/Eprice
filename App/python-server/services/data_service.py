@@ -148,7 +148,7 @@ class PriceDataService:
     
 
     
-    async def price_data_avg_by_weekday(self, time_range: TimeRangeRequest, timezone_hki=False) -> List[PriceAvgByWeekdayPoint]:
+    async def price_data_avg_by_weekday(self, time_range: TimeRangeRequest) -> List[PriceAvgByWeekdayPoint]:
         """
         Calculate average price by weekday for a given time range.
 
@@ -160,5 +160,5 @@ class PriceDataService:
         """
         data = await self.price_data_range(time_range)
         
-        return self.porssisahko_service_tools.calculate_avg_by_weekday(data, timezone_hki=timezone_hki)
+        return self.porssisahko_service_tools.calculate_avg_by_weekday(data)
     
