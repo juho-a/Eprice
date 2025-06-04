@@ -11,10 +11,6 @@ dependencies = [
     "langchain-huggingface>=0.1.2",
     "langchain-text-splitters>=0.3.8",
     "numpy>=2.2.5",
-<<<<<<< Updated upstream
-=======
-    "ollama>=0.4.8",
->>>>>>> Stashed changes
     "openai>=1.76.0",
     "pandas>=2.2.3",
     "pillow>=11.2.1",
@@ -25,8 +21,5 @@ dependencies = [
     "transformers>=4.51.3",
     "langchain-postgres>=0.0.13",
     "langchain-openai>=0.3.18",
-<<<<<<< Updated upstream
     "torch>=2.7.0",
-=======
->>>>>>> Stashed changes
 ]
