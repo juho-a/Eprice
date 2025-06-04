@@ -40,18 +40,10 @@ def check_and_generate_diagram():
 
 def uml_viewer():
     with gr.Blocks() as uml:
-<<<<<<< Updated upstream
-=======
-        gr.Markdown("# UML Diagram Viewer")
->>>>>>> Stashed changes
         output_image = gr.Image(label="Generated Diagram", interactive=False)
         timer = gr.Timer(2)
         timer.tick(check_and_generate_diagram, outputs=output_image)
         refresh_button = gr.Button("Refresh")
         refresh_button.click(check_and_generate_diagram, outputs=output_image)
         uml.load(check_and_generate_diagram, outputs=output_image)
-<<<<<<< Updated upstream
-=======
-    return uml
->>>>>>> Stashed changes
     return uml

@@ -133,7 +133,7 @@ services:
       - 7861:7861
       - 7862:7862
     restart: always
-    profiles:
-      - chat-engine
+    # profiles:
+    #   - chat-engine
     volumes:
       - ./chat-engine:/app

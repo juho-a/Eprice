@@ -32,4 +32,5 @@
     A view that allows you to scroll through the files in the codebase and documentation.
     You can click on the files to view their contents. Both chat views have access to the same files,
     and understand the directory structure of the codebase.
+  </p>
 </div>
