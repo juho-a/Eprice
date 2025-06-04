@@ -31,7 +31,7 @@
     }
 
     // TODO: switch to stateful variables
-    let todayPrices = [];
+    let todayPrices = $state([]);
     let todayValues = [];
     let labels = [];
 

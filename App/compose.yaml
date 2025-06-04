@@ -1,7 +1,7 @@
 services:
   database:
     container_name: postgresql_database
-    image: reinikp2/pgvector-database:v1 #postgres:17.0
+    image: reinikp2/pgvector-database:v1 #alt: postgres:17.0 + pgvector
     restart: unless-stopped
     env_file:
       - project.env
@@ -35,6 +35,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./client:/app
+      - /app/node_modules # fixes node_modules issue -- Hurrays :)
     ports:
       - 5173:5173
     depends_on:
@@ -71,10 +72,6 @@ services:
     environment:
       - TZ=Europe/Helsinki  # Set the timezone
 
-  # This service is for updating the database with data from external sources
-  # It will be run manually when needed. Any known and constant data should be
-  # added to the database using migrations. Only fresh data that is not
-  # available in the database should be added using this service.
   data-preparation:
     build:
       context: ./data-preparation/scripts  # Here be Dockerfile
@@ -136,7 +133,7 @@ services:
       - 7861:7861
       - 7862:7862
     restart: always
-    # profiles:
-    #   - chat-engine
+    profiles:
+      - chat-engine
     volumes:
       - ./chat-engine:/app

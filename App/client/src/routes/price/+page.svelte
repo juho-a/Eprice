@@ -169,6 +169,7 @@
                             onclick={toggleChartType}
                             disabled={!dataLoader}>
                         Toggle Chart Type
+                    </button>
                 </div>
             </form>
         </div>
