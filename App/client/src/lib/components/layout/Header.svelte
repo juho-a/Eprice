@@ -20,6 +20,7 @@
         <li>
           <a href="/" class="">Home</a>
         </li>
+<<<<<<< Updated upstream
         {#if user}
         <li>
           <a href="/epc" class="">Production/Consumption</a>
@@ -29,6 +30,10 @@
         </li>
         {:else}
             <li>
+=======
+        {#if !user}
+          <li>
+>>>>>>> Stashed changes
               <a href="/auth/login" class="">Login</a>
             </li>
             <li>
@@ -37,6 +42,7 @@
         {/if}
       </ul>
     </nav>
+<<<<<<< Updated upstream
     <!-- {#if user?.role === 'admin' && devChatAvailable}
       <ul class="ml-4 flex space-x-4 text-white">
         <li>
@@ -44,6 +50,11 @@
         </li>
       </ul>
     {/if} -->
+=======
+    {#if user?.role === 'admin'}
+        <a href="/chat" class="text-white ml-4">Developer Chat</a>
+    {/if}
+>>>>>>> Stashed changes
     {#if user && $page.url.pathname !== '/logout'}
       <div class="ml-auto">
         <ul class="ml-4 flex space-x-4 text-white">

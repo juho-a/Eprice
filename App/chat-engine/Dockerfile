@@ -5,6 +5,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libpq-dev \
+<<<<<<< Updated upstream
     wget curl bash ca-certificates git default-jre build-essential \
     graphviz && \
     rm -rf /var/lib/apt/lists/*
@@ -12,6 +13,11 @@ RUN apt-get update && \
 # Download PlantUML jar to /root
 RUN wget -O /root/plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
 
+=======
+    wget curl bash ca-certificates git default-jre build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+>>>>>>> Stashed changes
 # copy everything from the chat-engine directory to the /app directory
 COPY ./chat-engine /app
 
@@ -31,8 +37,12 @@ ENV GRADIO_SERVER_NAME="0.0.0.0"
 
 RUN uv sync
 
+<<<<<<< Updated upstream
 # fix if torch incompatibility issues
 RUN uv add torch 
+=======
+RUN uv add torch
+>>>>>>> Stashed changes
 
 ENV UV_LINK_MODE=copy
 
