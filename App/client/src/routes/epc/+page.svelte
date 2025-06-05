@@ -16,7 +16,7 @@
     let consumptionValues = form?.consumptionValues || [];
     let differenceValues = form?.differenceValues || [];
     let priceLabels = form?.priceLabels || [];
-    let prices = form?.prices || [];
+    let prices = form?.priceValues || [];
 
     let chartCanvas;
     let chart;
