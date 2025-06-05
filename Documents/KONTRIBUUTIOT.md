@@ -114,4 +114,4 @@ Embeddaukseen käytetty malli on avoin malli HuggingFacesta. Sieltä löytyy use
 
 ## Dokumentaatio
 
-Dokumentaatio on pääosin Paavo Reinikan tekemää. Juho Ahopelto dokumentoi serverin endpointit (openapi endpoints).
+Dokumentaatio on pääosin Paavo Reinikan tekemää. Juho Ahopelto dokumentoi serverin endpointit (openapi endpoints). Dokumentaation teossa on käytetty myös kielimalleja.

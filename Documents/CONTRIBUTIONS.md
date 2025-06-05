@@ -202,5 +202,5 @@ The embedding model used here, is open-source from HuggingFace. There are many g
 
 ## Documentation
 
-Most of the documentation was written by Paavo Reinikka, with some help from Juho Ahopelto.
+Most of the documentation was written by Paavo Reinikka, with some help from Juho Ahopelto, and with a lot of help from Copilot.
 
