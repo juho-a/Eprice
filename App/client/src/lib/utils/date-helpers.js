@@ -6,6 +6,17 @@ export const datesInOrder = (startTime, endTime) => {
     return start < end;
 };
 
+export const datesCloseEnough = (startTime, endTime) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const sixMonthsAgo = new Date(end);
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    if (start < sixMonthsAgo) {
+        return false; // start date is more than 6 months before end date
+    }
+    return true;
+};
+
 export const getFormattedDates = (data, time_key = "startTime", value_key = "value") => {
     // This function takes an array of objects and 
     // returns formatted and sorted dates and values.

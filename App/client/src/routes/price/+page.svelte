@@ -53,7 +53,7 @@
                 labels: getSelectedLabels(),
                 datasets: [{
                     label: 'Price',
-                    backgroundColor: 'rgba(10, 200, 245, 0.6)',
+                    backgroundColor: 'rgba(10, 200, 245, 0.7)',
                     borderColor: 'rgb(10, 200, 245)',
                     data: getSelectedValues()
                 }]
