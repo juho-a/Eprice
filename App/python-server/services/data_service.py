@@ -10,7 +10,9 @@ to the application's core data models.
 from models.data_model import *
 from ext_apis.ext_apis import *
 from repositories.porssisahko_repository import *
+from repositories.fingrid_repository import FingridRepository
 from utils.porssisahko_service_tools import *
+from utils.fingrid_service_tools import *
 from config.secrets import DATABASE_URL
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -25,6 +27,8 @@ class FingridDataService:
         Initialize the FingridDataService with the external API fetcher.
         """
         self.ext_api_fetcher = FetchFingridData()
+        self.fingrid_repository = FingridRepository(DATABASE_URL)
+        self.fingrid_service_tools = FingridServiceTools(self.ext_api_fetcher, self.fingrid_repository)
 
     async def fingrid_data(self, dataset_id: int) -> FingridDataPoint:
         """
@@ -56,7 +60,13 @@ class FingridDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        return await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
+            
+        try:
+            result = await self.fingrid_service_tools.fetch_and_process_data(time_range, dataset_id)
+            return result if result else await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
+        except Exception:
+            print(f"Failed to fetch Fingrid data for dataset_id {dataset_id} in range {time_range.startTime} to {time_range.endTime}")
+            return await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
 
 
 class PriceDataService:
@@ -69,8 +79,8 @@ class PriceDataService:
         Initialize the PriceDataService with required repositories and helper services.
         """
         self.ext_api_fetcher = FetchPriceData()
-        self.database_fetcher = PorssisahkoRepository(DATABASE_URL)
-        self.porssisahko_service_tools = PorssisahkoServiceTools(self.ext_api_fetcher, self.database_fetcher)
+        self.porssisahko_repository = PorssisahkoRepository(DATABASE_URL)
+        self.porssisahko_service_tools = PorssisahkoServiceTools(self.ext_api_fetcher, self.porssisahko_repository)
 
     async def price_data_latest(self) -> List[PriceDataPoint]:
         """
@@ -82,8 +92,8 @@ class PriceDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        startTime, endTime = self.porssisahko_service_tools.expected_time_range()
-        time_range = TimeRange(startTime=startTime, endTime=endTime)
+        start_time, end_time = self.porssisahko_service_tools.expected_time_range()
+        time_range = TimeRange(startTime=start_time, endTime=end_time)
         try:
             result = await self.porssisahko_service_tools.fetch_and_process_data(time_range)
             return result if result else await self.ext_api_fetcher.fetch_price_data_latest()
