@@ -104,8 +104,9 @@ async def login(user: User, response: Response):
                         value=token,
                         httponly=True, samesite="lax",
                         path="/",
-                        secure=False)
-                        #domain="80.221.17.169")
+                        secure=False,
+                        #domain="80.221.17.169"
+                        )
 
     return {"message": "Welcome!"}
 

@@ -24,6 +24,10 @@
     <Clock />
     <User user={data.user} />
   </div>
+  
+  <main class="container grow mx-auto"> <!-- mx-auto grow max-w-4xl-->
+    {@render children()}
+  </main>
 
   {#if data.user?.email}
     <!-- <p class="text-right text-gray-500 dark:text-gray-400">
@@ -32,10 +36,6 @@
 
     <ChatBot user={data.user} />
   {/if}
-  
-  <main class="container grow mx-auto"> <!-- mx-auto grow max-w-4xl-->
-    {@render children()}
-  </main>
 
   <Footer />
   

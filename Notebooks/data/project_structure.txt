@@ -146,7 +146,7 @@
 │   │       └── porssisahko_tools.py
 │   └── user-chat
 │       ├── Dockerfile
-│       ├── README
+│       ├── README.md
 │       ├── gradio_dashboard.py
 │       └── run.sh
 └── Documents
@@ -155,6 +155,7 @@
     ├── KONTRIBUUTIOT.pdf
     ├── README.md
     ├── backend_design.md
+    ├── frontend_description.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
     ├── project_description.pdf
@@ -167,6 +168,7 @@
             ├── authentication_class_diagram.wsd
             ├── authentication_use_case.wsd
             ├── data_access_call_sequence_diagram.wsd
+            ├── frontend_structure.wsd
             ├── llm_retrieval.wsd
             ├── services_diagram.wsd
             ├── tool_calling.wsd
