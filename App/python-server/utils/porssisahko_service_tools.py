@@ -20,12 +20,12 @@ class PorssisahkoServiceTools:
     PorssisahkoServiceTools has functions for time range calculations, data conversion, and filling missing entries.
     """
 
-    def __init__(self, ext_api_fetcher: FetchPriceData, database_fetcher: PorssisahkoRepository):
+    def __init__(self, ext_api_fetcher: FetchPriceData, porssisahko_repository: PorssisahkoRepository):
         """
         Initialize the PorssisahkoServiceTools with external API and database fetchers.
         """
         self.ext_api_fetcher = ext_api_fetcher
-        self.database_fetcher = database_fetcher
+        self.database_fetcher = porssisahko_repository
 
     def expected_time_range(self) -> tuple[datetime, datetime]:
         """
@@ -72,24 +72,28 @@ class PorssisahkoServiceTools:
         Side effects:
             Updates the result list and inserts new entries into the database.
         """
-        for missing in missing_entries:
-            time_range = TimeRange(startTime=missing.startDate, endTime=missing.startDate)
-            fetched = await self.ext_api_fetcher.fetch_price_data_range(time_range)
-            if not fetched:
-                continue
+        try:
+            for missing in missing_entries:
+                time_range = TimeRange(startTime=missing.startDate, endTime=missing.startDate)
+                fetched = await self.ext_api_fetcher.fetch_price_data_range(time_range)
+                if not fetched:
+                    continue
 
-            datapoint = fetched[0]
-            utc_dt = datapoint.startDate
-            iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+                datapoint = fetched[0]
+                utc_dt = datapoint.startDate
+                iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
-            result.append(PriceDataPoint(
-                startDate=utc_dt,
-                price=datapoint.price
-            ))
-            await self.database_fetcher.insert_entry(
-                price=datapoint.price,
-                iso_date=iso_str
-            )
+                result.append(PriceDataPoint(
+                    startDate=utc_dt,
+                    price=datapoint.price
+                ))
+                await self.database_fetcher.insert_entry(
+                    price=datapoint.price,
+                    iso_date=iso_str
+                )
+        except Exception as e:
+            print(f"Error filling missing entries: {e}")
+            raise
 
     async def fetch_and_process_data(self, time_range:TimeRange) -> List[PriceDataPoint]:
         """
@@ -197,4 +201,3 @@ class PorssisahkoServiceTools:
             for weekday, prices in weekday_prices.items()
         ]
         return sorted(result, key=lambda x: x.weekday)
-
