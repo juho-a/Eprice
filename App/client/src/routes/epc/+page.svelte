@@ -154,7 +154,7 @@
 <div class="max-w-4xl mx-auto" >
     <div style="margin-top: 4rem; width: 100%; max-width: 1200px;">
         <h1 class="text-center text-3xl py-8 mt-8 mb-4 font-extrabold text-gray-900 dark:text-white">
-            Production vs. Consumption vs. Price
+            Production vs. Consumption
         </h1>
         <div class="shadow-lg p-4 mb-4 border-1 border-primary-100 rounded-xl bg-white dark:bg-gray-800 transition-all duration-300">
             <canvas bind:this={chartCanvas} id="mainChart" class=""></canvas>

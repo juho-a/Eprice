@@ -5,17 +5,17 @@ import { COOKIE_KEY } from "$env/static/private";
 const apiRequest = async (url) => {
   return await fetch(`${PUBLIC_INTERNAL_API_URL}${url}`, {
     method: "GET",
-    credentials: "include", // FIX ATTEMPT: Include cookies in the request
   });
 };
 
 export const actions = {
 
-  logout: async ({ cookies }) => {
+  logout: async ({ cookies, locals }) => {
     const response = await apiRequest("/api/auth/logout");
     if (response.ok) {
-      cookies.delete(COOKIE_KEY, { path: "/"}) //, domain: "80.221.17.169" });
+      cookies.delete(COOKIE_KEY, { path: "/"});
       //TODO: clear locals
+      // locals.user = undefined; // Clear user session in locals
       throw redirect(302, "/");
     } else {
       return { error: "Logout failed" };
