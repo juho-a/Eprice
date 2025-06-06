@@ -61,15 +61,14 @@ Tämä osio dokumentoi projektin hakemistorakenteen ja siihen osallistuneiden he
 │   │   │   └── porssisahko_scheduler.py (Paavo)
 |   |   |
 │   │   ├── services – logiikka reitityksen (controllers) ja tietokannan (repositories) / ulkoisten apien välillä 
-│   │   │   ├── auth_service.py (Paavo)
-│   │   │   └── data_service.py (Juho)
-|   |   |
-│   │   └── utils – apufunctioita yms.
-│   │       ├── email_tools.py (Paavo)
-│   │       ├── porssisahko_service_tools.py (Juho)
-│   │       └── porssisahko_tools.py (Paavo)
-│   |
-│   └── user-chat – käyttäjä-chat (alustus, Paavo, Juho hioo systeemi promptia sikäli kuin ehtii)
+│       │   ├── auth_service.py (Paavo)
+│       │   └── data_service.py (Juho)
+|       |
+│       └── utils – apufunctioita yms.
+│          ├── email_tools.py (Paavo)
+│          ├── porssisahko_service_tools.py (Juho)
+│          └── porssisahko_tools.py (Paavo)
+│   
 │
 └── Documents – projektin dokumentaatio
     ├── README.md
@@ -99,12 +98,6 @@ Tämä osio dokumentoi projektin hakemistorakenteen ja siihen osallistuneiden he
 Developer chatin retrieval toiminto vaatii tietyn määrän esikäsittelyä (parserointi / siivous / lataus), joka tehdään offline-tilassa skripteillä ja tiedostolla `Eprice/Notebooks/document_loading.ipynb`. Nämä perustuvat osittain Paavon (heh, siis minun) aiempiin ja rinnakkaisiin projekteihin. Kaikki ei ole vielä mukana tässä repossa, mutta tullaan julkaisemaan myöhemmin osoitteessa https://github.com/PaavoReinikka.
 
 Projektin dokumentoinnin avuksi on koodattu myös UML-kaavioiden generointityökalu, joka käyttää PlantUML-syntaksia ja on toteutettu Pythonilla (lisätietoja Notebooks README:ssä).
-
-## Käyttäjächat / User-Chat
-
-User-Chat perustuu Ollaman tarjoamaan avoimeen Llama 3.2 -malliin. Chat toimii lähinnä esimerkkinä siitä, että avoimen lähdekoodin kielimalleja voidaan käyttää myös kontitetussa sovelluksessa. Hyvän suorituskyvyn saavuttaminen edellyttää kuitenkin hienosäätöä ja/tai suurempaa mallia. CUDA-yhteensopiva GPU ei ole välttämätön, ellei mallia kouluteta — pienemmät mallit toimivat hyvin myös moderneilla prosessoreilla.
-
-Projektin aikarajoitteiden (n. 4–6 viikkoa) vuoksi mallin hienosäätö ei ollut tällä kertaa mahdollista. Myös datan kerääminen ja valmisteleminen vie merkittävästi aikaa.
 
 ## Kehittäjächat / Developer-Chat
 

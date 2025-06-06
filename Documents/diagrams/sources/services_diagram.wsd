@@ -18,7 +18,6 @@ package "Database Layer" {
 
 package "Backend Layer" {
     [Server] <<container>> 
-    [User Chat] <<container>> 
     [Developer Chat] <<container>> 
 }
 
@@ -32,8 +31,7 @@ cloud "External APIs" as ExternalAPIs
 [Database Migrations] --> [Database] : Applies migrations
 [Server] --> [Database] : Reads/Writes data
 [Client] --> [Server] : API calls (port 8000)
-[Client] --> [User Chat] : LLM service (port 7862)
-[Client] --> [Developer Chat] : Dev chat (port 7860-7861)
+[Client] --> [Developer Chat] : Dev chat (port 7860-7863)
 [Gradio Dashboards] --> [Developer Chat] : Access via Gradio\n(optional)
 [E2E Tests] --> [Client] : Tests frontend
 [Server] --> ExternalAPIs : Makes external API calls

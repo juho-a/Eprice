@@ -30,7 +30,6 @@
 │   ├── client
 │   │   ├── Dockerfile
 │   │   ├── README.md
-│   │   ├── docker
 │   │   ├── src
 │   │   │   ├── app.css
 │   │   │   ├── app.html
@@ -65,6 +64,7 @@
 │   │   │       ├── +layout.js
 │   │   │       ├── +layout.server.js
 │   │   │       ├── +layout.svelte
+│   │   │       ├── +page.server.js
 │   │   │       ├── +page.svelte
 │   │   │       ├── api
 │   │   │       │   └── devchat
@@ -103,6 +103,8 @@
 │   │   ├── V10__code_constraint.sql
 │   │   ├── V11__documents.sql
 │   │   ├── V12__files.sql
+│   │   ├── V13__fingrid.sql
+│   │   ├── V14__fingrid_load_entries.sql
 │   │   ├── V1__users.sql
 │   │   ├── V2__porssisahko.sql
 │   │   ├── V3__timezone.sql
@@ -115,52 +117,54 @@
 │   │   ├── Dockerfile
 │   │   └── tests
 │   │       └── frontend.spec.js
-│   ├── python-server
-│   │   ├── Dockerfile
-│   │   ├── README.md
-│   │   ├── main.py
-│   │   ├── requirements.txt
-│   │   ├── config
-│   │   │   ├── __init__.py
-│   │   │   └── secrets.py
-│   │   ├── controllers
-│   │   │   ├── auth_controller.py
-│   │   │   └── data_controller.py
-│   │   ├── ext_apis
-│   │   │   └── ext_apis.py
-│   │   ├── models
-│   │   │   ├── custom_exception.py
-│   │   │   ├── data_model.py
-│   │   │   └── user_model.py
-│   │   ├── repositories
-│   │   │   ├── porssisahko_repository.py
-│   │   │   └── user_repository.py
-│   │   ├── scheduled_tasks
-│   │   │   └── porssisahko_scheduler.py
-│   │   ├── services
-│   │   │   ├── auth_service.py
-│   │   │   └── data_service.py
-│   │   └── utils
-│   │       ├── email_tools.py
-│   │       ├── porssisahko_service_tools.py
-│   │       └── porssisahko_tools.py
-│   └── user-chat
+│   └── python-server
 │       ├── Dockerfile
-│       ├── README
-│       ├── gradio_dashboard.py
-│       └── run.sh
+│       ├── README.md
+│       ├── main.py
+│       ├── requirements.txt
+│       ├── config
+│       │   ├── __init__.py
+│       │   └── secrets.py
+│       ├── controllers
+│       │   ├── auth_controller.py
+│       │   └── data_controller.py
+│       ├── ext_apis
+│       │   └── ext_apis.py
+│       ├── models
+│       │   ├── custom_exception.py
+│       │   ├── data_model.py
+│       │   └── user_model.py
+│       ├── repositories
+│       │   ├── fingrid_repository.py
+│       │   ├── porssisahko_repository.py
+│       │   └── user_repository.py
+│       ├── scheduled_tasks
+│       │   └── porssisahko_scheduler.py
+│       ├── services
+│       │   ├── auth_service.py
+│       │   └── data_service.py
+│       └── utils
+│           ├── email_tools.py
+│           ├── fingrid_service_tools.py
+│           ├── porssisahko_service_tools.py
+│           └── porssisahko_tools.py
 └── Documents
+    ├── CONTRIBUTIONS.md
+    ├── KONTRIBUUTIOT.md
     ├── README.md
     ├── backend_design.md
+    ├── frontend_description.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
     ├── project_directory_structure.txt
+    ├── projektin_kuvaus.md
     └── diagrams
         └── sources
             ├── authentication_call_sequence_diagram.wsd
             ├── authentication_class_diagram.wsd
             ├── authentication_use_case.wsd
             ├── data_access_call_sequence_diagram.wsd
+            ├── frontend_structure.wsd
             ├── llm_retrieval.wsd
             ├── services_diagram.wsd
             ├── tool_calling.wsd

@@ -156,12 +156,7 @@
 │   │       ├── email_tools.py (Paavo)
 │   │       ├── porssisahko_service_tools.py (Juho)
 │   │       └── porssisahko_tools.py (Paavo)
-│   │
-│   └── user-chat (Setup, Paavo)
-│       ├── Dockerfile
-│       ├── README
-│       ├── gradio_dashboard.py
-│       └── run.sh
+│   
 │
 └── Documents
     ├── README.md
@@ -189,10 +184,6 @@
 Additionally, the project/developer chat's retrieval mechanism requires some amount of parsing/cleaning/loading (all project code and documents), which is done offline using scripts and `document_loading.ipynb` inside `Eprice/Notebooks/`. These are at least in some parts based on Paavo's (heh, me in 3rd person...) other previous and contemporary projects/works. Not everything is included in this repo, but will be later made available in `https://github.com/PaavoReinikka`. 
 
 To aid in the documentation of the project, there is also a UML diagram generator dashboard in `Eprice/Notebooks/` (using PlantUML syntax). It was written with Python (see Notebooks README for details and instructions).
-
-## User Chat
-
-User chat is based on Ollama served Llama 3.2 model, which is fully open-source and free. The chat is pretty much just a template / placeholder, to demonstrate it is also possible to include an open-source llm in a containerized app. However, to get good performance from the model, it does require fine-tuning, and/or (ideally) a slightly bigger model -- cuda capable gpu is not mandatory, unless training, and the smaller models run fine on modern cpu's. In the time constraints of this project, it was not feasible to fine-tune the model (within a timeframe of roughly 4-6 weeks). Acquiring and preparing data for fine-tuning is also very time consuming.
 
 ## Developer chat
 
