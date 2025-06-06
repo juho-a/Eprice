@@ -13,7 +13,6 @@
 │   ├── chat-engine
 │   │   ├── Dockerfile
 │   │   ├── README.md
-│   │   ├── _compose.yaml
 │   │   ├── agent_app.py
 │   │   ├── agent_manager.py
 │   │   ├── app.py
@@ -27,7 +26,6 @@
 │   │       ├── db_calls.py
 │   │       ├── helpers.py
 │   │       └── tools.py
-│   ├── chat_engine
 │   ├── client
 │   │   ├── Dockerfile
 │   │   ├── README.md
