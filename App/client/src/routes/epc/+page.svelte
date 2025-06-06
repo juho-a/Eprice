@@ -59,7 +59,7 @@
                 datasets: [
                     {
                         label: 'Production - Consumption',
-                        backgroundColor: 'rgba(157,39, 245, 1)',
+                        backgroundColor: 'rgba(157,39, 245, 0.7)',
                         borderColor: 'rgb(157,39, 245)',
                         data: differenceValues,
                         yAxisID: 'y',
@@ -72,7 +72,7 @@
                 datasets: [
                     {
                         label: 'Price',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
                         borderColor: 'rgb(75, 192, 192)',
                         data: prices,
                         yAxisID: 'y',

@@ -1,5 +1,5 @@
 import { PUBLIC_INTERNAL_API_URL } from "$env/static/public";
-import { datesInOrder, getFormattedDates } from '$lib/utils/date-helpers.js';
+import { datesInOrder, getFormattedDates, datesCloseEnough } from '$lib/utils/date-helpers.js';
 import { fail } from "@sveltejs/kit";
 import { COOKIE_KEY } from "$env/static/private";
 
@@ -13,6 +13,8 @@ export const actions = {
             return fail(400, { error: "Start and end dates are required." });
         } else if (!datesInOrder(data.startTime, data.endTime)) {
             return fail(400, { error: "Start date must come before end date." });
+        } else if (!datesCloseEnough(data.startTime, data.endTime)) {
+            return fail(400, { error: "The date range must be within the last 6 months." });
         }
 
         try {
