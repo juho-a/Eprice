@@ -27,6 +27,7 @@
 │   │       ├── db_calls.py
 │   │       ├── helpers.py
 │   │       └── tools.py
+│   ├── chat_engine
 │   ├── client
 │   │   ├── Dockerfile
 │   │   ├── README.md
@@ -150,14 +151,18 @@
 │           └── porssisahko_tools.py
 └── Documents
     ├── CONTRIBUTIONS.md
+    ├── CONTRIBUTIONS.pdf
     ├── KONTRIBUUTIOT.md
+    ├── KONTRIBUUTIOT.pdf
     ├── README.md
     ├── backend_design.md
     ├── frontend_description.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
+    ├── project_description.pdf
     ├── project_directory_structure.txt
     ├── projektin_kuvaus.md
+    ├── projektin_kuvaus.pdf
     └── diagrams
         └── sources
             ├── authentication_call_sequence_diagram.wsd
