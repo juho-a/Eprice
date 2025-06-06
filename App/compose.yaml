@@ -106,21 +106,6 @@ services:
     profiles:
       - backend-tests
 
-  user-chat:
-    container_name: user-chat
-    build:
-      context: .
-      dockerfile: user-chat/Dockerfile
-    volumes:
-      - type: bind
-        source: ./user-chat/.ollama
-        target: /root/.ollama
-    ports:
-      - 7863:7860
-    restart: always
-    profiles:
-       - user-chat
-  
   chat-engine:
     container_name: chat-engine
     build:
@@ -137,3 +122,6 @@ services:
     #   - chat-engine
     volumes:
       - ./chat-engine:/app
+      - ~/.cache/huggingface:/root/.cache/huggingface  # to prevent downloading models every time
+    environment:
+      - HF_HOME=/root/.cache/huggingface
