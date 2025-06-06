@@ -25,6 +25,6 @@ DELIMITER ';' CSV HEADER;
 INSERT INTO fingrid (datetime_orig, datetime, date, year, month, day, hour, weekday, dataset_id, value)
 SELECT datetime_orig, datetime, date, year, month, day, hour, weekday, dataset_id, value
 FROM fingrid_staging
-ON CONFLICT (datetime) DO NOTHING;
+ON CONFLICT (datetime, dataset_id) DO NOTHING;
 
 DROP TABLE fingrid_staging;

@@ -18,4 +18,4 @@ CREATE TABLE IF NOT EXISTS fingrid (
 
 -- Add a unique constraint to prevent duplicate rows (date and time)
 ALTER TABLE fingrid
-    ADD CONSTRAINT unique_datetime_fg UNIQUE (datetime);
+    ADD CONSTRAINT unique_datetime_fg UNIQUE (datetime, dataset_id);
