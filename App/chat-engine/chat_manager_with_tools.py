@@ -187,9 +187,22 @@ class Embedder:
             embeddings = self.model(**inputs).last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
         return embeddings.tolist()
     
-    def count_tokens(self, text: str) -> int:
+    def _count_tokens(self, text: str) -> int:
         """Count the number of tokens in the input text."""
         return len(self.tokenizer.encode(text, add_special_tokens=False))
+
+    # This is solely for suppressing the token limit warning in the Hugging Face tokenizer
+    def count_tokens(self, text: str) -> int:
+        """Count the number of tokens in the input text, handling texts longer than the model's max length."""
+        max_length = getattr(self.tokenizer.model_max_length, "item", lambda: self.tokenizer.model_max_length)()
+        tokens = self.tokenizer.encode(text, add_special_tokens=False)
+        if len(tokens) <= max_length:
+            return len(tokens)
+        # For long texts, split into chunks and sum
+        return sum(
+            len(tokens[i:i+max_length])
+            for i in range(0, len(tokens), max_length)
+        )
     
 class WrappedEmbedder:
     def __init__(self, model_name: str = "BAAI/bge-small-en"):
