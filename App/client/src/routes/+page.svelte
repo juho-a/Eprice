@@ -6,41 +6,28 @@
     import { isTodayHelsinki } from '$lib/utils/date-helpers';
     import PriceCards from '$lib/components/PriceCards.svelte';
 
-    // TODO: switch to stateful variables
+    // TODO: change to runes mode
+    export let data;
+
     let priceCanvas;
     let priceChart;
-    let prices = [];
-    let { data } = $props();
+
     const userState = useUserState();
     if (data.user) {
-      userState.user = data.user;
+        userState.user = data.user;
     }
 
-    // Fetch prices on mount and after login/redirect
-    const fetchPrices = async () => {
-        const { data, update } = usePricesState();
-        await update(); // Always fetch fresh data
-        prices = data;
-    }
-
-    // Also fetch prices if the page becomes visible again (e.g. after login)
-    if (typeof window !== "undefined") {
-        window.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") fetchPrices();
-        });
-    }
-
-    // TODO: switch to stateful variables
-    let todayPrices = $state([]);
+    let prices = [];
+    let todayPrices = [];
     let todayValues = [];
     let labels = [];
 
-    onMount(async () => {
-        await fetchPrices();
-        // prices.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    const fetchPrices = async () => {
+        const { data: pricesData, update } = usePricesState();
+        await update();
+        prices = pricesData;
+
         todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
-        // keep the first 24 hours of prices (Fix for Juho's issue)
-        // todayPrices = prices.slice(0, 24);
         todayValues = todayPrices.map(p => p.price);
         labels = todayPrices.map(p =>
             new Date(p.startDate).toLocaleTimeString('fi-FI', {
@@ -50,7 +37,6 @@
             })
         );
 
-        // Draw or update chart
         if (priceCanvas && labels.length) {
             if (priceChart) priceChart.destroy();
             priceChart = new chartjs(priceCanvas.getContext('2d'), {
@@ -71,8 +57,17 @@
                 }
             });
         }
-    });
+    };
+
+    onMount(fetchPrices);
+    // this is hack to refresh after redirects
+    if (typeof window !== "undefined") {
+        window.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") fetchPrices();
+        });
+    }
 </script>
+
 
 <title>Home - Market Electricity Prices Today</title>
 <div class="max-w-3xl mx-auto mt-16">
