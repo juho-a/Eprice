@@ -60,11 +60,9 @@ class FingridDataService:
         Raises:
             HTTPException: If the API call fails or no data is available.
         """
-        #print(await self.fingrid_service_tools.read_data())
             
         try:
             result = await self.fingrid_service_tools.fetch_and_process_data(time_range, dataset_id)
-            print(f"Result at service level: {len(result)} items")
             return result if result else await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
         except Exception:
             print(f"Failed to fetch Fingrid data for dataset_id {dataset_id} in range {time_range.startTime} to {time_range.endTime}")

@@ -42,22 +42,16 @@ class FingridServiceTools:
 
             result = self.convert_to_fingrid_data(raw_data)
 
-            missing_entries = self.find_missing_entries_utc(
-                time_range.startTime.astimezone(ZoneInfo("UTC")),
-                time_range.endTime.astimezone(ZoneInfo("UTC")),
-                result,
-                dataset_id
-            )
-            print(f"Missing entries found: {missing_entries}")
+            missing_entries = self.find_missing_entries_utc(time_range, result, dataset_id)
             if missing_entries:
+                print(f"Database has {len(missing_entries)} entries missing in the range {time_range.startTime} to {time_range.endTime} with dataset ID {dataset_id}.")
                 await self.fill_missing_entries(result, missing_entries, dataset_id)
             return sorted(result, key=lambda x: x.startTime, reverse=False)
         except Exception as e:
             print(f"Error while fetching and processing data: {e}")
             raise
 
-    
-    
+        
 
     def convert_to_fingrid_data(self, data: List[dict]) -> List[FingridDataPoint]:
         """
@@ -80,7 +74,7 @@ class FingridServiceTools:
         ], key=lambda x: x.startTime, reverse=False)
 
 
-    def find_missing_entries_utc(self, start_date_utc: datetime, end_date_utc: datetime, data_utc: List[FingridDataPoint], dataset_id: int) -> List[StartDateModel]:
+    def find_missing_entries_utc(self, time_range:TimeRange, data_utc: List[FingridDataPoint], dataset_id: int) -> List[StartDateModel]:
         """
         Find missing hourly entries in the given UTC time range.
 
@@ -92,11 +86,10 @@ class FingridServiceTools:
         Returns:
             List[StartDateModel]: List of StartDateModel objects for missing hours (all in UTC).
         """
-        print("find_missing_entries_utc")
         result = []
-        current_date_utc = start_date_utc
+        current_date_utc = time_range.startTime
         try:
-            while current_date_utc <= end_date_utc:
+            while current_date_utc <= time_range.endTime:
                 if not any(item.startTime == current_date_utc for item in data_utc):
                     result.append(StartDateModel(startDate=current_date_utc))
                 current_date_utc += timedelta(hours=1)
@@ -117,37 +110,62 @@ class FingridServiceTools:
         Side effects:
             Updates the result list and inserts new entries into the database.
         """
-        print("fill_missing_entries")
+
         self.result = result
         if not missing_entries:
             return
-        min_missing = min(missing_entries, key=lambda x: x.startDate).startDate
-        max_missing = max(missing_entries, key=lambda x: x.startDate).startDate
-        print(f"Missing entries range from {min_missing} to {max_missing}")
-        
+        start_time_utc_aware = min(missing_entries, key=lambda x: x.startDate).startDate
+        end_time_utc_aware = max(missing_entries, key=lambda x: x.startDate).startDate
+        time_range = TimeRange(startTime=start_time_utc_aware, endTime=end_time_utc_aware + timedelta(hours=1))
         
         try:
-            for missing in missing_entries:
-                time_range = TimeRange(startTime=missing.startDate, endTime=missing.startDate + timedelta(hours=1))
-                fetched = await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
-                if not fetched:
+            # Fetch data for entire range of missing entries
+            fetched_range = await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
+            if not fetched_range:
+                print("No data fetched for the missing entries range.")
+                return
+            print(f"Fetched {len(fetched_range)} entries for the range {time_range.startTime} to {time_range.endTime} from external API for dataset ID {dataset_id}.")
+            counter = 0
+            for entry in fetched_range:
+                #if entry not in result:
+                if any(item.startTime == entry.startTime for item in result):
                     continue
-
-                datapoint = fetched[0]
-
-                utc_dt = datapoint.startTime
+                utc_dt = entry.startTime
                 iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
                 result.append(FingridDataPoint(
                     startTime=utc_dt,
                     endTime=utc_dt + timedelta(hours=1),
-                    value=datapoint.value
+                    value=entry.value
                 ))
                 await self.fingrid_repository.insert_entry(
-                    value=datapoint.value,
+                    value=entry.value,
                     iso_date=iso_str,
                     dataset_id=dataset_id
                 )
+                counter += 1
+            print(f"Inserted {counter} missing entries into the database for dataset ID {dataset_id}.")
+            # for missing in missing_entries:
+            #     time_range = TimeRange(startTime=missing.startDate, endTime=missing.startDate + timedelta(hours=1))
+            #     fetched = await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
+            #     if not fetched:
+            #         continue
+
+            #     datapoint = fetched[0]
+
+            #     utc_dt = datapoint.startTime
+            #     iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+            #     result.append(FingridDataPoint(
+            #         startTime=utc_dt,
+            #         endTime=utc_dt + timedelta(hours=1),
+            #         value=datapoint.value
+            #     ))
+            #     await self.fingrid_repository.insert_entry(
+            #         value=datapoint.value,
+            #         iso_date=iso_str,
+            #         dataset_id=dataset_id
+            #     )
         except Exception as e:
             print(f"Error while filling missing entries: {e}")
 

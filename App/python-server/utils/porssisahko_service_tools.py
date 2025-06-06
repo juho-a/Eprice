@@ -146,7 +146,6 @@ class PorssisahkoServiceTools:
         result = []
         current_date_utc = start_date_utc
         while current_date_utc <= end_date_utc:
-            print(f"current_date_utc: {current_date_utc}")
             if not any(item.startDate == current_date_utc for item in data_utc):
                 result.append(StartDateModel(startDate=current_date_utc))
             current_date_utc += timedelta(hours=1)
@@ -202,4 +201,3 @@ class PorssisahkoServiceTools:
             for weekday, prices in weekday_prices.items()
         ]
         return sorted(result, key=lambda x: x.weekday)
-

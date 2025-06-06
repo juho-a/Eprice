@@ -121,29 +121,22 @@ class FetchFingridData:
         )
         
 
-    async def fetch_fingrid_data_range(self, dataset_id: int, time_range:TimeRange) -> List[FingridDataPoint]:
+    async def fetch_fingrid_data_range(self, dataset_id: int, time_range: TimeRange) -> List[FingridDataPoint]:
         """
-        Fetch a list of data points for a given Fingrid dataset ID and time range.
+        Fetch a list of data points for a given Fingrid dataset ID and time range,
+        but return only data points that are aligned with full hours (e.g., 13:00, 14:00).
 
         Args:
             dataset_id (int): The Fingrid dataset ID.
-            start_time (datetime): Start time in UTC.
-            end_time (datetime): End time in UTC.
+            time_range (TimeRange): Time range with startTime and endTime (both in UTC).
 
         Returns:
-            List[FingridDataPoint]: List of data points for the specified range.
-
-        Raises:
-            HTTPException: If the API call fails or no data is available.
+            List[FingridDataPoint]: Filtered list of data points for the specified range.
         """
         headers = {"x-api-key": FINGRID_API_KEY} if FINGRID_API_KEY is not None else {}
-        # Remove any None values from headers to satisfy type checker
         headers = {k: v for k, v in headers.items() if v is not None}
         url = f"{self.base_url}{dataset_id}/data"
-        max_retries = 3
-        retry_delay = 1
 
-            
         query_params = {
             "startTime": time_range.startTime.isoformat().replace("+00:00", "Z"),
             "endTime": time_range.endTime.isoformat().replace("+00:00", "Z"),
@@ -153,6 +146,9 @@ class FetchFingridData:
         }
 
         url = f"{url}?{urlencode(query_params)}"
+        max_retries = 3
+        retry_delay = 1
+
         for attempt in range(max_retries):
             try:
                 async with httpx.AsyncClient() as client:
@@ -160,14 +156,22 @@ class FetchFingridData:
                     response.raise_for_status()
                     full_data = response.json()
                     data = full_data.get("data", [])
+
+                    filtered_points = []
                     for item in data:
                         item.pop("datasetId", None)
-                    return [FingridDataPoint(**item) for item in data]
+                        start_dt = datetime.fromisoformat(item["startTime"].replace("Z", "+00:00"))
+
+                        if start_dt.minute == 0 and start_dt.second == 0:
+                            filtered_points.append(FingridDataPoint(**item))
+
+                    return filtered_points
+
             except httpx.HTTPStatusError as exc:
                 if attempt == max_retries - 1:
                     raise HTTPException(
                         status_code=exc.response.status_code,
-                        detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API. Number of attempts: {attempt +1}"
+                        detail=f"HTTP error while fetching data for dataset {dataset_id} from Fingrid API. Number of attempts: {attempt + 1}"
                     ) from exc
                 await asyncio.sleep(retry_delay)
 
@@ -176,6 +180,7 @@ class FetchFingridData:
                     status_code=500,
                     detail=f"Unexpected error fetching data for dataset {dataset_id} from Fingrid API."
                 ) from e
+
         raise HTTPException(
             status_code=500,
             detail=f"Failed to fetch data for dataset {dataset_id} from Fingrid API after {max_retries} attempts."
