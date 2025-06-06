@@ -31,7 +31,7 @@ This folder contains the **chat engine** for the Eprice app. The chat engine pro
 
 ## Setup
 
-By default, compose does everything except populates the database -- this needs to be done offline (may change in the future). You can also run the chat locally (see instructions below). The instructions to populate the database are in `Eprice/Notebooks/document_loading`. **If you want to develope or use the chat, you need to go read `Eprice/Notebooks/document_loading/README.md`. The notebooks and scripts (which ever you use) will download the required HF model to your local machine, and that will be mounted to the chat container -- this is not strictly necessary, but downloading the model repeatedly during the container on build tends to bump into HF rate limits (nasty traces to debug).
+By default, compose does everything. If you read the `Eprice/App/README.md` and followed the instructions to extract the archived `pgdata` directory, you should be all set. Otherwise you need to populate chat data yourself -- this needs to be done offline (may change in the future). You can also run the chat locally (see instructions below). The instructions to populate the database are in `Eprice/Notebooks/document_loading`. **If you want to develope the chat, you need to go read `Eprice/Notebooks/document_loading/README.md`**. The notebooks and scripts (which ever you use) will download the required HF model to your local machine, and that will be mounted to the chat container -- this is not strictly necessary, but downloading the model repeatedly during the container on build tends to bump into HF rate limits (nasty traces to debug).
 
 ### Prerequisites
 

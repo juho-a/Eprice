@@ -62,6 +62,14 @@ sudo chown -R 999:999 ./pgdata
 - `chmod 700 ./pgdata` sets secure permissions (Postgres default).
 - `sudo chown -R 999:999 ./pgdata` sets ownership to the default Postgres user inside the container (UID 999).
 
+**Alternatively**, if you do not want to populate the database yourself you can unpack the tar file and use that as your pgdata -- the archive includes everything the developer chat needs, but it is the frozen state of the project at 2025-6-6.
+
+```bash
+tar xzvf pgdata.tar.gz
+```
+
+Just ensure your Compose file mounts ./pgdata:/var/lib/postgresql/data -- you may need to set permissions like it is explained above.
+
 **Note:**  
 If you change to a custom Postgres image or user, check the UID/GID with:
 
