@@ -33,6 +33,7 @@ export const getTomorrow = () => {
     // This function returns tomorrow's date in ISO format (YYYY-MM-DD)
     const d = new Date();
     d.setDate(d.getDate() + 1);
+    d.setHours(d.getHours() + 3);
     return d.toISOString().slice(0, 10);
 }
 

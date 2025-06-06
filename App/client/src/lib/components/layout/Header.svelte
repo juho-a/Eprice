@@ -37,13 +37,6 @@
         {/if}
       </ul>
     </nav>
-    <!-- {#if user?.role === 'admin' && devChatAvailable}
-      <ul class="ml-4 flex space-x-4 text-white">
-        <li>
-          <a href="/chat" class="text-white ml-4">Developer Chat</a>
-        </li>
-      </ul>
-    {/if} -->
     {#if user && $page.url.pathname !== '/logout'}
       <div class="ml-auto">
         <ul class="ml-4 flex space-x-4 text-white">

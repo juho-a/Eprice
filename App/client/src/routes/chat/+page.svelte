@@ -8,6 +8,14 @@
     let activeTabValue = $state(4);
 
     let items = [
+        { label: "Docs",
+            value: 4,
+            component: ChatView4
+        },
+        { label: "Files",
+            value: 3,
+            component: ChatView3
+        },
         { label: "Streaming",
             value: 1,
             component: ChatView1
@@ -16,14 +24,6 @@
             value: 2,
             component: ChatView2
             },
-        { label: "Files",
-            value: 3,
-            component: ChatView3
-        },
-        { label: "Docs",
-            value: 4,
-            component: ChatView4
-        }
     ];
 </script>
 

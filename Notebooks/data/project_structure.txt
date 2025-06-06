@@ -30,7 +30,6 @@
 │   ├── client
 │   │   ├── Dockerfile
 │   │   ├── README.md
-│   │   ├── docker
 │   │   ├── src
 │   │   │   ├── app.css
 │   │   │   ├── app.html
@@ -65,6 +64,7 @@
 │   │   │       ├── +layout.js
 │   │   │       ├── +layout.server.js
 │   │   │       ├── +layout.svelte
+│   │   │       ├── +page.server.js
 │   │   │       ├── +page.svelte
 │   │   │       ├── api
 │   │   │       │   └── devchat
@@ -150,11 +150,17 @@
 │       ├── gradio_dashboard.py
 │       └── run.sh
 └── Documents
+    ├── CONTRIBUTIONS.md
+    ├── KONTRIBUUTIOT.md
+    ├── KONTRIBUUTIOT.pdf
     ├── README.md
     ├── backend_design.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
+    ├── project_description.pdf
     ├── project_directory_structure.txt
+    ├── projektin_kuvaus.md
+    ├── projektin_kuvaus.pdf
     └── diagrams
         └── sources
             ├── authentication_call_sequence_diagram.wsd

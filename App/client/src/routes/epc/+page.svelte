@@ -16,7 +16,7 @@
     let consumptionValues = form?.consumptionValues || [];
     let differenceValues = form?.differenceValues || [];
     let priceLabels = form?.priceLabels || [];
-    let prices = form?.prices || [];
+    let prices = form?.priceValues || [];
 
     let chartCanvas;
     let chart;
@@ -219,6 +219,7 @@
                         onclick={toggleChartType}
                         disabled={!dataLoader}>
                     Toggle Chart Type
+                </button>
             </div>
         </form>
         <div class="mt-10">

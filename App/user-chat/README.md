@@ -4,7 +4,7 @@
 
 This folder has the dockerfile for ollama llm engine, and a minimal gradio dashboard implementation. In order to run the engine, docker needs to load the *llama3.2* model first. It will be downloaded into `user-chat/.ollama/` folder, which you need to create. However, do not include it in git. 
 
-The chat-engine uses uv as the default package manager, and it's included in the container also. The dependencies are in `pyproject.toml`, and if you prefer pip, you can always you that. However, remember to include you local virtualenvironment into .gitignore and .dockerignore.
+The chat-engine uses uv as the default package manager, and it's included in the container also. The dependencies are in `pyproject.toml`, and if you prefer pip, you can always use that. However, remember to include you local virtualenvironment into .gitignore and .dockerignore.
 
 **This container is not run by default when you run the project using docker-compose**. To include the chat-engine, you need use a specific profile:
 

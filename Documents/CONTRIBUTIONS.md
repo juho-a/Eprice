@@ -196,11 +196,11 @@ User chat is based on Ollama served Llama 3.2 model, which is fully open-source 
 
 ## Developer chat
 
-The developer chat is based on OpenAI's gtp-4o-mini, which is basically free for research (and such) pursposes. There are also a lot of open-source generative text models (chat and completion) in HF, and also good datasets for fine-tuning. Some of the experiments, with various open models, during this project will eventually be published in `https://github.com/PaavoReinikka`.
+The developer chat is based on OpenAI's gtp-4o-mini, which is basically free for research (and such) purposes. There are also a lot of open-source generative text models (chat and completion) in HF, and also good datasets for fine-tuning. Some of the experiments, with various open models, during this project will eventually be published in `https://github.com/PaavoReinikka`.
 
 The embedding model used here, is open-source from HuggingFace. There are many good models available at HF, and a there is a leader board for embedding models, which is a good place to start looking (`https://huggingface.co/spaces/mteb/leaderboard`).
 
 ## Documentation
 
-Most of the documentation was written by Paavo Reinikka, with some help from Juho Ahopelto.
+Most of the documentation was written by Paavo Reinikka, with some help from Juho Ahopelto, and with a lot of help from Copilot.
 
