@@ -28,6 +28,4 @@
     ];
 </script>
 
-{#if data?.user.role === 'admin'}
-    <Tabs items={items} activeTabValue={activeTabValue} on:change={e => activeTabValue = e.detail} />
-{/if}
+<Tabs items={items} activeTabValue={activeTabValue} on:change={e => activeTabValue = e.detail} />

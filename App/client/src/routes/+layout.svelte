@@ -29,7 +29,7 @@
     {@render children()}
   </main>
 
-  {#if data.user?.email}
+  {#if data.user?.role === "admin"}
     <!-- <p class="text-right text-gray-500 dark:text-gray-400">
       Logged in as: <b>{data.user?.email}</b>
     </p> -->

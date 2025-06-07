@@ -2,7 +2,15 @@ import { PUBLIC_INTERNAL_API_URL } from "$env/static/public";
 import { datesInOrder, getFormattedDates, datesCloseEnough } from '$lib/utils/date-helpers.js';
 import { fail } from "@sveltejs/kit";
 import { COOKIE_KEY } from "$env/static/private";
+import { error, redirect } from "@sveltejs/kit";
 
+export const load = async ({ locals, url }) => {
+  if (!locals.user) {
+    // Not logged in, redirect to login
+    throw redirect(303, `/auth/login`);
+  }
+  return {};
+};
 
 export const actions = {
     getCombinedRange: async ({ request, cookies }) => {
