@@ -38,9 +38,6 @@ The system consists of multiple containerized services that work together to pro
 - **Purpose**: Runs end-to-end tests for the system.
 - **Depends On**: `Client`
 
-### 6. User Chat
-- **Ports**: `7862`
-
 ### (Extra) Chat Engine
 - **Ports**: `7860-7861`
 - **Purpose**: Provides a chat engine for interaction with the project. This is meant for developers and maintainers, not the app's end-users. Chat uses retrieval augmented generation, and the retriever has access to project documentation and code. There are 2 distinct clients: A traditional streaming chat, and an Agent (for more complex reasoning tasks).

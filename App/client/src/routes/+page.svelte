@@ -1,46 +1,27 @@
 <script>
     import chartjs from 'chart.js/auto';
     import { onMount } from "svelte";
-    import { usePricesState } from "$lib/states/usePricesState.svelte";
-    import { useUserState } from "$lib/states/userState.svelte.js";
     import { isTodayHelsinki } from '$lib/utils/date-helpers';
+    import { readPublicData } from "$lib/apis/data-api.js";
     import PriceCards from '$lib/components/PriceCards.svelte';
 
-    // TODO: switch to stateful variables
+    // TODO: change to runes mode, $state variables and pricesState
+    export let data;
+
     let priceCanvas;
     let priceChart;
+
     let prices = [];
-    let { data } = $props();
-    const userState = useUserState();
-    if (data.user) {
-      userState.user = data.user;
-    }
-
-    // Fetch prices on mount and after login/redirect
-    const fetchPrices = async () => {
-        const { data, update } = usePricesState();
-        await update(); // Always fetch fresh data
-        prices = data;
-    }
-
-    // Also fetch prices if the page becomes visible again (e.g. after login)
-    if (typeof window !== "undefined") {
-        window.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") fetchPrices();
-        });
-    }
-
-    // TODO: switch to stateful variables
-    let todayPrices = $state([]);
+    let todayPrices = [];
     let todayValues = [];
     let labels = [];
 
-    onMount(async () => {
-        await fetchPrices();
-        // prices.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    // Fetch prices from the public API, directly from the browser
+    const fetchPrices = async () => {
+        prices = await readPublicData();
+
+        // prepare data for today
         todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
-        // keep the first 24 hours of prices (Fix for Juho's issue)
-        // todayPrices = prices.slice(0, 24);
         todayValues = todayPrices.map(p => p.price);
         labels = todayPrices.map(p =>
             new Date(p.startDate).toLocaleTimeString('fi-FI', {
@@ -50,9 +31,8 @@
             })
         );
 
-        // Draw or update chart
         if (priceCanvas && labels.length) {
-            if (priceChart) priceChart.destroy();
+            if (priceChart) priceChart.destroy(); // destroy previous chart instance if exists
             priceChart = new chartjs(priceCanvas.getContext('2d'), {
                 type: "bar",
                 data: {
@@ -71,12 +51,16 @@
                 }
             });
         }
-    });
+    };
+
+    onMount(fetchPrices);
+    
 </script>
+
 
 <title>Home - Market Electricity Prices Today</title>
 <div class="max-w-3xl mx-auto mt-16">
-    <h1 class="text-center text-3xl font-extrabold mb-8">
+    <h1 id="main-heading" class="text-center text-3xl font-extrabold mb-8">
         Market Electricity Prices Today<br>
         <span class="text-xl">{new Date().toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' })}</span>
     </h1>
@@ -97,7 +81,9 @@
         <p class="text-lg">
             Want to see more features and get the full functionality of the app?
             <br />
-            <a href="http://localhost:5173/auth/register" class="inline-block mt-6 px-4 py-2 bg-primary-500 text-white font-bold rounded hover:bg-primary-600 transition">
+            <a href="http://localhost:5173/auth/register"
+               class="inline-block mt-6 px-4 py-2 bg-primary-500 text-white font-bold rounded hover:bg-primary-600 transition"
+               id="register-link">
                 Register for free
             </a>
         </p>

@@ -6,6 +6,7 @@
     import Tabs from "$lib/components/Tabs.svelte";
 
     let activeTabValue = $state(4);
+    let { data } = $props();
 
     let items = [
         { label: "Docs",
@@ -26,6 +27,5 @@
             },
     ];
 </script>
-
 
 <Tabs items={items} activeTabValue={activeTabValue} on:change={e => activeTabValue = e.detail} />

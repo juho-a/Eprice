@@ -40,9 +40,6 @@ Järjestelmä koostuu useista kontitetuista palveluista, jotka toimivat yhdessä
 - **Tarkoitus**: Suorittaa järjestelmän päättymistestit.
 - **Riippuvuu**: Client
 
-### 6. User Chat
-- **Portti**: 7862
-
 ## Lisäpalveluiden yleiskuvaus
 
 ### Chat Engine (for: Developer Chat)
