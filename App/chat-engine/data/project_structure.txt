@@ -3,6 +3,7 @@
 ├── App
 │   ├── README.md
 │   ├── compose.yaml
+│   ├── pgdata.tar.gz
 │   ├── project.env
 │   ├── backend-tests
 │   │   ├── Dockerfile
@@ -74,6 +75,7 @@
 │   │   │       │       ├── +page.server.js
 │   │   │       │       └── +page.svelte
 │   │   │       ├── chat
+│   │   │       │   ├── +page.server.js
 │   │   │       │   └── +page.svelte
 │   │   │       ├── epc
 │   │   │       │   ├── +page.server.js
@@ -115,7 +117,7 @@
 │   ├── e2e-tests
 │   │   ├── Dockerfile
 │   │   └── tests
-│   │       └── frontend.spec.js
+│   │       └── home.spec.js
 │   └── python-server
 │       ├── Dockerfile
 │       ├── README.md

@@ -1,25 +1,26 @@
 # Contributions
 
+Below is a summary of the main contributors for each part of the Eprice project, based on the current project structure.
 
-
+```code
 ├── LICENSE
 ├── README.md
 ├── App
 │   ├── README.md
-│   ├── compose.yaml (anything with containers, Paavo)
+│   ├── compose.yaml  (anything with containers, Paavo)
+│   ├── pgdata.tar.gz – database snapshot (Paavo)
 │   ├── project.env (anything with project and container level configurations, Paavo)
-│   │
-│   ├── backend-tests (Setup, Paavo)
+|   |
+│   ├── backend-tests (setup, Paavo)
 │   │   ├── Dockerfile
 │   │   ├── README.md
 │   │   └── tests
 │   │       ├── test_auth_controller.py (Juho & Paavo)
 │   │       └── test_data_controller.py (Juho)
-│   │
+|   |
 │   ├── chat-engine (Paavo)
 │   │   ├── Dockerfile
 │   │   ├── README.md
-│   │   ├── _compose.yaml
 │   │   ├── agent_app.py
 │   │   ├── agent_manager.py
 │   │   ├── app.py
@@ -33,11 +34,10 @@
 │   │       ├── db_calls.py
 │   │       ├── helpers.py
 │   │       └── tools.py
-│   │
-│   ├── client (Paavo)
+|   |
+│   ├── client (Paavo) 
 │   │   ├── Dockerfile
 │   │   ├── README.md
-│   │   ├── docker
 │   │   ├── src
 │   │   │   ├── app.css
 │   │   │   ├── app.html
@@ -72,6 +72,7 @@
 │   │   │       ├── +layout.js
 │   │   │       ├── +layout.server.js
 │   │   │       ├── +layout.svelte
+│   │   │       ├── +page.server.js
 │   │   │       ├── +page.svelte
 │   │   │       ├── api
 │   │   │       │   └── devchat
@@ -82,6 +83,7 @@
 │   │   │       │       ├── +page.server.js
 │   │   │       │       └── +page.svelte
 │   │   │       ├── chat
+│   │   │       │   ├── +page.server.js
 │   │   │       │   └── +page.svelte
 │   │   │       ├── epc
 │   │   │       │   ├── +page.server.js
@@ -98,7 +100,7 @@
 │   │   │           └── +page.svelte
 │   │   └── static
 │   │       └── favicon.png
-│   │
+|   |
 │   ├── data-preparation (Paavo)
 │   │   ├── README.md
 │   │   └── scripts
@@ -107,76 +109,85 @@
 │   │       ├── clean_porssisahko.py
 │   │       ├── populate_porssisahko.py
 │   │       └── retrieve_porssisahko_update.sh
-│   │
+|   |
 │   ├── database-migrations (Paavo)
+│   │   ├── V10__code_constraint.sql
+│   │   ├── V11__documents.sql
+│   │   ├── V12__files.sql
+│   │   ├── V13__fingrid.sql
+│   │   ├── V14__fingrid_load_entries.sql
 │   │   ├── V1__users.sql
 │   │   ├── V2__porssisahko.sql
 │   │   ├── V3__timezone.sql
 │   │   ├── V4__users_add_role.sql
 │   │   ├── V5__porssisahko_load_entries.sql
 │   │   ├── V6__users_add_isverified.sql
-│   │   │   None (bad version naming -- accidentally missed V7)
 │   │   ├── V8__extension_vector.sql
 │   │   └── V9__code.sql
-│   │   ├── V10__code_constraint.sql
-│   │   ├── V11__documents.sql
-│   │   ├── V12__files.sql
-│   │
-│   ├── e2e-tests (Setup, Paavo)
+|   |
+│   ├── e2e-tests (setup, Paavo)
 │   │   ├── Dockerfile
 │   │   └── tests
-│   │       └── frontend.spec.js
-│   │
-│   ├── python-server (Juho & Paavo)
-│   │   ├── Dockerfile
-│   │   ├── README.md
-│   │   ├── main.py (Juho & Paavo)
-│   │   ├── requirements.txt
-│   │   ├── config
-│   │   │   ├── __init__.py
-│   │   │   └── secrets.py
-│   │   ├── controllers
-│   │   │   ├── auth_controller.py (Juho & Paavo)
-│   │   │   └── data_controller.py (Juho)
-│   │   ├── ext_apis
-│   │   │   └── ext_apis.py (Juho)
-│   │   ├── models
-│   │   │   ├── custom_exception.py (Juho)
-│   │   │   ├── data_model.py (Juho)
-│   │   │   └── user_model.py (Paavo)
-│   │   ├── repositories
-│   │   │   ├── porssisahko_repository.py (Paavo)
-│   │   │   └── user_repository.py (Paavo)
-│   │   ├── scheduled_tasks
-│   │   │   └── porssisahko_scheduler.py (Paavo)
-│   │   ├── services
-│   │   │   ├── auth_service.py (Paavo)
-│   │   │   └── data_service.py (Juho)
-│   │   └── utils
-│   │       ├── email_tools.py (Paavo)
-│   │       ├── porssisahko_service_tools.py (Juho)
-│   │       └── porssisahko_tools.py (Paavo)
-│   
-│
+│   │       └── home.spec.js (Paavo)
+|   |
+│   └── python-server (Juho & Paavo)
+│       ├── Dockerfile
+│       ├── README.md
+│       ├── main.py
+│       ├── requirements.txt
+│       ├── config
+│       │   ├── __init__.py
+│       │   └── secrets.py
+│       ├── controllers
+│       │   ├── auth_controller.py (Juho & Paavo)
+│       │   └── data_controller.py (Juho)
+│       ├── ext_apis
+│       │   └── ext_apis.py (Juho)
+│       ├── models
+│       │   ├── custom_exception.py (Juho)
+│       │   ├── data_model.py (Juho)
+│       │   └── user_model.py (Paavo)
+│       ├── repositories
+│       │   ├── fingrid_repository.py (Juho)
+│       │   ├── porssisahko_repository.py (Paavo)
+│       │   └── user_repository.py (Paavo)
+│       ├── scheduled_tasks
+│       │   └── porssisahko_scheduler.py (Paavo)
+│       ├── services
+│       │   ├── auth_service.py (Paavo)
+│       │   └── data_service.py (Juho)
+│       └── utils
+│           ├── email_tools.py (Paavo)
+│           ├── fingrid_service_tools.py (Juho)
+│           ├── porssisahko_service_tools.py (Juho)
+│           └── porssisahko_tools.py (Paavo)
+|
 └── Documents
+    ├── CONTRIBUTIONS.md
+    ├── CONTRIBUTIONS.pdf
+    ├── KONTRIBUUTIOT.md
+    ├── KONTRIBUUTIOT.pdf
     ├── README.md
     ├── backend_design.md
+    ├── frontend_description.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
+    ├── project_description.pdf
     ├── project_directory_structure.txt
-    ├── api_definitions
-        ├── openapi.json
-        ├── README.md
+    ├── projektin_kuvaus.md
+    ├── projektin_kuvaus.pdf
     └── diagrams
         └── sources
             ├── authentication_call_sequence_diagram.wsd
             ├── authentication_class_diagram.wsd
             ├── authentication_use_case.wsd
             ├── data_access_call_sequence_diagram.wsd
+            ├── frontend_structure.wsd
             ├── llm_retrieval.wsd
             ├── services_diagram.wsd
             ├── tool_calling.wsd
             └── use_case.wsd
+```
 
 
 ## Notebooks

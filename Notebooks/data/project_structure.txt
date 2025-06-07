@@ -74,6 +74,7 @@
 │   │   │       │       ├── +page.server.js
 │   │   │       │       └── +page.svelte
 │   │   │       ├── chat
+│   │   │       │   ├── +page.server.js
 │   │   │       │   └── +page.svelte
 │   │   │       ├── epc
 │   │   │       │   ├── +page.server.js
@@ -115,7 +116,7 @@
 │   ├── e2e-tests
 │   │   ├── Dockerfile
 │   │   └── tests
-│   │       └── frontend.spec.js
+│   │       └── home.spec.js
 │   └── python-server
 │       ├── Dockerfile
 │       ├── README.md
