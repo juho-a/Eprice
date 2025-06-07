@@ -1,12 +1,15 @@
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient
+from httpx import AsyncClient, Timeout
+
 
 @pytest_asyncio.fixture
 async def client():
     """Fixture for creating an async HTTP client with the test server base URL."""
-    async with AsyncClient(base_url="http://localhost:8000") as client:
+    timeout = Timeout(10.0)  # timeout 10 sekuntia (voit säätää)
+    async with AsyncClient(base_url="http://localhost:8000", timeout=timeout) as client:
         yield client
+
 
 @pytest_asyncio.fixture
 async def auth_client(client):
@@ -21,6 +24,7 @@ async def auth_client(client):
     assert login_resp.status_code == 200
     return client
 
+
 @pytest.mark.asyncio
 async def test_get_prices(auth_client):
     """Test that the public endpoint for retrieving price data returns a list of items with 'startDate' and 'price'."""
@@ -29,6 +33,7 @@ async def test_get_prices(auth_client):
     data = response.json()
     assert isinstance(data, list)
     assert all("startDate" in item and "price" in item for item in data)
+
 
 @pytest.mark.asyncio
 async def test_get_prices_today(auth_client):
@@ -174,3 +179,99 @@ async def test_post_on_get_endpoint(auth_client):
     """Test that making a POST request to a GET-only endpoint returns a 405 or 404 error."""
     response = await auth_client.post("/api/windpower")
     assert response.status_code in (405, 404)
+
+@pytest.mark.asyncio
+async def test_post_price_hourlyavg_success(auth_client):
+    """
+    Test successful POST request to /api/price/hourlyavg endpoint with valid time range.
+    
+    Verifies that the response status code is 200, response data is a list, 
+    and each item contains 'hour' and 'price' keys.
+    """
+    payload = {
+        "startTime": "2024-05-01T00:00:00Z",
+        "endTime": "2024-05-01T12:00:00Z"
+    }
+    response = await auth_client.post("/api/price/hourlyavg", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert all("hour" in item and "price" in item for item in data)
+
+@pytest.mark.asyncio
+async def test_post_price_hourlyavg_invalid_time(auth_client):
+    """
+    Test POST request to /api/price/hourlyavg with invalid startTime format.
+    
+    Expects a 400, 422 or 500 status code and an error message in the response.
+    """
+    payload = {
+        "startTime": "invalid-date",
+        "endTime": "2024-05-01T12:00:00Z"
+    }
+    response = await auth_client.post("/api/price/hourlyavg", json=payload)
+    assert response.status_code in (400, 422, 500)
+    data = response.json()
+    assert "error" in data
+
+@pytest.mark.asyncio
+async def test_post_price_hourlyavg_missing_fields(auth_client):
+    """
+    Test POST request to /api/price/hourlyavg missing the endTime field.
+    
+    Expects a 400 or 422 status code due to validation error.
+    """
+    payload = {
+        "startTime": "2024-05-01T00:00:00Z"
+        # endTime puuttuu
+    }
+    response = await auth_client.post("/api/price/hourlyavg", json=payload)
+    assert response.status_code in (400, 422)
+
+@pytest.mark.asyncio
+async def test_post_price_weekdayavg_success(auth_client):
+    """
+    Test successful POST request to /api/price/weekdayavg endpoint with valid time range.
+    
+    Verifies that the response status code is 200, response data is a list,
+    and each item contains 'weekday' and 'price' keys.
+    """
+    payload = {
+        "startTime": "2024-05-01T00:00:00Z",
+        "endTime": "2024-05-07T23:59:59Z"
+    }
+    response = await auth_client.post("/api/price/weekdayavg", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert all("weekday" in item and "price" in item for item in data)
+
+@pytest.mark.asyncio
+async def test_post_price_weekdayavg_invalid_time(auth_client):
+    """
+    Test POST request to /api/price/weekdayavg with invalid startTime and endTime formats.
+    
+    Expects a 400, 422 or 500 status code and an error message in the response.
+    """
+    payload = {
+        "startTime": "not-a-date",
+        "endTime": "also-not-a-date"
+    }
+    response = await auth_client.post("/api/price/weekdayavg", json=payload)
+    assert response.status_code in (400, 422, 500)
+    data = response.json()
+    assert "error" in data
+
+@pytest.mark.asyncio
+async def test_post_price_weekdayavg_missing_fields(auth_client):
+    """
+    Test POST request to /api/price/weekdayavg missing the startTime field.
+    
+    Expects a 400 or 422 status code due to validation error.
+    """
+    payload = {
+        "endTime": "2024-05-01T23:59:59Z"
+        # startTime puuttuu
+    }
+    response = await auth_client.post("/api/price/weekdayavg", json=payload)
+    assert response.status_code in (400, 422)
