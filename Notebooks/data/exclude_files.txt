@@ -17,4 +17,5 @@ uv.lock
 serving_over_net.txt
 for_virtualbox.sh
 pgdata.tar.gz
+.pdf
 

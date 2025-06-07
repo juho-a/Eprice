@@ -3,7 +3,6 @@
 ├── App
 │   ├── README.md
 │   ├── compose.yaml
-│   ├── pgdata.tar.gz
 │   ├── project.env
 │   ├── backend-tests
 │   │   ├── Dockerfile
@@ -117,6 +116,7 @@
 │   ├── e2e-tests
 │   │   ├── Dockerfile
 │   │   └── tests
+│   │       ├── auth.spec.js
 │   │       └── home.spec.js
 │   └── python-server
 │       ├── Dockerfile
@@ -151,23 +151,21 @@
 │           └── porssisahko_tools.py
 └── Documents
     ├── CONTRIBUTIONS.md
-    ├── CONTRIBUTIONS.pdf
     ├── KONTRIBUUTIOT.md
-    ├── KONTRIBUUTIOT.pdf
     ├── README.md
     ├── backend_design.md
     ├── frontend_description.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
-    ├── project_description.pdf
     ├── project_directory_structure.txt
     ├── projektin_kuvaus.md
-    ├── projektin_kuvaus.pdf
+    ├── testing_plan.md
     └── diagrams
         └── sources
             ├── authentication_call_sequence_diagram.wsd
             ├── authentication_class_diagram.wsd
             ├── authentication_use_case.wsd
+            ├── controller-service-repository_design.wsd
             ├── data_access_call_sequence_diagram.wsd
             ├── frontend_structure.wsd
             ├── llm_retrieval.wsd
