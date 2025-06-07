@@ -3,7 +3,6 @@
 ├── App
 │   ├── README.md
 │   ├── compose.yaml
-│   ├── pgdata.tar.gz
 │   ├── project.env
 │   ├── backend-tests
 │   │   ├── Dockerfile
