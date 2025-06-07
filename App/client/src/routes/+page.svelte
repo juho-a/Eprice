@@ -71,7 +71,7 @@
 
 <title>Home - Market Electricity Prices Today</title>
 <div class="max-w-3xl mx-auto mt-16">
-    <h1 class="text-center text-3xl font-extrabold mb-8">
+    <h1 id="main-heading" class="text-center text-3xl font-extrabold mb-8">
         Market Electricity Prices Today<br>
         <span class="text-xl">{new Date().toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' })}</span>
     </h1>
@@ -92,7 +92,9 @@
         <p class="text-lg">
             Want to see more features and get the full functionality of the app?
             <br />
-            <a href="http://localhost:5173/auth/register" class="inline-block mt-6 px-4 py-2 bg-primary-500 text-white font-bold rounded hover:bg-primary-600 transition">
+            <a href="http://localhost:5173/auth/register"
+               class="inline-block mt-6 px-4 py-2 bg-primary-500 text-white font-bold rounded hover:bg-primary-600 transition"
+               id="register-link">
                 Register for free
             </a>
         </p>
