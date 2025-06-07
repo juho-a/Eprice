@@ -4,9 +4,9 @@ from datetime import datetime
 
 class FingridRepository:
     """
-    Repository class for value data operations in the Evalue backend.
+    Repository class for Fingrid data operations.
 
-    Provides asynchronous methods for inserting and retrieving value entries,
+    Provides asynchronous methods for inserting and retrieving Fingrid entries,
     as well as finding missing entries. Interacts directly with the PostgreSQL
     database using asyncpg.
 
@@ -15,7 +15,7 @@ class FingridRepository:
     """
     def __init__(self, database_url: str):
         """
-        Initialize the PorssisahkoRepository with a database connection URL.
+        Initialize the FingridRepository with a database connection URL.
 
         Args:
             database_url (str): The database connection URL.
@@ -27,9 +27,11 @@ class FingridRepository:
         Insert a single entry into the fingrid table.
 
         Args:
-            value (float): The value value.
-            iso_date (str): The date in ISO 8601 format.
+            value (float): The value to insert.
+            iso_date (str): The datetime in ISO 8601 format (UTC).
             predicted (bool): Indicates if the value is predicted. Default is False.
+            convert_to_helsinki_time (bool): Whether to convert datetime to Helsinki time. Default is True.
+            dataset_id (int): The dataset ID. Default is 0.
 
         Raises:
             asyncpg.PostgresError: If a database error occurs.
@@ -46,11 +48,11 @@ class FingridRepository:
             await conn.execute(
                 """
                 INSERT INTO fingrid (datetime_orig,datetime,date,year,month,day,hour,weekday,dataset_id,value)
-                """
-                "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
-                "ON CONFLICT (datetime, dataset_id) DO NOTHING",
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                ON CONFLICT (datetime, dataset_id) DO NOTHING
+                """,
                 entry["datetime_orig"],  # datetime_orig in UTC time zone aware format
-                entry["datetime"],  # datetime int helsinki time
+                entry["datetime"],       # datetime in Helsinki time (naive)
                 entry["date"],
                 entry["year"],
                 entry["month"],
@@ -67,14 +69,14 @@ class FingridRepository:
             if conn:
                 await conn.close()
 
-
     async def get_entries(self, start_date: datetime, end_date: datetime, dataset_id, select_columns: str = "*"):
         """
-        Retrieve entries from the porssisahko table between two dates.
+        Retrieve entries from the fingrid table between two datetimes for a specific dataset.
 
         Args:
-            start_date (datetime): The start date as a datetime object.
-            end_date (datetime): The end date as a datetime object.
+            start_date (datetime): The start datetime (inclusive).
+            end_date (datetime): The end datetime (inclusive).
+            dataset_id (int): The dataset ID to filter by.
             select_columns (str): The columns to select from the table. Default is "*".
 
         Returns:
@@ -112,14 +114,15 @@ class FingridRepository:
 
     async def get_missing_entries(self, start_date: datetime, end_date: datetime):
         """
-        Retrieve missing hourly entries from the porssisahko table between two dates.
+        Find missing hourly datetimes in the fingrid table between two datetimes.
 
         Args:
-            start_date (datetime): The start date as a datetime object.
-            end_date (datetime): The end date as a datetime object.
+            start_date (datetime): The start datetime (inclusive).
+            end_date (datetime): The end datetime (inclusive).
 
         Returns:
-            list[tuple]: A list of tuples where each tuple contains the date (YYYY-MM-DD) and hour (0-23).
+            list[tuple]: A list of tuples where each tuple contains the date (YYYY-MM-DD) and hour (0-23)
+                         for each missing hour in the range.
 
         Raises:
             asyncpg.PostgresError: If a database error occurs.
@@ -158,4 +161,4 @@ class FingridRepository:
             raise
         finally:
             if conn:
-                await conn.close()    
+                await conn.close()

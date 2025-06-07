@@ -1,37 +1,44 @@
 from models.data_model import *
 from ext_apis.ext_apis import *
 from repositories.fingrid_repository import *
-from utils.porssisahko_service_tools import *
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-
 class FingridServiceTools:
     """
-    A class containing utility methods for Fingrid-related operations.
+    Utility class for Fingrid-related data operations.
+
+    Provides methods for fetching, processing, and filling missing Fingrid data
+    using the repository and external API fetcher.
     """
     def __init__(self, ext_api_fetcher, fingrid_repository):
         """
-        Initialize the FingridTools with the FingridRepository.
-        This repository is used to interact with the Fingrid database.
+        Initialize FingridServiceTools.
+
+        Args:
+            ext_api_fetcher: External API fetcher instance for Fingrid data.
+            fingrid_repository: FingridRepository instance for database operations.
         """
         self.fingrid_repository = fingrid_repository
         self.ext_api_fetcher = ext_api_fetcher
 
-    async def fetch_and_process_data(self, time_range:TimeRange, dataset_id: int):
+    async def fetch_and_process_data(self, time_range: TimeRange, dataset_id: int):
         """
-        Fetch and process Fingrid data for a given dataset ID.
-        
+        Fetch and process Fingrid data for a given time range and dataset.
+
         Args:
+            time_range (TimeRange): The time range for which to fetch data.
             dataset_id (int): The Fingrid dataset ID.
-        
+
         Returns:
-            List[FingridDataPoint]: Processed list of Fingrid data points.
+            List[FingridDataPoint]: Sorted list of Fingrid data points for the range.
+
+        Raises:
+            Exception: If fetching or processing fails.
         """
         try:
             start_naive_hki = time_range.startTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
             end_naive_hki = time_range.endTime.astimezone(ZoneInfo("Europe/Helsinki")).replace(tzinfo=None)
-
 
             raw_data = await self.fingrid_repository.get_entries(
                 start_date=start_naive_hki,
@@ -51,17 +58,15 @@ class FingridServiceTools:
             print(f"Error while fetching and processing data: {e}")
             raise
 
-        
-
-    def convert_to_fingrid_data(self, data: List[dict]) -> List[FingridDataPoint]:
+    def convert_to_fingrid_data(self, data: list[dict]) -> list[FingridDataPoint]:
         """
-        Convert a list of database dicts to a sorted list of PriceDataPoint objects in UTC.
+        Convert a list of database dictionaries to a sorted list of FingridDataPoint objects in UTC.
 
         Args:
-            data (List[dict]): List of dicts with 'datetime' and 'price'.
+            data (list[dict]): List of dicts with 'datetime' and 'value' keys.
 
         Returns:
-            List[PriceDataPoint]: Sorted list of PriceDataPoint objects (startDate in UTC).
+            list[FingridDataPoint]: Sorted list of FingridDataPoint objects (startTime in UTC).
         """
         if not data:
             return []
@@ -73,18 +78,20 @@ class FingridServiceTools:
             ) for item in data
         ], key=lambda x: x.startTime, reverse=False)
 
-
-    def find_missing_entries_utc(self, time_range:TimeRange, data_utc: List[FingridDataPoint], dataset_id: int) -> List[StartDateModel]:
+    def find_missing_entries_utc(self, time_range: TimeRange, data_utc: list[FingridDataPoint], dataset_id: int) -> list[StartDateModel]:
         """
         Find missing hourly entries in the given UTC time range.
 
         Args:
-            start_date_utc (datetime): Start of the UTC time range.
-            end_date_utc (datetime): End of the UTC time range.
-            data_utc (List[PriceDataPoint]): List of available data points.
+            time_range (TimeRange): The UTC time range to check.
+            data_utc (list[FingridDataPoint]): List of available data points in UTC.
+            dataset_id (int): The dataset ID (not used in logic, for compatibility).
 
         Returns:
-            List[StartDateModel]: List of StartDateModel objects for missing hours (all in UTC).
+            list[StartDateModel]: List of StartDateModel objects for missing hours (all in UTC).
+
+        Raises:
+            Exception: If an error occurs during processing.
         """
         result = []
         current_date_utc = time_range.startTime
@@ -98,19 +105,22 @@ class FingridServiceTools:
             print(f"Error while finding missing entries: {e}")
             raise
         return result
-    
-    async def fill_missing_entries(self, result: List[FingridDataPoint], missing_entries: List[StartDateModel], dataset_id: int):
+
+    async def fill_missing_entries(self, result: list[FingridDataPoint], missing_entries: list[StartDateModel], dataset_id: int):
         """
-        Fetch and insert missing price data entries from the external API.
+        Fetch and insert missing Fingrid data entries from the external API.
 
         Args:
-            result (List[PriceDataPoint]): List to append new data points to (modified in place).
-            missing_entries (List[PriceDataPoint]): List of missing data points to fetch.
+            result (list[FingridDataPoint]): List to append new data points to (modified in place).
+            missing_entries (list[StartDateModel]): List of missing data points to fetch.
+            dataset_id (int): The dataset ID.
 
         Side effects:
             Updates the result list and inserts new entries into the database.
-        """
 
+        Raises:
+            Exception: If an error occurs during fetching or insertion.
+        """
         self.result = result
         if not missing_entries:
             return
@@ -127,7 +137,6 @@ class FingridServiceTools:
             print(f"Fetched {len(fetched_range)} entries for the range {time_range.startTime} to {time_range.endTime} from external API for dataset ID {dataset_id}.")
             counter = 0
             for entry in fetched_range:
-                #if entry not in result:
                 if any(item.startTime == entry.startTime for item in result):
                     continue
                 utc_dt = entry.startTime
@@ -145,44 +154,26 @@ class FingridServiceTools:
                 )
                 counter += 1
             print(f"Inserted {counter} missing entries into the database for dataset ID {dataset_id}.")
-            # for missing in missing_entries:
-            #     time_range = TimeRange(startTime=missing.startDate, endTime=missing.startDate + timedelta(hours=1))
-            #     fetched = await self.ext_api_fetcher.fetch_fingrid_data_range(dataset_id, time_range)
-            #     if not fetched:
-            #         continue
-
-            #     datapoint = fetched[0]
-
-            #     utc_dt = datapoint.startTime
-            #     iso_str = (utc_dt + timedelta(hours=0)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-            #     result.append(FingridDataPoint(
-            #         startTime=utc_dt,
-            #         endTime=utc_dt + timedelta(hours=1),
-            #         value=datapoint.value
-            #     ))
-            #     await self.fingrid_repository.insert_entry(
-            #         value=datapoint.value,
-            #         iso_date=iso_str,
-            #         dataset_id=dataset_id
-            #     )
         except Exception as e:
             print(f"Error while filling missing entries: {e}")
 
 def convert_to_fingrid_entry(value, iso_date, predicted=False, convert_to_helsinki_time=True, dataset_id=-1):
     """
-    Converts a price and ISO 8601 date into a dictionary for the porssisahko table.
+    Convert a value and ISO 8601 date string into a dictionary for the fingrid table.
 
     Args:
-        price (float): The price value.
+        value (float): The value to insert.
         iso_date (str): The date in ISO 8601 format (e.g., "2022-11-14T22:00:00.000Z").
-        predicted (bool): Indicates if the price is predicted. Default is False.
+        predicted (bool): Indicates if the value is predicted. Default is False.
+        convert_to_helsinki_time (bool): Whether to convert datetime to Helsinki time. Default is True.
+        dataset_id (int): The dataset ID.
+
     Returns:
-        dict: A dictionary with keys: Datetime, Date, Year, Month, Day, Hour, Weekday, Price, Predicted.
+        dict: A dictionary with keys: datetime_orig, datetime, date, year, month, day, hour, weekday, dataset_id, value, predicted.
+
     Raises:
         ValueError: If the ISO date is not in the correct format.
     """
-  
     try:
         if convert_to_helsinki_time:
             # Parse the ISO date string to a UTC datetime
@@ -193,14 +184,11 @@ def convert_to_fingrid_entry(value, iso_date, predicted=False, convert_to_helsin
         else:
             # Parse the ISO date string to a naive datetime (UTC)
             dt_naive = datetime.fromisoformat(iso_date.replace("Z", "+00:00")).replace(tzinfo=None)
-        # Extract the weekday
         weekday = dt_naive.weekday()
-
-        # Return the dictionary
         return {
-            "datetime_orig": iso_date,  # Original datetime in UTC
-            "datetime": dt_naive,  # Use offset-naive datetime
-            "date": dt_naive.date(),  # Extract the date part
+            "datetime_orig": iso_date,
+            "datetime": dt_naive,
+            "date": dt_naive.date(),
             "year": dt_naive.year,
             "month": dt_naive.month,
             "day": dt_naive.day,
@@ -211,7 +199,6 @@ def convert_to_fingrid_entry(value, iso_date, predicted=False, convert_to_helsin
             "predicted": predicted
         }
     except ValueError as e:
-        # Handle invalid date format or parsing errors
         raise ValueError(f"Invalid ISO date format: {iso_date}. Error: {e}")
 
 
