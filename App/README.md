@@ -68,7 +68,11 @@ sudo chown -R 999:999 ./pgdata
 tar xzvf pgdata.tar.gz
 ```
 
-Just ensure your Compose file mounts ./pgdata:/var/lib/postgresql/data -- you may need to set permissions like it is explained above.
+Just ensure your Compose file mounts ./pgdata:/var/lib/postgresql/data -- you also need to set the permissions like it is explained above. Similarly, if you update the database yourself and want to take a snapshot, run:
+
+```bash
+tar czvf pgdata.tar.gz pgdata
+```
 
 **Note:**  
 If you change to a custom Postgres image or user, check the UID/GID with:
