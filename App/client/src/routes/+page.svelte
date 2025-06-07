@@ -65,7 +65,7 @@
         <span class="text-xl">{new Date().toLocaleDateString('fi-FI', { timeZone: 'Europe/Helsinki' })}</span>
     </h1>
     <div class="shadow-lg p-4 border-1 border-primary-100 rounded-xl bg-white dark:bg-gray-800">
-        <canvas bind:this={priceCanvas} id="priceChart" style="width:100%;height:400px;"></canvas>
+        <canvas bind:this={priceCanvas} id="mainChart" style="width:100%;height:400px;"></canvas>
     </div>
     <div class="py-8">
         <PriceCards values={todayValues} kind="price" unit="c/kWh"/>

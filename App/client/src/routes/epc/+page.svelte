@@ -157,7 +157,7 @@
             Production vs. Consumption
         </h1>
         <div class="shadow-lg p-4 mb-4 border-1 border-primary-100 rounded-xl bg-white dark:bg-gray-800 transition-all duration-300">
-            <canvas bind:this={chartCanvas} id="mainChart" class=""></canvas>
+            <canvas bind:this={chartCanvas} id="epcChart" class=""></canvas>
         </div>
         <br/>
         <form method="POST" use:enhance={() => {

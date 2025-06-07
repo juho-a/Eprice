@@ -8,7 +8,7 @@ test('Home page loads successfully', async ({ page }) => {
 test('Home page has the chart visible.', async ({ page }) => {
   await page.goto("http://localhost:5173/");
   await page.waitForTimeout(1000);
-  const canvas = page.locator("#priceChart");
+  const canvas = page.locator("#mainChart");
   await expect(canvas).toBeVisible();
 });
 
