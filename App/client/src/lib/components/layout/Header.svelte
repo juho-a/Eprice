@@ -49,7 +49,7 @@
             <a href="/auth/remove" class="underline text-white">Delete account</a>
           </li>
           <li>
-            <a href="/logout" class="underline text-white">Logout</a>
+            <a href="/logout" class="underline text-white" id="logout-link">Logout</a>
           </li>
         </ul>
       </div>
