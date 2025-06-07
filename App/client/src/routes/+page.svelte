@@ -1,10 +1,11 @@
 <script>
     import chartjs from 'chart.js/auto';
     import { onMount } from "svelte";
-    import { usePricesState } from "$lib/states/usePricesState.svelte";
-    import { useUserState } from "$lib/states/userState.svelte.js";
+    // import { usePricesState } from "$lib/states/usePricesState.svelte";
+    // import { useUserState } from "$lib/states/userState.svelte.js";
     import { isTodayHelsinki } from '$lib/utils/date-helpers';
     import PriceCards from '$lib/components/PriceCards.svelte';
+    import { readPublicData } from "$lib/apis/data-api.js";
 
     // TODO: change to runes mode
     export let data;
@@ -12,10 +13,10 @@
     let priceCanvas;
     let priceChart;
 
-    const userState = useUserState();
-    if (data.user) {
-        userState.user = data.user;
-    }
+    // const userState = useUserState();
+    // if (data.user) {
+        // userState.user = data.user;
+    // }
 
     let prices = [];
     let todayPrices = [];
@@ -23,9 +24,10 @@
     let labels = [];
 
     const fetchPrices = async () => {
-        const { data: pricesData, update } = usePricesState();
-        await update();
-        prices = pricesData;
+        // const { data: pricesData, update } = usePricesState();
+        // await update();
+        // prices = pricesData;
+        prices = await readPublicData();
 
         todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
         todayValues = todayPrices.map(p => p.price);
