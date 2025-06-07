@@ -60,12 +60,7 @@
     };
 
     onMount(fetchPrices);
-    // this is hack to refresh after redirects
-    if (typeof window !== "undefined") {
-        window.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") fetchPrices();
-        });
-    }
+    
 </script>
 
 
