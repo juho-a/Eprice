@@ -1,34 +1,26 @@
 <script>
     import chartjs from 'chart.js/auto';
     import { onMount } from "svelte";
-    // import { usePricesState } from "$lib/states/usePricesState.svelte";
-    // import { useUserState } from "$lib/states/userState.svelte.js";
     import { isTodayHelsinki } from '$lib/utils/date-helpers';
-    import PriceCards from '$lib/components/PriceCards.svelte';
     import { readPublicData } from "$lib/apis/data-api.js";
+    import PriceCards from '$lib/components/PriceCards.svelte';
 
-    // TODO: change to runes mode
+    // TODO: change to runes mode, $state variables and pricesState
     export let data;
 
     let priceCanvas;
     let priceChart;
-
-    // const userState = useUserState();
-    // if (data.user) {
-        // userState.user = data.user;
-    // }
 
     let prices = [];
     let todayPrices = [];
     let todayValues = [];
     let labels = [];
 
+    // Fetch prices from the public API, directly from the browser
     const fetchPrices = async () => {
-        // const { data: pricesData, update } = usePricesState();
-        // await update();
-        // prices = pricesData;
         prices = await readPublicData();
 
+        // prepare data for today
         todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
         todayValues = todayPrices.map(p => p.price);
         labels = todayPrices.map(p =>
@@ -40,7 +32,7 @@
         );
 
         if (priceCanvas && labels.length) {
-            if (priceChart) priceChart.destroy();
+            if (priceChart) priceChart.destroy(); // destroy previous chart instance if exists
             priceChart = new chartjs(priceCanvas.getContext('2d'), {
                 type: "bar",
                 data: {
