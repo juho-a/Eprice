@@ -11,6 +11,16 @@ test.describe("Authentication", () => {
         await expect(page.locator("text=Incorrect email or password")).toBeVisible();
     });
 
+    test("Shows error on login with incorrect password", async ({ page }) => {
+        const email = "test@test.com";
+        await page.goto(`${baseUrl}/auth/login`);
+        await page.fill('input[name="email"]', email);
+        await page.fill('input[name="password"]', "canada");
+        await page.click('button[type="submit"]');
+        await page.waitForTimeout(1000);
+        await expect(page.locator("text=Incorrect email or password")).toBeVisible();
+    });
+
     test("Registers a new user successfully and removes the account after", async ({ page }) => {
         const email = `testuser${Date.now()}@example.com`;
         await page.goto(`${baseUrl}/auth/register`);
@@ -41,6 +51,23 @@ test.describe("Authentication", () => {
         await expect(page.locator("text=Email already registered.")).toBeVisible();
     });
 
+    test("Shows error on register with insuffucient password", async ({ page }) => {
+        const email = `testuser${Date.now()}@example.com`;
+        await page.goto(`${baseUrl}/auth/register`);
+        await page.fill('input[name="email"]', email);
+        await page.fill('input[name="password"]', "123");
+        await page.click('button[type="submit"]');
+        await expect(page.locator("text=Password must be at least 4 characters long.")).toBeVisible();
+    });
+
+    test("Shows error on register with invalid email", async ({ page }) => {
+        const email = `example@bademail`;
+        await page.goto(`${baseUrl}/auth/register`);
+        await page.fill('input[name="email"]', email);
+        await page.fill('input[name="password"]', "TestPassword123!");
+        await page.click('button[type="submit"]');
+        await expect(page.locator("text=value is not a valid email address")).toBeVisible();
+    });
 
     // This test assumes you have a verified user for login success
     test("Logs in successfully with valid credentials", async ({ page }) => {
