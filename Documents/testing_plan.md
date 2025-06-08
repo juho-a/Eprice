@@ -35,12 +35,53 @@ This testing plan focuses on backend testing and end-to-end (e2e) testing of the
 | /api/production          | GET  | Total electricity production data           |
 | /api/production/range    | POST | Total electricity production data for a time range|
 
+#### 1.1.4 E2E-Tested Features
+
+Implemented Test Cases (by 8.6.2025)
+
+**Authentication** (auth.spec.js):
+
+- Login
+    - Shows error on login with invalid credentials
+    - Shows error on login with incorrect password
+    - Logs in successfully with valid credentials
+    - Shows user email after login
+    - Logs out successfully
+
+- Register
+    - Registers a new user successfully and removes the account after
+    - Shows error on register with existing email
+    - Shows error on register with insufficient password
+    - Shows error on register with invalid email
+
+- Header Navigation Visibility
+    - Shows login and register links when not logged in
+    - Shows user links and hides login/register when logged in as user
+    - Shows Developer Chat link when logged in as admin and devChatAvailable
+    - Does not show Developer Chat link for normal user
+
+
+**Home Page** (home.spec.js):
+
+- Home page loads successfully (title check)
+- Home page has the chart visible
+- Shows correct main heading and date
+- Shows price cards section (max, min, avg, std)
+- Shows register prompt when not logged in
+
+
+#### 1.1.5 Features Missing from E2E-Tests
+
+- epc.spec.js: Testing production and consumption -view with logged in user (data retrieval, interactivity, graph response, price-cards)
+- price.spec.js: Testing prices -view with logged in user (data retrieval, interactivity, graph response, price-cards)
+
+
 ### 1.2 Quality Objectives  
 - Ensure backend API behaves correctly and reliably.  
 - Validate full user journeys through e2e tests to catch integration issues.  
 - Test authentication and authorization flows end-to-end.  
 - Achieve high test coverage of critical features and UI elements
-- Coverage measured by pytest-cov for backend, and Playwrights own coverage tools for frontend (if time permits).
+- Coverage measured by pytest-cov for backend, and Playwrights own coverage tools for frontend (only if time permits).
 
 ### 1.3 Roles and Responsibilities  
 - All team members are responsible for participating in testing activities, reporting identified bugs, and contributing to bug resolution.
@@ -63,12 +104,11 @@ This testing plan focuses on backend testing and end-to-end (e2e) testing of the
 ### 2.2 Test Levels  
 - API-level integration testing (pytest + httpx).  
 - End-to-end UI testing (Playwright).  
-- Unit tests handled separately.
 
 ### 2.3 Bug Triage  
 - Prioritize bugs by severity and impact on functionality.  
 - Use automated test reports and bug tracking tools.  
-- Regular meetings to decide fixes pre-release.
+- Regular meetings to decide fixes pre-release/-deadline.
 
 ### 2.5 Test Completeness  
 - All critical backend tests pass.  
@@ -98,7 +138,7 @@ This testing plan focuses on backend testing and end-to-end (e2e) testing of the
 - Backend running in test environment or locally  
 - Frontend application accessible for UI tests (localhost or test server)  
 - Python 3.13+ with dependencies  
-- Node.js environment for Playwright tests
+- Node.js environment for Playwright tests (Vite is serving the client)
 
 ---
 
