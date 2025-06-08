@@ -83,7 +83,7 @@
             <br />
             <a href="http://localhost:5173/auth/register"
                class="inline-block mt-6 px-4 py-2 bg-primary-500 text-white font-bold rounded hover:bg-primary-600 transition"
-               id="register-link">
+               id="register-free-link">
                 Register for free
             </a>
         </p>

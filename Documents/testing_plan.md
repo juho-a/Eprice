@@ -39,10 +39,17 @@ This testing plan focuses on backend testing and end-to-end (e2e) testing of the
 - Ensure backend API behaves correctly and reliably.  
 - Validate full user journeys through e2e tests to catch integration issues.  
 - Test authentication and authorization flows end-to-end.  
-- Achieve high test coverage of critical features and UI elements.
+- Achieve high test coverage of critical features and UI elements
+- Coverage measured by pytest-cov for backend, and Playwrights own coverage tools for frontend (if time permits).
 
 ### 1.3 Roles and Responsibilities  
 - All team members are responsible for participating in testing activities, reporting identified bugs, and contributing to bug resolution.
+
+### 1.4 Test Execution in Docker
+
+- All backend and E2E tests are executed in isolated Docker containers.
+- Source code for tests is mounted into the containers from `Eprice/App/e2e-tests` and `Eprice/App/backend-tests`.
+- The test containers depend on the application and database containers to ensure the environment is ready before tests run.
 
 ---
 
@@ -90,7 +97,7 @@ This testing plan focuses on backend testing and end-to-end (e2e) testing of the
 ### 4.2 Test Environment  
 - Backend running in test environment or locally  
 - Frontend application accessible for UI tests (localhost or test server)  
-- Python 3.8+ with dependencies  
+- Python 3.13+ with dependencies  
 - Node.js environment for Playwright tests
 
 ---
