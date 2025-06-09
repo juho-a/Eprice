@@ -3,7 +3,7 @@ export const datesInOrder = (startTime, endTime) => {
     // This function checks if the start date is before or equal to the end date.
     const start = new Date(startTime);
     const end = new Date(endTime);
-    return start < end;
+    return start <= end;
 };
 
 export const datesCloseEnough = (startTime, endTime) => {
