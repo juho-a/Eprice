@@ -130,14 +130,14 @@
             selectedValues2 = consumptionValues;
             kind1 = "prod.";
             kind2 = "cons.";
-            units1 = "kWh";
-            units2 = "kWh";
+            units1 = "MWh";
+            units2 = "MWh";
         } else if (selection === "difference") {
             selectedValues1 = differenceValues;
             selectedValues2 = [];
             kind1 = "difference";
             kind2 = "";
-            units1 = "kWh";
+            units1 = "MWh";
             units2 = "";
         } else if (selection === "price") {
             selectedValues1 = prices;
