@@ -29,6 +29,7 @@ from typing import List
 from services.data_service import FingridDataService, PriceDataService
 from models.data_model import FingridDataPoint, TimeRangeRequest, PriceDataPoint, ErrorResponse
 from fastapi import HTTPException
+from datetime import timedelta
 
 router = APIRouter()
 fingrid_data_service = FingridDataService()
@@ -68,6 +69,7 @@ async def post_windpower_range(time_range: TimeRangeRequest):
     Returns:
         List[FingridDataPoint] | JSONResponse: List of wind power data points or an error message.
     """
+    time_range.endTime = time_range.endTime + timedelta(hours=23)
     try:
         return await fingrid_data_service.fingrid_data_range(dataset_id=245, time_range=time_range)
 
@@ -112,6 +114,7 @@ async def post_consumption_range(time_range: TimeRangeRequest):
         List[FingridDataPoint] | JSONResponse: List of consumption data points or an error message.
             Each FingridDataPoint's startTime and endTime are returned as UTC datetimes (RFC 3339).
     """
+    time_range.endTime = time_range.endTime + timedelta(hours=23)
     try:
         return await fingrid_data_service.fingrid_data_range(
             dataset_id=165,time_range=time_range)
@@ -156,6 +159,7 @@ async def post_production_range(time_range: TimeRangeRequest):
         List[FingridDataPoint] | JSONResponse: List of production data points or an error message.
             Each FingridDataPoint's startTime and endTime are returned as UTC datetimes (RFC 3339).
     """
+    time_range.endTime = time_range.endTime + timedelta(hours=23)
     try:
         return await fingrid_data_service.fingrid_data_range(
             dataset_id=241, time_range=time_range)
@@ -178,6 +182,7 @@ async def post_price_range(time_range: TimeRangeRequest):
         List[PriceDataPoint] | JSONResponse: List of price data points or an error message.
             Each PriceDataPoint's startDate is returned as a UTC datetime string in RFC 3339 format (e.g., '2025-06-01T20:00:00Z').
     """
+    time_range.endTime = time_range.endTime + timedelta(hours=23)
     try:
         return await price_data_service.price_data_range(time_range)
     except HTTPException as e:
