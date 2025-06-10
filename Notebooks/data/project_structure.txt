@@ -65,6 +65,7 @@
 │   │   │       ├── +layout.svelte
 │   │   │       ├── +page.server.js
 │   │   │       ├── +page.svelte
+│   │   │       ├── OLDpage.svelte
 │   │   │       ├── api
 │   │   │       │   └── devchat
 │   │   │       │       └── +server.js
@@ -115,6 +116,7 @@
 │   │   └── V9__code.sql
 │   ├── e2e-tests
 │   │   ├── Dockerfile
+│   │   ├── README.md
 │   │   └── tests
 │   │       ├── auth.spec.js
 │   │       └── home.spec.js
@@ -151,14 +153,12 @@
 │           └── porssisahko_tools.py
 └── Documents
     ├── CONTRIBUTIONS.md
-    ├── KONTRIBUUTIOT.md
     ├── README.md
     ├── backend_design.md
     ├── frontend_description.md
     ├── openapi_endpoint_descriptions.md
     ├── project_description.md
     ├── project_directory_structure.txt
-    ├── projektin_kuvaus.md
     ├── testing_plan.md
     └── diagrams
         └── sources
