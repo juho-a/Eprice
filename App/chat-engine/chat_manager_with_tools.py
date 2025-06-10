@@ -272,7 +272,7 @@ class ChatManagerWithTools:
 
     def _setup_llm(self):
         self.llm = ChatOpenAI(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             temperature=0.2,
             streaming=True,
         )
