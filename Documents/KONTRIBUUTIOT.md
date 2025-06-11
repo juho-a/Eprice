@@ -112,7 +112,7 @@ Tämä osio dokumentoi projektin hakemistorakenteen ja siihen osallistuneiden he
 │   │       ├── populate_porssisahko.py
 │   │       └── retrieve_porssisahko_update.sh
 │   │
-│   ├── database-migrations – tietokantamuutokset (Paavo)
+│   ├── database-migrations – tietokantamuutokset (Paavo & Juho)
 │   │   ├── V1__users.sql
 │   │   ├── V2__porssisahko.sql
 │   │   ├── V3__timezone.sql

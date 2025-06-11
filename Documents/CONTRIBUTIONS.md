@@ -11,7 +11,7 @@ Below is a summary of the main contributors for each part of the Eprice project,
 │   ├── pgdata.tar.gz – database snapshot (Paavo)
 │   ├── project.env (anything with project and container level configurations, Paavo)
 |   |
-│   ├── backend-tests (setup, Paavo)
+│   ├── backend-tests (Paavo & Juho)
 │   │   ├── Dockerfile
 │   │   ├── README.md
 │   │   └── tests
@@ -110,7 +110,7 @@ Below is a summary of the main contributors for each part of the Eprice project,
 │   │       ├── populate_porssisahko.py
 │   │       └── retrieve_porssisahko_update.sh
 |   |
-│   ├── database-migrations (Paavo)
+│   ├── database-migrations (Paavo & Juho)
 │   │   ├── V10__code_constraint.sql
 │   │   ├── V11__documents.sql
 │   │   ├── V12__files.sql
@@ -128,7 +128,8 @@ Below is a summary of the main contributors for each part of the Eprice project,
 │   ├── e2e-tests (setup, Paavo)
 │   │   ├── Dockerfile
 │   │   └── tests
-│   │       └── home.spec.js (Paavo)
+│   │       ├── home.spec.js (Paavo)
+|   |       └── auth.spec.js (Paavo)
 |   |
 │   └── python-server (Juho & Paavo)
 │       ├── Dockerfile
