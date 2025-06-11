@@ -130,8 +130,9 @@ Tämä osio dokumentoi projektin hakemistorakenteen ja siihen osallistuneiden he
 │   ├── e2e-tests – end-to-end testit (Paavo)
 │   │   ├── Dockerfile
 │   │   └── tests
-│   │       └── home.spec.js (Paavo)
-│   │
+│   │       ├── home.spec.js
+│   │       └── auth.spec.js
+|   |
 │   └── python-server (Juho & Paavo)
 │       ├── Dockerfile
 │       ├── README.md
