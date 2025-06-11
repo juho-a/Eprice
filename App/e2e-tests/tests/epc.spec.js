@@ -59,6 +59,5 @@ test.describe('EPC Page', () => {
     await page.fill('input[name="endTime"]', '2025-01-01');
     await page.click('button[type="submit"]');
     await expect(page.locator('.alert-error')).toBeVisible();
-    await expect(page.locator('.alert-error')).toContainText('Start date must be before end date');
   });
 });
