@@ -1,38 +1,22 @@
 <script>
     import chartjs from 'chart.js/auto';
     import { onMount } from "svelte";
-    import { isTodayHelsinki } from '$lib/utils/date-helpers';
-    import { readPublicData } from "$lib/apis/data-api.js";
+    import { isTodayHelsinki, getFormattedDates } from '$lib/utils/date-helpers';
     import PriceCards from '$lib/components/PriceCards.svelte';
 
-    // TODO: change to runes mode, $state variables and pricesState
-    export let data;
+    let { data } = $props();
 
     let priceCanvas;
     let priceChart;
 
-    let prices = [];
-    let todayPrices = [];
-    let todayValues = [];
-    let labels = [];
+    // Filter for today's prices
+    let todayPrices = (data.prices ?? []).filter(p => isTodayHelsinki(p.startDate));
+    
+    // Format and sort using getFormattedDates
+    let { labels, values } = getFormattedDates(todayPrices, "startDate", "price");
 
-    // Fetch prices from the public API, directly from the browser
-    const fetchPrices = async () => {
-        prices = await readPublicData();
-
-        // prepare data for today
-        todayPrices = prices.filter(p => isTodayHelsinki(p.startDate));
-        todayValues = todayPrices.map(p => p.price);
-        labels = todayPrices.map(p =>
-            new Date(p.startDate).toLocaleTimeString('fi-FI', {
-                timeZone: 'Europe/Helsinki',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        );
-
+    $effect(() => {
         if (priceCanvas && labels.length) {
-            if (priceChart) priceChart.destroy(); // destroy previous chart instance if exists
             priceChart = new chartjs(priceCanvas.getContext('2d'), {
                 type: "bar",
                 data: {
@@ -41,7 +25,7 @@
                         label: 'Price (c/kWh)',
                         backgroundColor: 'rgba(10, 200, 245, 0.6)',
                         borderColor: 'rgb(10, 200, 245)',
-                        data: todayValues
+                        data: values
                     }]
                 },
                 options: {
@@ -51,12 +35,9 @@
                 }
             });
         }
-    };
+    });
 
-    onMount(fetchPrices);
-    
 </script>
-
 
 <title>Home - Market Electricity Prices Today</title>
 <div class="max-w-3xl mx-auto mt-16">
@@ -68,9 +49,9 @@
         <canvas bind:this={priceCanvas} id="mainChart" style="width:100%;height:400px;"></canvas>
     </div>
     <div class="py-8">
-        <PriceCards values={todayValues} kind="price" unit="c/kWh"/>
+        <PriceCards values={[...values]} kind="price" unit="c/kWh"/>
     </div>
-    {#if data.user?.email}
+    {#if data?.user?.email}
     <div class="text-center">
         <p class="text-xl font-bold mb-4">
             Welcome back!<br />
@@ -83,11 +64,10 @@
             <br />
             <a href="http://localhost:5173/auth/register"
                class="inline-block mt-6 px-4 py-2 bg-primary-500 text-white font-bold rounded hover:bg-primary-600 transition"
-               id="register-link">
+               id="register-free-link">
                 Register for free
             </a>
         </p>
     </div>
     {/if}
 </div>
-

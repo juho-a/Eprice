@@ -18,4 +18,6 @@ serving_over_net.txt
 for_virtualbox.sh
 pgdata.tar.gz
 .pdf
-
+loppuraportti.md
+projektin_kuvaus.md
+KONTRIBUUTIOT.md

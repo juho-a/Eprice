@@ -22,17 +22,17 @@
         </li>
         {#if user}
         <li>
-          <a href="/epc" class="">Production/Consumption</a>
+          <a href="/epc" id="epc-link" class="">Production/Consumption</a>
         </li>
         <li>
-          <a href="/price" class="">Price</a>
+          <a href="/price" id="price-link" class="">Price</a>
         </li>
         {:else}
             <li>
-              <a href="/auth/login" class="">Login</a>
+              <a href="/auth/login" id="login-link" class="">Login</a>
             </li>
             <li>
-              <a href="/auth/register" class="">Register</a>
+              <a href="/auth/register" id="register-link" class="">Register</a>
           </li>
         {/if}
       </ul>
@@ -42,11 +42,11 @@
         <ul class="ml-4 flex space-x-4 text-white">
           {#if user.role === 'admin' && devChatAvailable}
             <li>
-              <a href="/chat" class="underline text-white font-bold">Developer Chat</a>
+              <a href="/chat" id="developer-chat-link" class="underline text-white font-bold">Developer Chat</a>
             </li>
           {/if}
           <li>
-            <a href="/auth/remove" class="underline text-white">Delete account</a>
+            <a href="/auth/remove" id="delete-link" class="underline text-white">Delete account</a>
           </li>
           <li>
             <a href="/logout" class="underline text-white" id="logout-link">Logout</a>

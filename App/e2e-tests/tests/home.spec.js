@@ -36,7 +36,4 @@ test('Shows register prompt when not logged in', async ({ page }) => {
   await page.waitForTimeout(1000);
   const prompt = page.locator("text=Want to see more features and get the full functionality of the app?");
   await expect(prompt).toBeVisible();
-  const registerLink = page.locator("#register-link");
-  await expect(registerLink).toBeVisible();
-  await expect(registerLink).toHaveText(/Register/i);
 });

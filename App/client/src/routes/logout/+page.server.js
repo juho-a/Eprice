@@ -20,6 +20,21 @@ export const actions = {
     } else {
       return { error: "Logout failed" };
     }
-  }
+  },
+  // NOTE: This is a hack to handle logout in a different way on Azure
+  // This is needed because Azure does not support the same cookie handling as other environments
+  logout2: async ({ request, cookies }) => {
+      const response = await apiRequest(
+        "/api/auth/logout",
+      );
+  
+      if (response.ok) {
+        const _ = response.headers.getSetCookie();
+        cookies.set(COOKIE_KEY, "", { path: "/", secure: false });
+        throw redirect(302, "/");
+      } else {
+        return { error: "Logout failed" };
+      }
+    },
 
 };
