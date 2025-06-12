@@ -31,33 +31,33 @@ This is the frontend for the Eprice application, built with Svelte. It displays 
 
 ## Main Components
 
-- **+page.svelte**  
+- src/routes/**+page.svelte**  
   The main landing page. Fetches price data, calculates averages, and renders:
   - `PriceBall` components for current, daily, and weekly prices.
   - `MainChart` for visualizing price trends.
 
-- **PriceBall.svelte**  
+- src/components/layout/**PriceBall.svelte**  
   A reusable component to display a price value with a heading and optional timestamp.
 
-- **+page.svelte**  
+- src/routes/price/**+page.svelte**  
   A page for selecting a custom date range and viewing a table and chart of prices.
 
-- **+page.svelte**  
+- src/routes/pricetable/**+page.svelte**  
   Lets users select a date range and view a paginated table of prices.
 
-- **+page.svelte**  
+- src/routes/epc/**+page.svelte**  
   Shows production, consumption, and price data with interactive charts and filters.
 
-- **Header.svelte**  
+- src/components/layout/**Header.svelte**  
   Navigation bar with links that adapt based on authentication state and user role.
 
-- **Footer.svelte**  
+- src/components/layout/**Footer.svelte**  
   Footer with theme-switching buttons.
 
-- **User.svelte**  
+- src/components/layout/**User.svelte**  
   Displays the currently logged-in user's email.
 
-- **Clock.svelte**  
+- src/components/layout/**Clock.svelte**  
   Shows the current time, updating every second.
 
 - **API Helpers (data-api.js)**  
