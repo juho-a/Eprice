@@ -130,8 +130,8 @@ async def test_post_price_range(auth_client):
 async def test_post_windpower_range_invalid_time(auth_client):
     """Test that posting a time range where endTime is before startTime results in an error."""
     payload = {
-        "startTime": "2024-05-01T03:00:00Z",
-        "endTime": "2024-05-01T00:00:00Z"
+        "startTime": "2025-05-01T03:00:00Z",
+        "endTime": "2025-02-01T00:00:00Z"
     }
     response = await auth_client.post("/api/windpower/range", json=payload)
     assert response.status_code in (400, 422, 500)
@@ -141,7 +141,7 @@ async def test_post_windpower_range_invalid_time(auth_client):
 @pytest.mark.asyncio
 async def test_post_price_range_missing_fields(auth_client):
     """Test that the price range endpoint returns an error if required fields are missing."""
-    payload = {"startTime": "2024-05-01T00:00:00Z"}  # Missing endTime
+    payload = {"startTime": "2025-05-01T00:00:00Z"}  # Missing endTime
     response = await auth_client.post("/api/price/range", json=payload)
     assert response.status_code in (400, 422)
 
@@ -189,14 +189,14 @@ async def test_post_price_hourlyavg_success(auth_client):
     and each item contains 'hour' and 'price' keys.
     """
     payload = {
-        "startTime": "2024-05-01T00:00:00Z",
-        "endTime": "2024-05-01T12:00:00Z"
+        "startTime": "2025-05-01T00:00:00Z",
+        "endTime": "2025-05-01T12:00:00Z"
     }
     response = await auth_client.post("/api/price/hourlyavg", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    assert all("hour" in item and "price" in item for item in data)
+    assert all("hour" in item and "avgPrice" in item for item in data)
 
 @pytest.mark.asyncio
 async def test_post_price_hourlyavg_invalid_time(auth_client):
@@ -207,7 +207,7 @@ async def test_post_price_hourlyavg_invalid_time(auth_client):
     """
     payload = {
         "startTime": "invalid-date",
-        "endTime": "2024-05-01T12:00:00Z"
+        "endTime": "2025-05-01T12:00:00Z"
     }
     response = await auth_client.post("/api/price/hourlyavg", json=payload)
     assert response.status_code in (400, 422, 500)
@@ -222,7 +222,7 @@ async def test_post_price_hourlyavg_missing_fields(auth_client):
     Expects a 400 or 422 status code due to validation error.
     """
     payload = {
-        "startTime": "2024-05-01T00:00:00Z"
+        "startTime": "2025-05-01T00:00:00Z"
         # endTime puuttuu
     }
     response = await auth_client.post("/api/price/hourlyavg", json=payload)
@@ -237,14 +237,14 @@ async def test_post_price_weekdayavg_success(auth_client):
     and each item contains 'weekday' and 'price' keys.
     """
     payload = {
-        "startTime": "2024-05-01T00:00:00Z",
-        "endTime": "2024-05-07T23:59:59Z"
+        "startTime": "2025-05-01T00:00:00Z",
+        "endTime": "2025-05-07T23:59:59Z"
     }
     response = await auth_client.post("/api/price/weekdayavg", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    assert all("weekday" in item and "price" in item for item in data)
+    assert all("weekday" in item and "avgPrice" in item for item in data)
 
 @pytest.mark.asyncio
 async def test_post_price_weekdayavg_invalid_time(auth_client):

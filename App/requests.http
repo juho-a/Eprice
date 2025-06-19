@@ -51,8 +51,8 @@ POST http://localhost:8000/api/windpower/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-06-03T01:00:00Z",
-  "endTime": "2025-06-05T06:00:00Z"
+  "startTime": "2025-05-01T03:00:00Z",
+  "endTime": "2025-03-01T00:00:00Z"
 }
 
 ### fingrid consumption data now
