@@ -6,7 +6,7 @@ It includes models for time ranges, Fingrid and price data points, error respons
 and utility base classes for datetime validation.
 """
 
-from pydantic import BaseModel, Field, field_validator, field_serializer
+from pydantic import BaseModel, Field, field_validator, field_serializer, model_validator
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -58,6 +58,12 @@ class TimeRange(DateTimeValidatedModel):
         description="End time in RFC 3339 format (e.g., 2024-05-02T00:00:00Z).",
         examples=["2024-05-02T00:00:00Z"]
     )
+
+    @model_validator(mode="after")
+    def check_start_before_end(self) -> 'TimeRange':
+        if self.startTime >= self.endTime:
+            raise ValueError("startTime must be before endTime")
+        return self
 
 class TimeRangeRequest(TimeRange):
     """
