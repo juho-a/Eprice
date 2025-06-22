@@ -1,4 +1,4 @@
-### Client/front template for Eprice app
+### Client/front for Eprice app
 
 You need to have deno installed: https://docs.deno.com/runtime/
 
