@@ -6,10 +6,9 @@ You need to have deno installed: https://docs.deno.com/runtime/
 
 * run this with docker compose.
 
-* first run `deno install --allow-scripts` in `client/` and `e2e-tests/` directories. This is likely to change in the future, but for now the denoland's alpine base image does not allow installing with optional flags (why this is the case beats me).
+* first run `deno install --allow-scripts` in `client/` and `e2e-tests/` directories. This is likely to change in the future, but for now the denoland's alpine base image does not allow installing with optional flags.
 
-
-Certainly! Here’s your original README text, **with additional details** based on your code and project structure. Additions are marked with comments for clarity, but you can remove those for your final README.
+**CHANGE**: Running deno install locally is now optional. 
 
 ---
 
