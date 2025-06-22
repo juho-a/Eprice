@@ -1,6 +1,6 @@
 ### Client/front template for Eprice app
 
-You need to have deno installed: https://docs.deno.com/runtime/
+You need to have deno installed: https://docs.deno.com/runtime/  (*see change below*)
 
 * missing project.env -- ask Paavo for this.
 
@@ -8,7 +8,7 @@ You need to have deno installed: https://docs.deno.com/runtime/
 
 * first run `deno install --allow-scripts` in `client/` and `e2e-tests/` directories. This is likely to change in the future, but for now the denoland's alpine base image does not allow installing with optional flags.
 
-**CHANGE**: Running deno install locally is now optional. 
+**CHANGE**: Running deno install locally is now optional, and Deno is therefore no longer a requirement.
 
 ---
 
