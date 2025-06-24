@@ -75,8 +75,8 @@ POST http://localhost:8000/api/production/range
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-01T00:00:00",
-  "endTime": "2025-05-31T06:00:00"
+  "startTime": "2025-06-19T00:00:00",
+  "endTime": "2025-06-28T06:00:00"
 }
 
 ### price average data by hour
