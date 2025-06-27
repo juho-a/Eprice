@@ -24,9 +24,8 @@ from urllib.parse import urlencode
 from typing import List
 from dotenv import load_dotenv
 import os
-from models.data_model import *
+from models.data_model import FingridDataPoint, PriceDataPoint, TimeRange 
 from zoneinfo import ZoneInfo
-from models.data_model import PriceDataPoint
 from fastapi import HTTPException
 import asyncio
 
